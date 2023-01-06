@@ -45,8 +45,8 @@ class ARFileManager: NSObject {
             for directory in contentsOfDirectory {
                 if !directory.contains(".DS_Store") {
                     let modelName = directory
-                    let modelThumbnailPath = url.absoluteString + directory + "/" + directory + ".jpg"
-                    let modelFilePath = url.absoluteString + directory + "/" + directory + ".usdz"
+                    let modelThumbnailPath = url.relativePath + "/" + directory + "/" + directory + ".jpg"
+                    let modelFilePath = url.relativePath + "/" + directory + "/" + directory + ".usdz"
                     
                     let assetModel = AssetModel()
                     assetModel.modelName = modelName

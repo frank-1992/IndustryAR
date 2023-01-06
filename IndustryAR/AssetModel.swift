@@ -8,7 +8,7 @@
 import UIKit
 
 class AssetModel: NSObject {
-    var modelName: String?
-    var modelThumbnailPath: String?
-    var modelFilePath: String?
+    var modelName: String = ""
+    var modelThumbnailPath: String = ""
+    var modelFilePath: String = ""
 }
