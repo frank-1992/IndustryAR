@@ -19,7 +19,7 @@ class HomeMenuViewController: UIViewController {
         tableView.backgroundColor = .white
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.separatorStyle = .none
+//        tableView.separatorStyle = .none
         tableView.rowHeight = 120
         tableView.register(HomeMenuTableViewCell.self, forCellReuseIdentifier: homeMenuTableViewCell)
         return tableView
@@ -39,12 +39,12 @@ class HomeMenuViewController: UIViewController {
         view.addSubview(tableView)
     }
 
-    // 创建container
+    // create assets container
     private func setupAssetsContainer() {
         ARFileManager.shared.setupAssetsContainer()
     }
     
-    // 获取资源
+    // get assets
     private func getAssets() {
         ARFileManager.shared.traverseContainer { [weak self] assetModels in
             guard let self = self else { return }

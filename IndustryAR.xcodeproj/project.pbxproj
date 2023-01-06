@@ -17,6 +17,9 @@
 		CECCCEFD296817800098B299 /* ARFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCCEFC296817800098B299 /* ARFileManager.swift */; };
 		CECCE9322968197D0098B299 /* AssetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE9312968197D0098B299 /* AssetModel.swift */; };
 		CECCE935296820390098B299 /* HomeMenuTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE934296820390098B299 /* HomeMenuTableViewCell.swift */; };
+		CECCE939296833AC0098B299 /* VirtualObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE938296833AC0098B299 /* VirtualObject.swift */; };
+		CECCE93C296833D90098B299 /* ARUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE93B296833D90098B299 /* ARUtilities.swift */; };
+		CECCE93F296835110098B299 /* ARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE93E296835110098B299 /* ARView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +37,9 @@
 		CECCCEFC296817800098B299 /* ARFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARFileManager.swift; sourceTree = "<group>"; };
 		CECCE9312968197D0098B299 /* AssetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetModel.swift; sourceTree = "<group>"; };
 		CECCE934296820390098B299 /* HomeMenuTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenuTableViewCell.swift; sourceTree = "<group>"; };
+		CECCE938296833AC0098B299 /* VirtualObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualObject.swift; sourceTree = "<group>"; };
+		CECCE93B296833D90098B299 /* ARUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARUtilities.swift; sourceTree = "<group>"; };
+		CECCE93E296835110098B299 /* ARView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,11 +92,13 @@
 		CE9FD6BB2967C8780052C339 /* IndustryAR */ = {
 			isa = PBXGroup;
 			children = (
+				CECCE93D296835080098B299 /* AR */,
+				CECCE93A296833B10098B299 /* Util */,
+				CECCE937296833700098B299 /* Node */,
+				CECCE936296833460098B299 /* Model */,
 				CECCE933296820170098B299 /* HomeMenu */,
 				CE9FD6BC2967C8780052C339 /* AppDelegate.swift */,
 				CE9FD6BE2967C8780052C339 /* SceneDelegate.swift */,
-				CECCCEFC296817800098B299 /* ARFileManager.swift */,
-				CECCE9312968197D0098B299 /* AssetModel.swift */,
 				CE9FD6C22967C8780052C339 /* Main.storyboard */,
 				CE9FD6C52967C87A0052C339 /* Assets.xcassets */,
 				CE9FD6C72967C87A0052C339 /* LaunchScreen.storyboard */,
@@ -106,6 +114,39 @@
 				CECCE934296820390098B299 /* HomeMenuTableViewCell.swift */,
 			);
 			path = HomeMenu;
+			sourceTree = "<group>";
+		};
+		CECCE936296833460098B299 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				CECCCEFC296817800098B299 /* ARFileManager.swift */,
+				CECCE9312968197D0098B299 /* AssetModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		CECCE937296833700098B299 /* Node */ = {
+			isa = PBXGroup;
+			children = (
+				CECCE938296833AC0098B299 /* VirtualObject.swift */,
+			);
+			path = Node;
+			sourceTree = "<group>";
+		};
+		CECCE93A296833B10098B299 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				CECCE93B296833D90098B299 /* ARUtilities.swift */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		CECCE93D296835080098B299 /* AR */ = {
+			isa = PBXGroup;
+			children = (
+				CECCE93E296835110098B299 /* ARView.swift */,
+			);
+			path = AR;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -225,9 +266,12 @@
 			files = (
 				CE9FD6C12967C8780052C339 /* HomeMenuViewController.swift in Sources */,
 				CE9FD6BD2967C8780052C339 /* AppDelegate.swift in Sources */,
+				CECCE93F296835110098B299 /* ARView.swift in Sources */,
 				CE9FD6BF2967C8780052C339 /* SceneDelegate.swift in Sources */,
+				CECCE93C296833D90098B299 /* ARUtilities.swift in Sources */,
 				CECCE9322968197D0098B299 /* AssetModel.swift in Sources */,
 				CECCCEFD296817800098B299 /* ARFileManager.swift in Sources */,
+				CECCE939296833AC0098B299 /* VirtualObject.swift in Sources */,
 				CECCE935296820390098B299 /* HomeMenuTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

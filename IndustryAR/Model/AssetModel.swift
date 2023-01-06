@@ -7,7 +7,7 @@
 
 import UIKit
 
-class AssetModel: NSObject {
+public class AssetModel: NSObject {
     var modelName: String = ""
     var modelThumbnailPath: String = ""
     var modelFilePath: String = ""

@@ -15,6 +15,13 @@ class HomeMenuTableViewCell: UITableViewCell {
         return imageView
     }()
     
+    private lazy var nameLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.font = UIFont(name: "PingFang-SC-Medium", size: 24)
+        label.textColor = .black
+        return label
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
@@ -28,16 +35,22 @@ class HomeMenuTableViewCell: UITableViewCell {
         contentView.backgroundColor = .white
         
         contentView.addSubview(iconView)
-        iconView.backgroundColor = .red
         iconView.snp.makeConstraints { make in
             make.centerY.equalTo(contentView)
             make.right.equalTo(contentView).offset(-10)
             make.size.equalTo(CGSize(width: 100, height: 100))
         }
+        
+        contentView.addSubview(nameLabel)
+        nameLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(contentView)
+            make.left.equalTo(contentView).offset(60)
+        }
     }
     
     func reloadUIWith(_ assetModel: AssetModel) {
         iconView.image = UIImage(contentsOfFile: assetModel.modelThumbnailPath)
+        nameLabel.text = assetModel.modelName
     }
 
 }
