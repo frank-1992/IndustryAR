@@ -19,9 +19,7 @@ public enum ObjectAlignment: Int {
 public final class VirtualObject: SCNReferenceNode {
 
     /// object name
-    public var modelName: String {
-        return referenceURL.lastPathComponent.replacingOccurrences(of: ".usdz", with: "")
-    }
+    public var modelName: String = ""
     
     /// alignments - 'horizontal, vertical, any'
     public var allowedAlignment: ARRaycastQuery.TargetAlignment {
@@ -44,18 +42,19 @@ public final class VirtualObject: SCNReferenceNode {
     public var shouldUpdateAnchor = false
     
     
-    public init?(assetModel: AssetModel) {
-        super.init(url: URL(fileURLWithPath: assetModel.modelFilePath))
+    public init?(filePath: String, fileName: String) {
+        super.init(url: URL(fileURLWithPath: filePath))
         self.load()
-        self.name = assetModel.modelName
+        self.name = fileName
+        self.modelName = fileName
         setupHorizontalPivot()
     }
     
-    public override init?(url referenceURL: URL) {
-        super.init(url: referenceURL)
-        self.load()
-        setupHorizontalPivot()
-    }
+//    public override init?(url referenceURL: URL) {
+//        super.init(url: referenceURL)
+//        self.load()
+//        setupHorizontalPivot()
+//    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

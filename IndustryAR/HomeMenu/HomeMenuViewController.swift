@@ -67,5 +67,13 @@ extension HomeMenuViewController: UITableViewDelegate, UITableViewDataSource {
         cell.reloadUIWith(model)
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let model = assetModels[indexPath.row]
+        let arVC = ARViewController()
+        arVC.assetModel = model
+        arVC.modalPresentationStyle = .overFullScreen
+        present(arVC, animated: true)
+    }
 }
 

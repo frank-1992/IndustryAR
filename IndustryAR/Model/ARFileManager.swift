@@ -42,23 +42,47 @@ class ARFileManager: NSObject {
             let contentsOfDirectory = try manager.contentsOfDirectory(atPath: url.path)
             print("contentsOfDirectory:\(contentsOfDirectory)")
             var assets = [AssetModel]()
+            var usdzFilePaths: [URL] = []
+            var scnFilePaths: [URL] = []
+            var modelThumbnailPath: URL?
             for directory in contentsOfDirectory {
                 if !directory.contains(".DS_Store") {
                     let modelName = directory
-                    let modelThumbnailPath = url.relativePath + "/" + directory + "/" + directory + ".jpg"
-                    let modelFilePath = url.relativePath + "/" + directory + "/" + directory + ".usdz"
+                    let childURL = url.appendingPathComponent(directory, isDirectory: true)
+                    
+                    guard let enumberatorAtURL = manager.enumerator(at: childURL,
+                                                              includingPropertiesForKeys: nil,
+                                                              options: .skipsHiddenFiles,
+                                                                    errorHandler: nil) else { return }
+                    
+                    for urlObject in enumberatorAtURL.allObjects {
+                        if let url = urlObject as? URL {
+                            print("\(url.lastPathComponent)")
+                            if url.lastPathComponent.contains(".usdz") {
+                                usdzFilePaths.append(url)
+                            }
+                            if url.lastPathComponent.contains(".scn") {
+                                scnFilePaths.append(url)
+                            }
+                            if url.lastPathComponent.contains(".jpg") || url.lastPathComponent.contains(".png") {
+                                modelThumbnailPath = url
+                            }
+                        }
+                    }
                     
                     let assetModel = AssetModel()
                     assetModel.modelName = modelName
-                    assetModel.modelThumbnailPath = modelThumbnailPath
-                    assetModel.modelFilePath = modelFilePath
-                    
+                    if let modelThumbnailPath = modelThumbnailPath {
+                        assetModel.modelThumbnailPath = modelThumbnailPath
+                    }
+                    assetModel.usdzFilePaths = usdzFilePaths
+                    assetModel.scnFilePaths = scnFilePaths
                     assets.append(assetModel)
                 }
             }
             completion(assets)
         } catch {
-            print("1.1 浅遍历 error:\(error)")
+            print("error:\(error)")
         }
 //        // 1.2 浅遍历：包含完整路径
 //        do {

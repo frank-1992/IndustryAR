@@ -24,6 +24,7 @@ class HomeMenuTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
         setupUI()
     }
     
@@ -49,7 +50,8 @@ class HomeMenuTableViewCell: UITableViewCell {
     }
     
     func reloadUIWith(_ assetModel: AssetModel) {
-        iconView.image = UIImage(contentsOfFile: assetModel.modelThumbnailPath)
+        guard let modelThumbnailPath = assetModel.modelThumbnailPath else { return }
+        iconView.image = UIImage(contentsOfFile: modelThumbnailPath.relativePath)
         nameLabel.text = assetModel.modelName
     }
 
