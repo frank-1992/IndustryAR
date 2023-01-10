@@ -114,9 +114,23 @@ class ARViewController: UIViewController {
     }
     
     private func showVirtualObject(with model: VirtualObject) {
-        sceneView.scene.rootNode.addChildNode(model)
         model.scale = SCNVector3(1, 1, 1)
         model.simdWorldPosition = simd_float3(x: 0, y: -1, z: -2)
+        sceneView.scene.rootNode.addChildNode(model)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // 画圆
+        let circleNode = SCNNode(geometry: SCNTorus(ringRadius: 0.1, pipeRadius: 0.001))
+        circleNode.geometry?.firstMaterial?.diffuse.contents = UIColor.red
+        circleNode.simdWorldPosition = simd_float3(x: 0, y: -1, z: -0.5)
+        sceneView.scene.rootNode.addChildNode(circleNode)
+        
+        
+        // 画方形
+        let node = Square()
+        node.simdWorldPosition = simd_float3(x: 0, y: -1, z: -0.5)
+        sceneView.scene.rootNode.addChildNode(node)
     }
 
 }
