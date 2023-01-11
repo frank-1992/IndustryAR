@@ -23,6 +23,8 @@
 		CECE42F5296BF8D400D0D795 /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE42F4296BF8D400D0D795 /* ARViewController.swift */; };
 		CECE775D296D7C0D00D0D795 /* Square.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE775C296D7C0D00D0D795 /* Square.swift */; };
 		CECE775F296D7D1200D0D795 /* SquareSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE775E296D7D1200D0D795 /* SquareSegment.swift */; };
+		CECE7761296D85D000D0D795 /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE7760296D85D000D0D795 /* Triangle.swift */; };
+		CECE7763296E946A00D0D795 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE7762296E946A00D0D795 /* Circle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +48,8 @@
 		CECE42F4296BF8D400D0D795 /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		CECE775C296D7C0D00D0D795 /* Square.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Square.swift; sourceTree = "<group>"; };
 		CECE775E296D7D1200D0D795 /* SquareSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SquareSegment.swift; sourceTree = "<group>"; };
+		CECE7760296D85D000D0D795 /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
+		CECE7762296E946A00D0D795 /* Circle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Circle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +140,8 @@
 			children = (
 				CECCE938296833AC0098B299 /* VirtualObject.swift */,
 				CECE775C296D7C0D00D0D795 /* Square.swift */,
+				CECE7760296D85D000D0D795 /* Triangle.swift */,
+				CECE7762296E946A00D0D795 /* Circle.swift */,
 				CECE775E296D7D1200D0D795 /* SquareSegment.swift */,
 			);
 			path = Node;
@@ -274,11 +280,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE9FD6C12967C8780052C339 /* HomeMenuViewController.swift in Sources */,
+				CECE7761296D85D000D0D795 /* Triangle.swift in Sources */,
 				CE9FD6BD2967C8780052C339 /* AppDelegate.swift in Sources */,
 				CECCE93F296835110098B299 /* ARView.swift in Sources */,
 				CECE775D296D7C0D00D0D795 /* Square.swift in Sources */,
 				CE9FD6BF2967C8780052C339 /* SceneDelegate.swift in Sources */,
 				CECCE93C296833D90098B299 /* ARUtilities.swift in Sources */,
+				CECE7763296E946A00D0D795 /* Circle.swift in Sources */,
 				CECE775F296D7D1200D0D795 /* SquareSegment.swift in Sources */,
 				CECCE9322968197D0098B299 /* AssetModel.swift in Sources */,
 				CECCCEFD296817800098B299 /* ARFileManager.swift in Sources */,

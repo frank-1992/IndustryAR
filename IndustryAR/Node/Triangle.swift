@@ -1,5 +1,5 @@
 //
-//  Rectangle.swift
+//  Triangle.swift
 //  IndustryAR
 //
 //  Created by 吴熠 on 1/10/23.
@@ -8,7 +8,7 @@
 import UIKit
 import SceneKit
 
-class Square: SCNNode {
+class Triangle: SCNNode {
     static let size: Float = 0.17
     
     // Thickness of the focus square lines in meters.
@@ -31,30 +31,28 @@ class Square: SCNNode {
         let s1 = Segment(name: "s1")
         let s2 = Segment(name: "s2")
         let s3 = Segment(name: "s3")
-        let s4 = Segment(name: "s4")
-        segments = [s1, s2, s3, s4]
+        segments = [s1, s2, s3]
         
         let sl: Float = 1  // segment length
         let c: Float = Square.thickness / 2
-        s1.simdPosition = simd_float3(0, 0, -sl / 2)
+        let temp: Float = sl / 2 * sin(.pi / 3)
+        s1.simdPosition = simd_float3(0, 0, temp)
         s1.simdRotation = simd_float4(0, 0, 1, .pi / 2)
         s1.simdLocalRotate(by: simd_quatf(angle: .pi / 2, axis: SIMD3(x: 0, y: 1, z: 0)))
-
         
-        s2.simdPosition = simd_float3(-sl / 2 + c, 0, 0)
+        
+        s2.simdPosition = simd_float3(-sl / 4, 0, 0)
         s2.simdRotation = simd_float4(1, 0, 0, .pi / 2)
+        s2.simdLocalRotate(by: simd_quatf(angle: .pi / 6, axis: SIMD3(x: 0, y: 0, z: 1)))
 
         
-        s3.simdPosition = simd_float3(sl / 2 - c, 0, 0)
+        s3.simdPosition = simd_float3(sl / 4, 0, 0)
         s3.simdRotation = simd_float4(1, 0, 0, .pi / 2)
+        s3.simdLocalRotate(by: simd_quatf(angle: -.pi / 6, axis: SIMD3(x: 0, y: 0, z: 1)))
         
-        s4.simdPosition = simd_float3(0, 0, sl / 2 - c / 2)
-        s4.simdRotation = simd_float4(0, 0, 1, .pi / 2)
-        s4.simdLocalRotate(by: simd_quatf(angle: .pi / 2, axis: SIMD3(x: 0, y: 1, z: 0)))
-
         
         positioningNode.eulerAngles.x = .pi / 2 // Horizontal
-        positioningNode.simdScale = [1.0, 1.0, 1.0] * (Square.size * Square.scaleForClosedSquare)
+        positioningNode.simdScale = [1.0, 1.0, 1.0] * (Triangle.size * Triangle.scaleForClosedSquare)
         for segment in segments {
             positioningNode.addChildNode(segment)
         }

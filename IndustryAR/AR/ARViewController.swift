@@ -24,8 +24,8 @@ class ARViewController: UIViewController {
     var usdzObjects: [VirtualObject] = []
     var scnObjects: [VirtualObject] = []
     
-    private lazy var sceneView: ARView = {
-        let sceneView = ARView(frame: view.bounds)
+    private lazy var sceneView: ARSCNView = {
+        let sceneView = ARSCNView(frame: view.bounds)
         sceneView.delegate = self
         sceneView.session.delegate = self
         sceneView.automaticallyUpdatesLighting = true
@@ -121,16 +121,24 @@ class ARViewController: UIViewController {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // 画圆
-        let circleNode = SCNNode(geometry: SCNTorus(ringRadius: 0.1, pipeRadius: 0.001))
-        circleNode.geometry?.firstMaterial?.diffuse.contents = UIColor.red
-        circleNode.simdWorldPosition = simd_float3(x: 0, y: -1, z: -0.5)
+        //
+        let circleNode = Circle()
+        circleNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
         sceneView.scene.rootNode.addChildNode(circleNode)
         
         
+        
         // 画方形
-        let node = Square()
-        node.simdWorldPosition = simd_float3(x: 0, y: -1, z: -0.5)
-        sceneView.scene.rootNode.addChildNode(node)
+//        let squareNode = Triangle() //Square()
+//        squareNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
+//        sceneView.scene.rootNode.addChildNode(squareNode)
+//
+        
+//        var circle = Circle(detail: 1000)
+//        circle.scale = SCNVector3(0.1, 0.1, 0.1)
+//        circle.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
+//        sceneView.scene.rootNode.addChildNode(circle)
+        
     }
 
 }
