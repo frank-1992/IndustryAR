@@ -121,23 +121,25 @@ class ARViewController: UIViewController {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // 画圆
-        //
-        let circleNode = Circle()
-        circleNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
-        sceneView.scene.rootNode.addChildNode(circleNode)
+//        let circleNode = Circle()
+//        circleNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
+//        sceneView.scene.rootNode.addChildNode(circleNode)
         
         
         
         // 画方形
-//        let squareNode = Triangle() //Square()
+//        let squareNode = Square()
 //        squareNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
 //        sceneView.scene.rootNode.addChildNode(squareNode)
-//
         
-//        var circle = Circle(detail: 1000)
-//        circle.scale = SCNVector3(0.1, 0.1, 0.1)
-//        circle.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
-//        sceneView.scene.rootNode.addChildNode(circle)
+        // 三角形
+//        let squareNode = Triangle()
+//        squareNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
+//        sceneView.scene.rootNode.addChildNode(squareNode)
+
+        
+        // 虚线
+        
         
     }
 

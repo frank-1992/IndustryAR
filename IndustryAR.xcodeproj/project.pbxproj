@@ -25,6 +25,7 @@
 		CECE775F296D7D1200D0D795 /* SquareSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE775E296D7D1200D0D795 /* SquareSegment.swift */; };
 		CECE7761296D85D000D0D795 /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE7760296D85D000D0D795 /* Triangle.swift */; };
 		CECE7763296E946A00D0D795 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE7762296E946A00D0D795 /* Circle.swift */; };
+		CECE7765296E9E2700D0D795 /* DashLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE7764296E9E2700D0D795 /* DashLine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		CECE775E296D7D1200D0D795 /* SquareSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SquareSegment.swift; sourceTree = "<group>"; };
 		CECE7760296D85D000D0D795 /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
 		CECE7762296E946A00D0D795 /* Circle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Circle.swift; sourceTree = "<group>"; };
+		CECE7764296E9E2700D0D795 /* DashLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashLine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +145,7 @@
 				CECE7760296D85D000D0D795 /* Triangle.swift */,
 				CECE7762296E946A00D0D795 /* Circle.swift */,
 				CECE775E296D7D1200D0D795 /* SquareSegment.swift */,
+				CECE7764296E9E2700D0D795 /* DashLine.swift */,
 			);
 			path = Node;
 			sourceTree = "<group>";
@@ -282,6 +285,7 @@
 				CE9FD6C12967C8780052C339 /* HomeMenuViewController.swift in Sources */,
 				CECE7761296D85D000D0D795 /* Triangle.swift in Sources */,
 				CE9FD6BD2967C8780052C339 /* AppDelegate.swift in Sources */,
+				CECE7765296E9E2700D0D795 /* DashLine.swift in Sources */,
 				CECCE93F296835110098B299 /* ARView.swift in Sources */,
 				CECE775D296D7C0D00D0D795 /* Square.swift in Sources */,
 				CE9FD6BF2967C8780052C339 /* SceneDelegate.swift in Sources */,
