@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HomeMenuTableViewCell: UITableViewCell {
+class ChildProjectTableViewCell: UITableViewCell {
 
     
     private lazy var iconView: UIImageView = {
@@ -17,7 +17,7 @@ class HomeMenuTableViewCell: UITableViewCell {
     
     private lazy var nameLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.font = UIFont(name: "PingFang-SC-Medium", size: 24)
+        label.font = UIFont(name: "PingFang-SC-Medium", size: 30)
         label.textColor = .black
         return label
     }()
@@ -37,9 +37,10 @@ class HomeMenuTableViewCell: UITableViewCell {
         
         contentView.addSubview(iconView)
         iconView.snp.makeConstraints { make in
-            make.centerY.equalTo(contentView)
             make.right.equalTo(contentView).offset(-10)
-            make.size.equalTo(CGSize(width: 100, height: 100))
+            make.top.equalTo(contentView).offset(10)
+            make.bottom.equalTo(contentView).offset(-10)
+            make.width.equalTo(200)
         }
         
         contentView.addSubview(nameLabel)
@@ -49,10 +50,10 @@ class HomeMenuTableViewCell: UITableViewCell {
         }
     }
     
-    func reloadUIWith(_ assetModel: AssetModel) {
-        guard let modelThumbnailPath = assetModel.modelThumbnailPath else { return }
+    func setupUIWith(_ assetModel: AssetModel) {
+        guard let modelThumbnailPath = assetModel.assetThumbnailPath else { return }
         iconView.image = UIImage(contentsOfFile: modelThumbnailPath.relativePath)
-        nameLabel.text = assetModel.modelName
+        nameLabel.text = assetModel.assetName
     }
 
 }

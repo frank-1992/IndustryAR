@@ -8,8 +8,8 @@
 import UIKit
 
 public class AssetModel: NSObject {
-    var modelName: String = ""
-    var modelThumbnailPath: URL?
+    var assetName: String = ""
+    var assetThumbnailPath: URL?
     var usdzFilePaths: [URL] = []
     var scnFilePaths: [URL] = []
 }

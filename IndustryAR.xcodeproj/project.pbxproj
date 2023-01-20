@@ -10,13 +10,16 @@
 		90A5358F00E577D0A8F2C422 /* Pods_IndustryAR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85061B28B0304062AE9528B4 /* Pods_IndustryAR.framework */; };
 		CE9FD6BD2967C8780052C339 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6BC2967C8780052C339 /* AppDelegate.swift */; };
 		CE9FD6BF2967C8780052C339 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6BE2967C8780052C339 /* SceneDelegate.swift */; };
-		CE9FD6C12967C8780052C339 /* HomeMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6C02967C8780052C339 /* HomeMenuViewController.swift */; };
+		CE9FD6C12967C8780052C339 /* ChildProjectListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6C02967C8780052C339 /* ChildProjectListViewController.swift */; };
 		CE9FD6C42967C8780052C339 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE9FD6C22967C8780052C339 /* Main.storyboard */; };
 		CE9FD6C62967C87A0052C339 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE9FD6C52967C87A0052C339 /* Assets.xcassets */; };
 		CE9FD6C92967C87A0052C339 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE9FD6C72967C87A0052C339 /* LaunchScreen.storyboard */; };
+		CEC519AB297A6C8E0054AD3A /* HomeContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC519AA297A6C8E0054AD3A /* HomeContainerViewController.swift */; };
+		CEC519AD297A6EAA0054AD3A /* HomeContainerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC519AC297A6EAA0054AD3A /* HomeContainerCell.swift */; };
+		CEC519AF297A74170054AD3A /* FileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC519AE297A74170054AD3A /* FileModel.swift */; };
 		CECCCEFD296817800098B299 /* ARFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCCEFC296817800098B299 /* ARFileManager.swift */; };
 		CECCE9322968197D0098B299 /* AssetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE9312968197D0098B299 /* AssetModel.swift */; };
-		CECCE935296820390098B299 /* HomeMenuTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE934296820390098B299 /* HomeMenuTableViewCell.swift */; };
+		CECCE935296820390098B299 /* ChildProjectTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE934296820390098B299 /* ChildProjectTableViewCell.swift */; };
 		CECCE939296833AC0098B299 /* VirtualObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE938296833AC0098B299 /* VirtualObject.swift */; };
 		CECCE93C296833D90098B299 /* ARUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE93B296833D90098B299 /* ARUtilities.swift */; };
 		CECCE93F296835110098B299 /* ARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE93E296835110098B299 /* ARView.swift */; };
@@ -35,14 +38,17 @@
 		CE9FD6B92967C8780052C339 /* IndustryAR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IndustryAR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE9FD6BC2967C8780052C339 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE9FD6BE2967C8780052C339 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		CE9FD6C02967C8780052C339 /* HomeMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenuViewController.swift; sourceTree = "<group>"; };
+		CE9FD6C02967C8780052C339 /* ChildProjectListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProjectListViewController.swift; sourceTree = "<group>"; };
 		CE9FD6C32967C8780052C339 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CE9FD6C52967C87A0052C339 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CE9FD6C82967C87A0052C339 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CE9FD6CA2967C87A0052C339 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CEC519AA297A6C8E0054AD3A /* HomeContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeContainerViewController.swift; sourceTree = "<group>"; };
+		CEC519AC297A6EAA0054AD3A /* HomeContainerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeContainerCell.swift; sourceTree = "<group>"; };
+		CEC519AE297A74170054AD3A /* FileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileModel.swift; sourceTree = "<group>"; };
 		CECCCEFC296817800098B299 /* ARFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARFileManager.swift; sourceTree = "<group>"; };
 		CECCE9312968197D0098B299 /* AssetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetModel.swift; sourceTree = "<group>"; };
-		CECCE934296820390098B299 /* HomeMenuTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenuTableViewCell.swift; sourceTree = "<group>"; };
+		CECCE934296820390098B299 /* ChildProjectTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProjectTableViewCell.swift; sourceTree = "<group>"; };
 		CECCE938296833AC0098B299 /* VirtualObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualObject.swift; sourceTree = "<group>"; };
 		CECCE93B296833D90098B299 /* ARUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARUtilities.swift; sourceTree = "<group>"; };
 		CECCE93E296835110098B299 /* ARView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARView.swift; sourceTree = "<group>"; };
@@ -122,8 +128,10 @@
 		CECCE933296820170098B299 /* HomeMenu */ = {
 			isa = PBXGroup;
 			children = (
-				CE9FD6C02967C8780052C339 /* HomeMenuViewController.swift */,
-				CECCE934296820390098B299 /* HomeMenuTableViewCell.swift */,
+				CE9FD6C02967C8780052C339 /* ChildProjectListViewController.swift */,
+				CECCE934296820390098B299 /* ChildProjectTableViewCell.swift */,
+				CEC519AA297A6C8E0054AD3A /* HomeContainerViewController.swift */,
+				CEC519AC297A6EAA0054AD3A /* HomeContainerCell.swift */,
 			);
 			path = HomeMenu;
 			sourceTree = "<group>";
@@ -133,6 +141,7 @@
 			children = (
 				CECCCEFC296817800098B299 /* ARFileManager.swift */,
 				CECCE9312968197D0098B299 /* AssetModel.swift */,
+				CEC519AE297A74170054AD3A /* FileModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -282,11 +291,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE9FD6C12967C8780052C339 /* HomeMenuViewController.swift in Sources */,
+				CE9FD6C12967C8780052C339 /* ChildProjectListViewController.swift in Sources */,
 				CECE7761296D85D000D0D795 /* Triangle.swift in Sources */,
 				CE9FD6BD2967C8780052C339 /* AppDelegate.swift in Sources */,
 				CECE7765296E9E2700D0D795 /* DashLine.swift in Sources */,
+				CEC519AD297A6EAA0054AD3A /* HomeContainerCell.swift in Sources */,
 				CECCE93F296835110098B299 /* ARView.swift in Sources */,
+				CEC519AB297A6C8E0054AD3A /* HomeContainerViewController.swift in Sources */,
+				CEC519AF297A74170054AD3A /* FileModel.swift in Sources */,
 				CECE775D296D7C0D00D0D795 /* Square.swift in Sources */,
 				CE9FD6BF2967C8780052C339 /* SceneDelegate.swift in Sources */,
 				CECCE93C296833D90098B299 /* ARUtilities.swift in Sources */,
@@ -295,7 +307,7 @@
 				CECCE9322968197D0098B299 /* AssetModel.swift in Sources */,
 				CECCCEFD296817800098B299 /* ARFileManager.swift in Sources */,
 				CECCE939296833AC0098B299 /* VirtualObject.swift in Sources */,
-				CECCE935296820390098B299 /* HomeMenuTableViewCell.swift in Sources */,
+				CECCE935296820390098B299 /* ChildProjectTableViewCell.swift in Sources */,
 				CECE42F5296BF8D400D0D795 /* ARViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -447,11 +459,13 @@
 				DEVELOPMENT_TEAM = P378DMQNTD;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IndustryAR/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera For AR";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Album For AR";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -477,11 +491,13 @@
 				DEVELOPMENT_TEAM = P378DMQNTD;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IndustryAR/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera For AR";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Album For AR";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

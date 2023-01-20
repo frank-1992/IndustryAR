@@ -35,52 +35,111 @@ class ARFileManager: NSObject {
         }
     }
     
+    public func getDirectoryChilds(with dirURL: URL, completion: @escaping (_ asssetModel: AssetModel) -> Void) {
+        do {
+            let asset = AssetModel()
+            var usdzFilePaths: [URL] = []
+            var scnFilePaths: [URL] = []
+            
+            asset.assetName = dirURL.lastPathComponent
+            let contentsOfDir = try manager.contentsOfDirectory(at: dirURL,
+                                                                includingPropertiesForKeys: nil,
+                                                                options: .skipsHiddenFiles)
+            for child in contentsOfDir {
+                if child.lastPathComponent.contains(".jpg") || child.lastPathComponent.contains(".png") || child.lastPathComponent.contains(".jpeg") {
+                    print(child)
+                    asset.assetThumbnailPath = child
+                }
+                if child.lastPathComponent.contains(".usdz") {
+                    usdzFilePaths.append(child)
+                }
+                if child.lastPathComponent.contains(".scn") {
+                    scnFilePaths.append(child)
+                }
+            }
+            asset.usdzFilePaths = usdzFilePaths
+            asset.scnFilePaths = scnFilePaths
+            completion(asset)
+        } catch {
+            print("error:\(error)")
+        }
+    }
+    
+    
     // 遍历文件夹
-    public func traverseContainer(completion: @escaping (_ assetModels: [AssetModel]) -> Void) {
+    public func traverseContainer(completion: @escaping (_ projectModels: [FileModel]) -> Void) {
         let url = self.documentURL.appendingPathComponent(containerName, isDirectory: true)
         do {
             let contentsOfDirectory = try manager.contentsOfDirectory(atPath: url.path)
-            print("contentsOfDirectory:\(contentsOfDirectory)")
-            var assets = [AssetModel]()
-            var usdzFilePaths: [URL] = []
-            var scnFilePaths: [URL] = []
-            var modelThumbnailPath: URL?
+//            print("contentsOfDirectory:\(contentsOfDirectory)")
+            
+            var projectModels = [FileModel]()
             for directory in contentsOfDirectory {
+                let projectModel = FileModel()
                 if !directory.contains(".DS_Store") {
-                    let modelName = directory
-                    let childURL = url.appendingPathComponent(directory, isDirectory: true)
+                    var containerChildDirectory: [URL] = [URL]()
+                    let projectName = directory
+                    projectModel.fileName = projectName
+                    let innerProjectURL = url.appendingPathComponent(directory, isDirectory: true)
                     
-                    guard let enumberatorAtURL = manager.enumerator(at: childURL,
-                                                              includingPropertiesForKeys: nil,
-                                                              options: .skipsHiddenFiles,
-                                                                    errorHandler: nil) else { return }
-                    
-                    for urlObject in enumberatorAtURL.allObjects {
-                        if let url = urlObject as? URL {
-                            print("\(url.lastPathComponent)")
-                            if url.lastPathComponent.contains(".usdz") {
-                                usdzFilePaths.append(url)
-                            }
-                            if url.lastPathComponent.contains(".scn") {
-                                scnFilePaths.append(url)
-                            }
-                            if url.lastPathComponent.contains(".jpg") || url.lastPathComponent.contains(".png") {
-                                modelThumbnailPath = url
-                            }
+                    let contentsOfContainer = try manager.contentsOfDirectory(at: innerProjectURL,
+                                                                              includingPropertiesForKeys: nil,
+                                                                              options: .skipsHiddenFiles)
+                    for containerChild in contentsOfContainer {
+                        if containerChild.lastPathComponent.contains(".jpg") || containerChild.lastPathComponent.contains(".png") || containerChild.lastPathComponent.contains(".jpeg") {
+                            projectModel.fileThumbnail = containerChild
+                        } else {
+                            // Asset Directory
+                            containerChildDirectory.append(containerChild)
                         }
                     }
+                    projectModel.childDirectory = containerChildDirectory
                     
-                    let assetModel = AssetModel()
-                    assetModel.modelName = modelName
-                    if let modelThumbnailPath = modelThumbnailPath {
-                        assetModel.modelThumbnailPath = modelThumbnailPath
-                    }
-                    assetModel.usdzFilePaths = usdzFilePaths
-                    assetModel.scnFilePaths = scnFilePaths
-                    assets.append(assetModel)
+                    projectModels.append(projectModel)
                 }
             }
-            completion(assets)
+            completion(projectModels)
+            
+//            var assets = [AssetModel]()
+//            var usdzFilePaths: [URL] = []
+//            var scnFilePaths: [URL] = []
+//            var modelThumbnailPath: URL?
+//            for directory in contentsOfDirectory {
+//                if !directory.contains(".DS_Store") {
+//                    let modelName = directory
+//                    let childURL = url.appendingPathComponent(directory, isDirectory: true)
+//
+//                    guard let enumberatorAtURL = manager.enumerator(at: childURL,
+//                                                              includingPropertiesForKeys: nil,
+//                                                              options: .skipsHiddenFiles,
+//                                                                    errorHandler: nil) else { return }
+//
+//                    for urlObject in enumberatorAtURL.allObjects {
+//                        if let url = urlObject as? URL {
+//                            print("\(url.lastPathComponent)")
+//                            if url.lastPathComponent.contains(".usdz") {
+//                                usdzFilePaths.append(url)
+//                            }
+//                            if url.lastPathComponent.contains(".scn") {
+//                                scnFilePaths.append(url)
+//                            }
+//                            if url.lastPathComponent.contains(".jpg") || url.lastPathComponent.contains(".png") {
+//                                modelThumbnailPath = url
+//                            }
+//                        }
+//                    }
+//
+//                    let assetModel = AssetModel()
+//                    assetModel.modelName = modelName
+//                    if let modelThumbnailPath = modelThumbnailPath {
+//                        assetModel.modelThumbnailPath = modelThumbnailPath
+//                    }
+//                    assetModel.usdzFilePaths = usdzFilePaths
+//                    assetModel.scnFilePaths = scnFilePaths
+//                    assets.append(assetModel)
+//                }
+//            }
+//            completion(assets)
         } catch {
             print("error:\(error)")
         }

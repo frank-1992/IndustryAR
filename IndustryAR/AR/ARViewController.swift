@@ -42,7 +42,7 @@ class ARViewController: UIViewController {
 
     @objc
     private func backButtonClicked() {
-        dismiss(animated: false, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
     
     override func viewDidLoad() {
@@ -96,7 +96,7 @@ class ARViewController: UIViewController {
         let scnFiles = assetModel.scnFilePaths
         if !usdzFiles.isEmpty {
             for usdzFile in usdzFiles {
-                if let usdzObject = VirtualObject(filePath: usdzFile.relativePath, fileName: assetModel.modelName) {
+                if let usdzObject = VirtualObject(filePath: usdzFile.relativePath, fileName: assetModel.assetName) {
                     usdzObjects.append(usdzObject)
                     showVirtualObject(with: usdzObject)
                 }
@@ -105,7 +105,7 @@ class ARViewController: UIViewController {
         
         if !scnFiles.isEmpty {
             for scnFile in scnFiles {
-                if let scnObject = VirtualObject(filePath: scnFile.relativePath, fileName: assetModel.modelName) {
+                if let scnObject = VirtualObject(filePath: scnFile.relativePath, fileName: assetModel.assetName) {
                     scnObjects.append(scnObject)
                     showVirtualObject(with: scnObject)
                 }
@@ -120,27 +120,24 @@ class ARViewController: UIViewController {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        // 画圆
-//        let circleNode = Circle()
-//        circleNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
-//        sceneView.scene.rootNode.addChildNode(circleNode)
+        // circle
+        let circleNode = Circle()
+        circleNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
+        sceneView.scene.rootNode.addChildNode(circleNode)
         
         
+        // square
+        let squareNode = Square()
+        squareNode.simdWorldPosition = simd_float3(x: 0, y: 0.2, z: -0.5)
+        sceneView.scene.rootNode.addChildNode(squareNode)
         
-        // 画方形
-//        let squareNode = Square()
-//        squareNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
-//        sceneView.scene.rootNode.addChildNode(squareNode)
-        
-        // 三角形
-//        let squareNode = Triangle()
-//        squareNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
-//        sceneView.scene.rootNode.addChildNode(squareNode)
+        // triangle
+        let triangleNode = Triangle()
+        triangleNode.simdWorldPosition = simd_float3(x: 0, y: -0.2, z: -0.5)
+        sceneView.scene.rootNode.addChildNode(triangleNode)
 
         
-        // 虚线
-        
-        
+        // line
     }
 
 }
