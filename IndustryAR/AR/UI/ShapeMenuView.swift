@@ -7,12 +7,24 @@
 
 import UIKit
 
-class ShapeMenuView: UIView {
+enum Function {
+    case line
+    case triangle
+    case square
+    case circle
+    case text
+    case depthSegmentation
+    case delete
+    case showSymbol
+}
 
+class ShapeMenuView: UIView {
+    
     private let shapeTableViewCell = "shapeTableViewCell"
     
-    private let icons = ["quxian", "quxian", "quxian", "quxian", "quxian", "quxian", "quxian", "quxian", "quxian"]
-    private let names = ["徒手画", "徒手画", "徒手画", "徒手画", "徒手画", "徒手画", "徒手画", "徒手画", "徒手画", "徒手画"]
+    private let icons = ["quxian", "sanjiaoxing", "cub", "yuanxing", "wenzi", "zhedang", "shanchu", "shezhi", "biaoji"]
+    private let names = ["徒手画", "三角形", "四边形", "圆", "文字注解", "遮挡剔除", "删除", "设置", "标记显示"]
+    private let functions: [Function] = [.line, .triangle, .square, .circle, .text, .depthSegmentation, .delete, .showSymbol]
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: self.bounds)
@@ -28,6 +40,7 @@ class ShapeMenuView: UIView {
         return tableView
     }()
     
+    var selectShapeTypeClosure: ((Function) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -65,6 +78,9 @@ extension ShapeMenuView: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension ShapeMenuView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        let function = functions[indexPath.row]
+        if let selectShapeTypeClosure = selectShapeTypeClosure {
+            selectShapeTypeClosure(function)
+        }
     }
 }

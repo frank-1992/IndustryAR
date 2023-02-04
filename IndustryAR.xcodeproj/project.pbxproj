@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		90A5358F00E577D0A8F2C422 /* Pods_IndustryAR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85061B28B0304062AE9528B4 /* Pods_IndustryAR.framework */; };
 		CE509C92298E1DA10081346C /* ShapeTypeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE509C91298E1DA10081346C /* ShapeTypeTableViewCell.swift */; };
+		CE509C94298E31D70081346C /* Maths.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE509C93298E31D70081346C /* Maths.swift */; };
+		CE509C96298E32010081346C /* StrokeAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE509C95298E32010081346C /* StrokeAnchor.swift */; };
+		CE509C98298E32410081346C /* SphereNodesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE509C97298E32410081346C /* SphereNodesManager.swift */; };
 		CE9FD6BD2967C8780052C339 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6BC2967C8780052C339 /* AppDelegate.swift */; };
 		CE9FD6BF2967C8780052C339 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6BE2967C8780052C339 /* SceneDelegate.swift */; };
 		CE9FD6C12967C8780052C339 /* ChildProjectListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6C02967C8780052C339 /* ChildProjectListViewController.swift */; };
@@ -38,6 +41,9 @@
 		85061B28B0304062AE9528B4 /* Pods_IndustryAR.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IndustryAR.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C332090FDEF32D528E1B8A7B /* Pods-IndustryAR.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IndustryAR.release.xcconfig"; path = "Target Support Files/Pods-IndustryAR/Pods-IndustryAR.release.xcconfig"; sourceTree = "<group>"; };
 		CE509C91298E1DA10081346C /* ShapeTypeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeTypeTableViewCell.swift; sourceTree = "<group>"; };
+		CE509C93298E31D70081346C /* Maths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Maths.swift; sourceTree = "<group>"; };
+		CE509C95298E32010081346C /* StrokeAnchor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeAnchor.swift; sourceTree = "<group>"; };
+		CE509C97298E32410081346C /* SphereNodesManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SphereNodesManager.swift; sourceTree = "<group>"; };
 		CE9FD6B92967C8780052C339 /* IndustryAR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IndustryAR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE9FD6BC2967C8780052C339 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE9FD6BE2967C8780052C339 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -141,6 +147,9 @@
 		CEC5ADB6298E0EDD0054AD3A /* Line */ = {
 			isa = PBXGroup;
 			children = (
+				CE509C93298E31D70081346C /* Maths.swift */,
+				CE509C97298E32410081346C /* SphereNodesManager.swift */,
+				CE509C95298E32010081346C /* StrokeAnchor.swift */,
 			);
 			path = Line;
 			sourceTree = "<group>";
@@ -317,6 +326,7 @@
 				CECE7761296D85D000D0D795 /* Triangle.swift in Sources */,
 				CE9FD6BD2967C8780052C339 /* AppDelegate.swift in Sources */,
 				CECE7765296E9E2700D0D795 /* DashLine.swift in Sources */,
+				CE509C94298E31D70081346C /* Maths.swift in Sources */,
 				CEC519AD297A6EAA0054AD3A /* HomeContainerCell.swift in Sources */,
 				CE509C92298E1DA10081346C /* ShapeTypeTableViewCell.swift in Sources */,
 				CECCE93F296835110098B299 /* ARView.swift in Sources */,
@@ -328,8 +338,10 @@
 				CECE7763296E946A00D0D795 /* Circle.swift in Sources */,
 				CECE775F296D7D1200D0D795 /* SquareSegment.swift in Sources */,
 				CECCE9322968197D0098B299 /* AssetModel.swift in Sources */,
+				CE509C98298E32410081346C /* SphereNodesManager.swift in Sources */,
 				CECCCEFD296817800098B299 /* ARFileManager.swift in Sources */,
 				CECCE939296833AC0098B299 /* VirtualObject.swift in Sources */,
+				CE509C96298E32010081346C /* StrokeAnchor.swift in Sources */,
 				CECCE935296820390098B299 /* ChildProjectTableViewCell.swift in Sources */,
 				CEC5ADBC298E1A590054AD3A /* ShapeMenuView.swift in Sources */,
 				CECE42F5296BF8D400D0D795 /* ARViewController.swift in Sources */,

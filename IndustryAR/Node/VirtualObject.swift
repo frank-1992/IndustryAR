@@ -47,7 +47,7 @@ public final class VirtualObject: SCNReferenceNode {
         self.load()
         self.name = fileName
         self.modelName = fileName
-        addHorizontalLight()
+//        addHorizontalLight()
         setupHorizontalPivot()
     }
     

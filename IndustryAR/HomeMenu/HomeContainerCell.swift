@@ -11,13 +11,14 @@ class HomeContainerCell: UICollectionViewCell {
     
     private lazy var iconView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
+        imageView.backgroundColor = .systemPink
         return imageView
     }()
     
     private lazy var nameLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = UIFont(name: "PingFang-SC-SemiBold", size: 30)
-        label.textColor = .black
+        label.textColor = .systemYellow
         return label
     }()
     
@@ -45,7 +46,9 @@ class HomeContainerCell: UICollectionViewCell {
     
     func setupUIWith(_ projectModel: FileModel) {
         guard let modelThumbnailPath = projectModel.fileThumbnail else { return }
-        iconView.image = UIImage(contentsOfFile: modelThumbnailPath.relativePath)
+        if !modelThumbnailPath.relativePath.isEmpty {
+            iconView.image = UIImage(contentsOfFile: modelThumbnailPath.relativePath)
+        }
         nameLabel.text = projectModel.fileName
     }
 }
