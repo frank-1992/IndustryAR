@@ -47,6 +47,7 @@ public final class VirtualObject: SCNReferenceNode {
         self.load()
         self.name = fileName
         self.modelName = fileName
+        addHorizontalLight()
         setupHorizontalPivot()
     }
     
@@ -78,6 +79,22 @@ public final class VirtualObject: SCNReferenceNode {
             y,
             z
         )
+    }
+    
+    private func addHorizontalLight() {
+        let light = SCNLight()
+        light.type = .directional
+        light.shadowColor = UIColor.black.withAlphaComponent(0.3)
+        light.shadowRadius = 5
+        light.shadowSampleCount = 5
+        light.castsShadow = true
+        light.shadowMode = .forward
+
+        let shadowLightNode = SCNNode()
+        shadowLightNode.light = light
+        /// horizontal
+        shadowLightNode.eulerAngles = SCNVector3(x: -.pi / 4, y: 0, z: 0)
+        self.addChildNode(shadowLightNode)
     }
 }
 

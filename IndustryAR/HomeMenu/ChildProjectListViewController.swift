@@ -75,8 +75,8 @@ class ChildProjectListViewController: UIViewController {
 
 }
 
-// MARK: - UITableViewDelegate, UITableViewDataSource
-extension ChildProjectListViewController: UITableViewDelegate, UITableViewDataSource {
+// MARK: - UITableViewDataSource
+extension ChildProjectListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return assetModels.count
     }
@@ -87,7 +87,10 @@ extension ChildProjectListViewController: UITableViewDelegate, UITableViewDataSo
         cell.setupUIWith(model)
         return cell
     }
-    
+}
+
+// MARK: - UITableViewDelegate
+extension ChildProjectListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let model = assetModels[indexPath.row]
         let arVC = ARViewController()

@@ -8,6 +8,7 @@
 import UIKit
 import ARKit
 import SceneKit
+import SnapKit
 
 let keyWindow = UIApplication.shared.connectedScenes
         .filter({$0.activationState == .foregroundActive})
@@ -38,6 +39,20 @@ class ARViewController: UIViewController {
         backButton.translatesAutoresizingMaskIntoConstraints = false
         backButton.addTarget(self, action: #selector(backButtonClicked), for: .touchUpInside)
         return backButton
+    }()
+    
+    private lazy var shapeMenuButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "menu"), for: .normal)
+        button.addTarget(self, action: #selector(showShapeMenuView(sender:)), for: .touchUpInside)
+        button.tag = 100
+        return button
+    }()
+    
+    private var shapeMenuView: ShapeMenuView = {
+        let view = ShapeMenuView(frame: .zero)
+        view.backgroundColor = .clear
+        return view
     }()
 
     @objc
@@ -83,10 +98,24 @@ class ARViewController: UIViewController {
     private func setupUI() {
         view.addSubview(sceneView)
         
-        view.addSubview(backButton)
+        sceneView.addSubview(backButton)
         backButton.snp.makeConstraints { make in
             make.leading.equalTo(10)
-            make.top.equalTo(view.snp.top).offset(statusHeight + 10)
+            make.top.equalTo(sceneView.snp.top).offset(statusHeight + 10)
+        }
+        
+        sceneView.addSubview(shapeMenuButton)
+        shapeMenuButton.snp.makeConstraints { make in
+            make.right.equalTo(-10)
+            make.top.equalTo(sceneView.snp.top).offset(statusHeight + 10)
+            make.size.equalTo(CGSize(width: 36, height: 36))
+        }
+        
+        sceneView.addSubview(shapeMenuView)
+        shapeMenuView.snp.makeConstraints { make in
+            make.left.equalTo(sceneView.snp.right)
+            make.top.equalTo(shapeMenuButton)
+            make.size.equalTo(CGSize(width: 300, height: 540))
         }
     }
     
@@ -114,30 +143,58 @@ class ARViewController: UIViewController {
     }
     
     private func showVirtualObject(with model: VirtualObject) {
+        let boundingBox = model.boundingBox
+        let bmax = boundingBox.max
+        let bmin = boundingBox.min
+        let width = bmax.x - bmin.x
+        let depth = bmax.z - bmin.z
+        let height = bmax.y - bmin.y
+
         model.scale = SCNVector3(1, 1, 1)
-        model.simdWorldPosition = simd_float3(x: 0, y: -1, z: -2)
+        model.simdWorldPosition = simd_float3(x: 0, y: -height / 2.0, z: -1 - depth)
         sceneView.scene.rootNode.addChildNode(model)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // circle
-        let circleNode = Circle()
-        circleNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
-        sceneView.scene.rootNode.addChildNode(circleNode)
-        
-        
-        // square
-        let squareNode = Square()
-        squareNode.simdWorldPosition = simd_float3(x: 0, y: 0.2, z: -0.5)
-        sceneView.scene.rootNode.addChildNode(squareNode)
-        
-        // triangle
-        let triangleNode = Triangle()
-        triangleNode.simdWorldPosition = simd_float3(x: 0, y: -0.2, z: -0.5)
-        sceneView.scene.rootNode.addChildNode(triangleNode)
+//        let circleNode = Circle()
+//        circleNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
+//        sceneView.scene.rootNode.addChildNode(circleNode)
+//
+//
+//        // square
+//        let squareNode = Square()
+//        squareNode.simdWorldPosition = simd_float3(x: 0, y: 0.2, z: -0.5)
+//        sceneView.scene.rootNode.addChildNode(squareNode)
+//        
+//        // triangle
+//        let triangleNode = Triangle()
+//        triangleNode.simdWorldPosition = simd_float3(x: 0, y: -0.2, z: -0.5)
+//        sceneView.scene.rootNode.addChildNode(triangleNode)
 
         
         // line
+    }
+    
+    @objc
+    private func showShapeMenuView(sender: UIButton) {
+        if sender.tag == 100 {
+            sender.tag = 101
+            UIView.animate(withDuration: 0.3) {
+                sender.transform = CGAffineTransform(translationX: -300, y: 0)
+                self.shapeMenuView.transform = CGAffineTransform(translationX: -300, y: 0)
+            } completion: { _ in
+                sender.setImage(UIImage(named: "close"), for: .normal)
+            }
+        } else {
+            sender.tag = 100
+            UIView.animate(withDuration: 0.3) {
+                sender.transform = CGAffineTransformIdentity
+                self.shapeMenuView.transform = CGAffineTransformIdentity
+            } completion: { _ in
+                sender.setImage(UIImage(named: "menu"), for: .normal)
+            }
+        }
     }
 
 }

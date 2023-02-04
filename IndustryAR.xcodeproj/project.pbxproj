@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		90A5358F00E577D0A8F2C422 /* Pods_IndustryAR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85061B28B0304062AE9528B4 /* Pods_IndustryAR.framework */; };
+		CE509C92298E1DA10081346C /* ShapeTypeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE509C91298E1DA10081346C /* ShapeTypeTableViewCell.swift */; };
 		CE9FD6BD2967C8780052C339 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6BC2967C8780052C339 /* AppDelegate.swift */; };
 		CE9FD6BF2967C8780052C339 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6BE2967C8780052C339 /* SceneDelegate.swift */; };
 		CE9FD6C12967C8780052C339 /* ChildProjectListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6C02967C8780052C339 /* ChildProjectListViewController.swift */; };
@@ -17,6 +18,7 @@
 		CEC519AB297A6C8E0054AD3A /* HomeContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC519AA297A6C8E0054AD3A /* HomeContainerViewController.swift */; };
 		CEC519AD297A6EAA0054AD3A /* HomeContainerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC519AC297A6EAA0054AD3A /* HomeContainerCell.swift */; };
 		CEC519AF297A74170054AD3A /* FileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC519AE297A74170054AD3A /* FileModel.swift */; };
+		CEC5ADBC298E1A590054AD3A /* ShapeMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC5ADBB298E1A590054AD3A /* ShapeMenuView.swift */; };
 		CECCCEFD296817800098B299 /* ARFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCCEFC296817800098B299 /* ARFileManager.swift */; };
 		CECCE9322968197D0098B299 /* AssetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE9312968197D0098B299 /* AssetModel.swift */; };
 		CECCE935296820390098B299 /* ChildProjectTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE934296820390098B299 /* ChildProjectTableViewCell.swift */; };
@@ -35,6 +37,7 @@
 		63939D8C61BAFB9C32E8B67C /* Pods-IndustryAR.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IndustryAR.debug.xcconfig"; path = "Target Support Files/Pods-IndustryAR/Pods-IndustryAR.debug.xcconfig"; sourceTree = "<group>"; };
 		85061B28B0304062AE9528B4 /* Pods_IndustryAR.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IndustryAR.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C332090FDEF32D528E1B8A7B /* Pods-IndustryAR.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IndustryAR.release.xcconfig"; path = "Target Support Files/Pods-IndustryAR/Pods-IndustryAR.release.xcconfig"; sourceTree = "<group>"; };
+		CE509C91298E1DA10081346C /* ShapeTypeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeTypeTableViewCell.swift; sourceTree = "<group>"; };
 		CE9FD6B92967C8780052C339 /* IndustryAR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IndustryAR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE9FD6BC2967C8780052C339 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE9FD6BE2967C8780052C339 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -46,6 +49,7 @@
 		CEC519AA297A6C8E0054AD3A /* HomeContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeContainerViewController.swift; sourceTree = "<group>"; };
 		CEC519AC297A6EAA0054AD3A /* HomeContainerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeContainerCell.swift; sourceTree = "<group>"; };
 		CEC519AE297A74170054AD3A /* FileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileModel.swift; sourceTree = "<group>"; };
+		CEC5ADBB298E1A590054AD3A /* ShapeMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeMenuView.swift; sourceTree = "<group>"; };
 		CECCCEFC296817800098B299 /* ARFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARFileManager.swift; sourceTree = "<group>"; };
 		CECCE9312968197D0098B299 /* AssetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetModel.swift; sourceTree = "<group>"; };
 		CECCE934296820390098B299 /* ChildProjectTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProjectTableViewCell.swift; sourceTree = "<group>"; };
@@ -89,6 +93,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		CE509C90298E1D7F0081346C /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				CEC5ADBB298E1A590054AD3A /* ShapeMenuView.swift */,
+				CE509C91298E1DA10081346C /* ShapeTypeTableViewCell.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		CE9FD6B02967C8780052C339 = {
 			isa = PBXGroup;
 			children = (
@@ -125,6 +138,13 @@
 			path = IndustryAR;
 			sourceTree = "<group>";
 		};
+		CEC5ADB6298E0EDD0054AD3A /* Line */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Line;
+			sourceTree = "<group>";
+		};
 		CECCE933296820170098B299 /* HomeMenu */ = {
 			isa = PBXGroup;
 			children = (
@@ -149,6 +169,7 @@
 		CECCE937296833700098B299 /* Node */ = {
 			isa = PBXGroup;
 			children = (
+				CEC5ADB6298E0EDD0054AD3A /* Line */,
 				CECCE938296833AC0098B299 /* VirtualObject.swift */,
 				CECE775C296D7C0D00D0D795 /* Square.swift */,
 				CECE7760296D85D000D0D795 /* Triangle.swift */,
@@ -170,6 +191,7 @@
 		CECCE93D296835080098B299 /* AR */ = {
 			isa = PBXGroup;
 			children = (
+				CE509C90298E1D7F0081346C /* UI */,
 				CECCE93E296835110098B299 /* ARView.swift */,
 				CECE42F4296BF8D400D0D795 /* ARViewController.swift */,
 			);
@@ -296,6 +318,7 @@
 				CE9FD6BD2967C8780052C339 /* AppDelegate.swift in Sources */,
 				CECE7765296E9E2700D0D795 /* DashLine.swift in Sources */,
 				CEC519AD297A6EAA0054AD3A /* HomeContainerCell.swift in Sources */,
+				CE509C92298E1DA10081346C /* ShapeTypeTableViewCell.swift in Sources */,
 				CECCE93F296835110098B299 /* ARView.swift in Sources */,
 				CEC519AB297A6C8E0054AD3A /* HomeContainerViewController.swift in Sources */,
 				CEC519AF297A74170054AD3A /* FileModel.swift in Sources */,
@@ -308,6 +331,7 @@
 				CECCCEFD296817800098B299 /* ARFileManager.swift in Sources */,
 				CECCE939296833AC0098B299 /* VirtualObject.swift in Sources */,
 				CECCE935296820390098B299 /* ChildProjectTableViewCell.swift in Sources */,
+				CEC5ADBC298E1A590054AD3A /* ShapeMenuView.swift in Sources */,
 				CECE42F5296BF8D400D0D795 /* ARViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -466,7 +490,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -498,7 +522,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
