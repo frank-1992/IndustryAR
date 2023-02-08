@@ -67,6 +67,8 @@ class ARViewController: UIViewController {
     
     var function: Function?
     
+    var settingsVC: SettingsViewController?
+    
     @objc
     private func backButtonClicked() {
         dismiss(animated: true, completion: nil)
@@ -130,9 +132,49 @@ class ARViewController: UIViewController {
             make.size.equalTo(CGSize(width: 300, height: 540))
         }
         
+        showSettingsVC()
+        
         shapeMenuView.selectShapeTypeClosure = { [weak self] function in
             guard let self = self else { return }
             self.function = function
+            if function == .settings {
+                // settings vc
+//                self.showSettingsVC()
+                self.settingsVC?.view.isHidden = false
+            }
+        }
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(tapAction(sender:)))
+        tap.delegate = self
+        sceneView.addGestureRecognizer(tap)
+    }
+    
+    // test geometry surface
+    @objc
+    private func tapAction(sender: UITapGestureRecognizer) {
+        let location = sender.location(in: sceneView)
+        guard let hitResult = self.sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else { return }
+        let tapPoint_world = hitResult.simdWorldCoordinates
+        guard let function = function else { return }
+        if function == .triangle {
+            let triangleNode = Triangle()
+            triangleNode.simdWorldPosition = tapPoint_world
+            triangleNode.simdScale = simd_float3(3, 3, 3)
+            sceneView.scene.rootNode.addChildNode(triangleNode)
+        }
+        
+        if function == .square {
+            let squareNode = Square()
+            squareNode.simdWorldPosition = tapPoint_world
+            squareNode.simdScale = simd_float3(3, 3, 3)
+            sceneView.scene.rootNode.addChildNode(squareNode)
+        }
+        
+        if function == .circle {
+            let circleNode = Circle()
+            circleNode.simdWorldPosition = tapPoint_world
+            circleNode.simdScale = simd_float3(3, 3, 3)
+            sceneView.scene.rootNode.addChildNode(circleNode)
         }
     }
     
@@ -201,7 +243,7 @@ class ARViewController: UIViewController {
                 sender.transform = CGAffineTransform(translationX: -300, y: 0)
                 self.shapeMenuView.transform = CGAffineTransform(translationX: -300, y: 0)
             } completion: { _ in
-                sender.setImage(UIImage(named: "close"), for: .normal)
+//                sender.setImage(UIImage(named: "close"), for: .normal)
             }
         } else {
             sender.tag = 100
@@ -209,8 +251,24 @@ class ARViewController: UIViewController {
                 sender.transform = CGAffineTransformIdentity
                 self.shapeMenuView.transform = CGAffineTransformIdentity
             } completion: { _ in
-                sender.setImage(UIImage(named: "menu"), for: .normal)
+//                sender.setImage(UIImage(named: "menu"), for: .normal)
             }
+        }
+    }
+    
+    private func showSettingsVC() {
+        let settingsVC = SettingsViewController()
+        self.addChild(settingsVC)
+        view.addSubview(settingsVC.view)
+        settingsVC.view.isHidden = true
+        self.settingsVC = settingsVC
+        settingsVC.view.snp.makeConstraints { make in
+            make.edges.equalTo(view)
+        }
+        
+        settingsVC.settingsClosure = { [weak self] settings in
+            guard let self = self else { return }
+            self.currentStrokeColor = settings.lineColor
         }
     }
     
@@ -257,9 +315,15 @@ class ARViewController: UIViewController {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
         guard let function = function, function == .line else { return }
         guard let touch = touches.first else { return }
-        guard let touchPositionInFrontOfCamera = getPosition(ofPoint: touch.location(in: sceneView), atDistanceFromCamera: distanceFromCamera, inView: sceneView) else { return }
+        let location = touch.location(in: sceneView)
+        guard let hitResult = sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else { return }
+        let tapPoint_world = hitResult.simdWorldCoordinates
+        
+        
+        let touchPositionInFrontOfCamera = tapPoint_world//getPosition(ofPoint: touch.location(in: sceneView), atDistanceFromCamera: distanceFromCamera, inView: sceneView) else { return }
         // Convert the position from SCNVector3 to float4x4
         let strokeAnchor = StrokeAnchor(name: "strokeAnchor", transform: float4x4(SIMD4(x: 1, y: 0, z: 0, w: 0),
                                                                                   SIMD4(x: 0, y: 1, z: 0, w: 0),
@@ -329,7 +393,10 @@ extension ARViewController: ARSessionDelegate {
         guard let currentStrokeAnchorID = strokeAnchorIDs.last else { return }
         let currentStrokeAnchor = anchorForID(currentStrokeAnchorID)
         if currentFingerPosition != nil && currentStrokeAnchor != nil {
-            guard let currentPointPosition = getPosition(ofPoint: currentFingerPosition!, atDistanceFromCamera: distanceFromCamera, inView: sceneView) else { return }
+            guard let location = currentFingerPosition else { return }
+            guard let hitResult = sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else { return }
+            let tapPoint_world = hitResult.simdWorldCoordinates
+            let currentPointPosition = SCNVector3(x: tapPoint_world.x, y: tapPoint_world.y, z: tapPoint_world.z)//getPosition(ofPoint: currentFingerPosition!, atDistanceFromCamera: distanceFromCamera, inView: sceneView) else { return }
             
             if let previousPoint = previousPoint {
                 // Do not create any new spheres if the distance hasn't changed much
@@ -361,5 +428,27 @@ extension ARViewController: ARSessionDelegate {
         )
         
 //        distanceFromCamera = distance
+    }
+    
+    func calculateDistance(firstPosition: SIMD3<Float>, secondPosition: SIMD3<Float>) -> Float{
+        let start = firstPosition
+        let end = secondPosition
+        
+        let distance = sqrt(
+            pow(end.x - start.x, 2) +
+            pow(end.y - start.y, 2) +
+            pow(end.z - start.z, 2)
+        )
+        
+        return distance
+    }
+}
+
+extension ARViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if NSStringFromClass((touch.view?.classForCoder)!) == "UITableViewCellContentView" {
+            return false
+        }
+        return true
     }
 }

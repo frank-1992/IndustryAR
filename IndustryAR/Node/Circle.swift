@@ -10,7 +10,7 @@ import SceneKit
 
 class Circle: SCNNode {
 
-    static let size: Float = 0.01
+    static let size: Float = 0.05
     
     // Thickness of the focus square lines in meters.
     static let thickness: CGFloat = 0.018

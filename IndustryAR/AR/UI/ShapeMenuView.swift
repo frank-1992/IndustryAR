@@ -15,6 +15,7 @@ enum Function {
     case text
     case depthSegmentation
     case delete
+    case settings
     case showSymbol
 }
 
@@ -24,7 +25,7 @@ class ShapeMenuView: UIView {
     
     private let icons = ["quxian", "sanjiaoxing", "cub", "yuanxing", "wenzi", "zhedang", "shanchu", "shezhi", "biaoji"]
     private let names = ["徒手画", "三角形", "四边形", "圆", "文字注解", "遮挡剔除", "删除", "设置", "标记显示"]
-    private let functions: [Function] = [.line, .triangle, .square, .circle, .text, .depthSegmentation, .delete, .showSymbol]
+    private let functions: [Function] = [.line, .triangle, .square, .circle, .text, .depthSegmentation, .delete, .settings, .showSymbol]
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: self.bounds)
