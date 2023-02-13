@@ -40,6 +40,7 @@
 		CECE7761296D85D000D0D795 /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE7760296D85D000D0D795 /* Triangle.swift */; };
 		CECE7763296E946A00D0D795 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE7762296E946A00D0D795 /* Circle.swift */; };
 		CECE7765296E9E2700D0D795 /* DashLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE7764296E9E2700D0D795 /* DashLine.swift */; };
+		F033BB92299A883400625BAC /* BottomMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BB91299A883400625BAC /* BottomMenuView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +81,7 @@
 		CECE7760296D85D000D0D795 /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
 		CECE7762296E946A00D0D795 /* Circle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Circle.swift; sourceTree = "<group>"; };
 		CECE7764296E9E2700D0D795 /* DashLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashLine.swift; sourceTree = "<group>"; };
+		F033BB91299A883400625BAC /* BottomMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomMenuView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +121,7 @@
 				CE53FB83298E4FFB0069CC7F /* SettingsViewController.swift */,
 				CE53FB85298E55FF0069CC7F /* SettingsTableViewCell.swift */,
 				CE53FB8B298E60590069CC7F /* ColorCollectionViewCell.swift */,
+				F033BB91299A883400625BAC /* BottomMenuView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -352,6 +355,7 @@
 				CE53FB84298E4FFB0069CC7F /* SettingsViewController.swift in Sources */,
 				CEC519AB297A6C8E0054AD3A /* HomeContainerViewController.swift in Sources */,
 				CEC519AF297A74170054AD3A /* FileModel.swift in Sources */,
+				F033BB92299A883400625BAC /* BottomMenuView.swift in Sources */,
 				CECE775D296D7C0D00D0D795 /* Square.swift in Sources */,
 				CE9FD6BF2967C8780052C339 /* SceneDelegate.swift in Sources */,
 				CE53FB86298E55FF0069CC7F /* SettingsTableViewCell.swift in Sources */,

@@ -10,7 +10,7 @@ import UIKit
 class HomeContainerViewController: UIViewController {
     
     private let itemWidth: CGFloat = 220
-    private let itemHeight: CGFloat = 280
+    private let itemHeight: CGFloat = 300
     private let column: CGFloat = 3
     private let containerCellID = "containerCellID"
 

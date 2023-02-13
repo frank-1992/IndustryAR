@@ -71,9 +71,22 @@ class ARViewController: UIViewController {
         return button
     }()
     
-    private var shapeMenuView: ShapeMenuView = {
+    private lazy var shapeMenuView: ShapeMenuView = {
         let view = ShapeMenuView(frame: .zero)
         view.backgroundColor = .clear
+        return view
+    }()
+    
+    private lazy var bottomMenuButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "zhankai"), for: .normal)
+        button.addTarget(self, action: #selector(showBottomMenuView(sender:)), for: .touchUpInside)
+        button.tag = 200
+        return button
+    }()
+    
+    private lazy var bottomMenuView: BottomMenuView = {
+        let view = BottomMenuView(frame: .zero)
         return view
     }()
     
@@ -166,6 +179,21 @@ class ARViewController: UIViewController {
             make.left.equalTo(sceneView.snp.right)
             make.top.equalTo(shapeMenuButton)
             make.size.equalTo(CGSize(width: 300, height: 540))
+        }
+        
+        sceneView.addSubview(bottomMenuButton)
+        bottomMenuButton.snp.makeConstraints { make in
+            make.bottom.equalTo(sceneView.safeAreaLayoutGuide).offset(-20)
+            make.left.equalTo(sceneView).offset(10)
+            make.size.equalTo(CGSize(width: 36, height: 36))
+        }
+        
+        sceneView.addSubview(bottomMenuView)
+        bottomMenuView.snp.makeConstraints { make in
+            make.right.equalTo(sceneView.snp.left)
+            make.centerY.equalTo(bottomMenuButton)
+            make.height.equalTo(60)
+            make.width.equalTo(400)
         }
         
         showSettingsVC()
@@ -782,6 +810,39 @@ class ARViewController: UIViewController {
         settingsVC.settingsClosure = { [weak self] settings in
             guard let self = self else { return }
             self.currentStrokeColor = settings.lineColor
+        }
+    }
+    
+    @objc
+    private func showBottomMenuView(sender: UIButton) {
+        if sender.tag == 200 {
+            sender.tag = 201
+            UIView.animate(withDuration: 0.3) {
+                sender.transform = CGAffineTransform(translationX: 400, y: 0)
+                self.bottomMenuView.transform = CGAffineTransform(translationX: 400, y: 0)
+            } completion: { _ in
+                let anim = CABasicAnimation()
+                anim.keyPath = "transform.rotation"
+                anim.toValue = Double.pi
+                anim.duration = 0.3
+                anim.isRemovedOnCompletion = false
+                anim.fillMode = CAMediaTimingFillMode.forwards
+                sender.imageView?.layer.add(anim, forKey: nil)
+            }
+        } else {
+            sender.tag = 200
+            UIView.animate(withDuration: 0.3) {
+                sender.transform = CGAffineTransformIdentity
+                self.bottomMenuView.transform = CGAffineTransformIdentity
+            } completion: { _ in
+                let anim = CABasicAnimation()
+                anim.keyPath = "transform.rotation"
+                anim.toValue = 0
+                anim.duration = 0.3
+                anim.isRemovedOnCompletion = false
+                anim.fillMode = CAMediaTimingFillMode.forwards
+                sender.imageView?.layer.add(anim, forKey: nil)
+            }
         }
     }
     

@@ -18,7 +18,7 @@ class HomeContainerCell: UICollectionViewCell {
     private lazy var nameLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = UIFont(name: "PingFang-SC-SemiBold", size: 30)
-        label.textColor = .systemYellow
+        label.textColor = .black
         return label
     }()
     
@@ -30,13 +30,14 @@ class HomeContainerCell: UICollectionViewCell {
     private func setupUI() {
         contentView.addSubview(iconView)
         iconView.snp.makeConstraints { make in
-            make.edges.equalTo(contentView)
+            make.left.right.top.equalTo(contentView)
+            make.height.equalTo(260)
         }
         
         contentView.addSubview(nameLabel)
         nameLabel.snp.makeConstraints { make in
             make.centerX.equalTo(iconView)
-            make.top.equalTo(iconView).offset(10)
+            make.top.equalTo(iconView.snp.bottom).offset(5)
         }
     }
     
