@@ -17,7 +17,7 @@ class Circle: SCNNode {
     
     static let ringRadius: CGFloat = 1.0
     
-    static let primaryColor = #colorLiteral(red: 1, green: 0.8, blue: 0, alpha: 1)
+    static let primaryColor = #colorLiteral(red: 1, green: 0.9254901961, blue: 0.4117647059, alpha: 1)
         
     private let positioningNode = SCNNode()
     
@@ -30,6 +30,10 @@ class Circle: SCNNode {
         positioningNode.eulerAngles.x = .pi / 2 // Horizontal
         positioningNode.simdScale = [1.0, 1.0, 1.0] * Circle.size
         positioningNode.addChildNode(circleNode)
+        
+        circleNode.geometry?.firstMaterial?.writesToDepthBuffer = false
+        circleNode.geometry?.firstMaterial?.readsFromDepthBuffer = false
+        renderingOrder = 100
         
         addChildNode(positioningNode)
     }

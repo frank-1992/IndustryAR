@@ -297,5 +297,180 @@ func SCNVector3Project(vectorToProject: SCNVector3, projectionVector: SCNVector3
 }
 
 
+//_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
+
+/**
+ * Get geometry vertices
+ */
+func getVertices(node:SCNNode) -> [SCNVector3]? {
+    let geometry = node.geometry
+    let sources = geometry?.sources(for: .vertex)
+    
+    guard let source = sources?.first else{return nil}
+    let stride = source.dataStride / source.bytesPerComponent
+    let offset = source.dataOffset / source.bytesPerComponent
+    let vectorCount = source.vectorCount
+    return source.data.withUnsafeBytes { dataBytes in
+                let buffer: UnsafePointer<Float> = dataBytes.baseAddress!.assumingMemoryBound(to: Float.self)
+        var result = Array<SCNVector3>()
+        for i in 0...vectorCount - 1 {
+            let start = i * stride + offset
+            result.append(SCNVector3(buffer[start], buffer[start + 1], buffer[start + 2]))
+        }
+        return result
+    }
+}
+
+/**
+ * Get geometry normals
+ */
+func getNormals(node:SCNNode) -> [SCNVector3]? {
+    let geometry = node.geometry
+    let sources = geometry?.sources(for: .normal)
+    
+    guard let source = sources?.first else{return nil}
+    let stride = source.dataStride / source.bytesPerComponent
+    let offset = source.dataOffset / source.bytesPerComponent
+    let normalCount = source.vectorCount
+    return source.data.withUnsafeBytes { dataBytes in
+                let buffer: UnsafePointer<Float> = dataBytes.baseAddress!.assumingMemoryBound(to: Float.self)
+        var result = Array<SCNVector3>()
+        for i in 0...normalCount - 1 {
+            let start = i * stride + offset
+            result.append(SCNVector3(buffer[start], buffer[start + 1], buffer[start + 2]))
+        }
+        return result
+    }
+}
+
+/**
+ * preset CAD Model
+ */
+func presetCadModel( cadModelNode: SCNNode, bPivot: Bool, bSubdLevel: Bool ) {
+    
+    let x = cadModelNode.boundingBox.min.x + (cadModelNode.boundingBox.max.x - cadModelNode.boundingBox.min.x) / 2
+    let y = cadModelNode.boundingBox.min.y + (cadModelNode.boundingBox.max.y - cadModelNode.boundingBox.min.y) / 2
+    let z = cadModelNode.boundingBox.min.z + (cadModelNode.boundingBox.max.z - cadModelNode.boundingBox.min.z) / 2
+    
+    if(bPivot) {
+        cadModelNode.pivot = SCNMatrix4MakeTranslation(
+            x,
+            y,
+            z
+        )
+    }
+    
+    presetNodeChildren(node: cadModelNode, bPivot: bPivot, bSubdLevel: bSubdLevel);
+}
+
+/**
+ * preset CAD Model children
+ */
+func presetNodeChildren( node: SCNNode, bPivot: Bool, bSubdLevel: Bool )
+{
+    //Subdivision level
+    if(node.geometry != nil)
+    {
+        let points = getVertices(node: node)
+        guard (points?.count) != nil else {
+            return
+        }
+        
+        let geometry = node.geometry
+        if(bSubdLevel) {
+            geometry?.wantsAdaptiveSubdivision = false
+            geometry?.subdivisionLevel = 0
+        }
+        
+        let element = geometry?.elements[0]
+        let primType = element?.primitiveType
+        switch primType {
+        case .triangles:
+            break
+        case .triangleStrip:
+            break
+        case .line:
+            break
+        case .point:
+            break
+        default:
+            break
+        }
+    }
+    
+    //Traverse children
+    let numberOfChildren = node.childNodes.count
+    if(numberOfChildren > 0) {
+        for i in 0...numberOfChildren - 1 {
+            let childNode = node.childNodes[i]
+            
+            presetNodeChildren(node: childNode, bPivot: bPivot, bSubdLevel: bSubdLevel)
+        }
+    }
+}
+
+/**
+ * convert radian to degree
+ */
+public func rad2deg( rad:Float ) -> Float {
+    return rad * (Float) (180.0 /  Double.pi)
+}
+
+/**
+ * convert degree to radian
+ */
+public func deg2rad( deg:Float ) -> Float{
+   return deg * (Float)(Double.pi / 180)
+}
+
+/**
+ * get Pan Direction For Rotation
+ */
+public func getPanDirectionForRotation(velocity: CGPoint) -> String {
+    var panDirection:String = ""
+    if ( velocity.x > 0 && velocity.x > abs(velocity.y) || velocity.x < 0 && abs(velocity.x) > abs(velocity.y) ){
+        panDirection = "horizontal"
+    }
+    
+    if ( velocity.y < 0 && abs(velocity.y) > abs(velocity.x) || velocity.y > 0 &&  velocity.y  > abs(velocity.x)) {
+        panDirection = "vertical"
+    }
+    
+    return panDirection
+}
+
+/**
+ * get Pan Direction For Translation
+ */
+public func getPanDirectionForTranslation(velocity: CGPoint) -> String {
+    var panDirection:String = ""
+    
+    let x = velocity.x
+    let y = velocity.y
+    let distance = sqrt(x * x + y * y)
+    guard distance > 0 else { return panDirection }
+    let localRadCos = abs(x) / distance
+    var localRad = acos(localRadCos)
+    localRad = localRad * 180.0 / CGFloat.pi;
+    
+    panDirection = ""
+    if(localRad < 22.5) {
+        panDirection = "x-axis"
+    }
+    else if(localRad > 67.5) {
+        panDirection = "y-axis"
+    }
+    else {
+        panDirection = "z-axis"
+    }
+    //else if(localRad >= 25 && localRad <= 65){
+    //    panDirection = "z-axis"
+    //}
+    
+    return panDirection
+}
+
+//_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
+
 
 

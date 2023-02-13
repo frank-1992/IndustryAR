@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05F40DEA2994C10D0033C99E /* SCNNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F40DE92994C10D0033C99E /* SCNNode+Extensions.swift */; };
 		90A5358F00E577D0A8F2C422 /* Pods_IndustryAR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85061B28B0304062AE9528B4 /* Pods_IndustryAR.framework */; };
 		CE509C92298E1DA10081346C /* ShapeTypeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE509C91298E1DA10081346C /* ShapeTypeTableViewCell.swift */; };
 		CE509C94298E31D70081346C /* Maths.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE509C93298E31D70081346C /* Maths.swift */; };
@@ -42,6 +43,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		05F40DE92994C10D0033C99E /* SCNNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNNode+Extensions.swift"; sourceTree = "<group>"; };
 		63939D8C61BAFB9C32E8B67C /* Pods-IndustryAR.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IndustryAR.debug.xcconfig"; path = "Target Support Files/Pods-IndustryAR/Pods-IndustryAR.debug.xcconfig"; sourceTree = "<group>"; };
 		85061B28B0304062AE9528B4 /* Pods_IndustryAR.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IndustryAR.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C332090FDEF32D528E1B8A7B /* Pods-IndustryAR.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IndustryAR.release.xcconfig"; path = "Target Support Files/Pods-IndustryAR/Pods-IndustryAR.release.xcconfig"; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 		CECCE937296833700098B299 /* Node */ = {
 			isa = PBXGroup;
 			children = (
+				05F40DE92994C10D0033C99E /* SCNNode+Extensions.swift */,
 				CEC5ADB6298E0EDD0054AD3A /* Line */,
 				CECCE938296833AC0098B299 /* VirtualObject.swift */,
 				CECE775C296D7C0D00D0D795 /* Square.swift */,
@@ -355,6 +358,7 @@
 				CE53FB8C298E60590069CC7F /* ColorCollectionViewCell.swift in Sources */,
 				CECCE93C296833D90098B299 /* ARUtilities.swift in Sources */,
 				CECE7763296E946A00D0D795 /* Circle.swift in Sources */,
+				05F40DEA2994C10D0033C99E /* SCNNode+Extensions.swift in Sources */,
 				CECE775F296D7D1200D0D795 /* SquareSegment.swift in Sources */,
 				CECCE9322968197D0098B299 /* AssetModel.swift in Sources */,
 				CE509C98298E32410081346C /* SphereNodesManager.swift in Sources */,
@@ -522,7 +526,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -554,7 +558,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

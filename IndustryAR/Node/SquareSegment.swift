@@ -32,6 +32,10 @@ class Segment: SCNNode {
         material.lightingModel = .constant
         material.emission.contents = Square.primaryColor
         geometry = plane
+        
+        material.writesToDepthBuffer = false
+        material.readsFromDepthBuffer = false
+        renderingOrder = 100
     }
 
     required init?(coder aDecoder: NSCoder) {
