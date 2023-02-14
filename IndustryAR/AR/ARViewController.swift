@@ -280,7 +280,7 @@ class ARViewController: UIViewController {
             if !self.isRecordingVideo {
                 do {
                     let videoRecording = try self.sceneView.startVideoRecording()
-                    videoRecording.videoOutput = 
+//                    videoRecording.videoOutput = 
                     self.isRecordingVideo = true
                 } catch {
                     print("record video has error")
