@@ -103,6 +103,8 @@ class ARViewController: UIViewController {
     
     var settingsVC: SettingsViewController?
     
+    var isRecordingVideo: Bool = false
+    
     @objc
     private func backButtonClicked() {
         dismiss(animated: true, completion: nil)
@@ -112,6 +114,7 @@ class ARViewController: UIViewController {
         super.viewDidLoad()
         loadARModel()
         setupUI()
+        setupRecorder()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -156,6 +159,10 @@ class ARViewController: UIViewController {
         
         sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
         currentStrokeAnchorNode = nil
+    }
+    
+    private func setupRecorder() {
+        sceneView.prepareForRecording()
     }
     
     private func setupUI() {
@@ -251,6 +258,68 @@ class ARViewController: UIViewController {
         rotateZGesture = UIRotationGestureRecognizer(target: self, action: #selector(didRotateZAxis(_:)))
         sceneView.addGestureRecognizer(rotateZGesture!)
         //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
+        
+        // take photo
+        bottomMenuView.takePictureClosure = { [weak self]  in
+            guard let self = self else { return }
+            self.sceneView.takePhoto { (photo: UIImage) in
+                let controller = RecorderResultViewController(mediaType: .image(photo))
+                self.addChild(controller)
+                self.view.addSubview(controller.view)
+                controller.view.snp.makeConstraints { make in
+                    make.center.equalTo(self.view)
+                    make.width.equalTo(self.view.frame.width * 0.8)
+                    make.height.equalTo(self.view.frame.height * 0.8)
+                }
+            }
+        }
+        
+        // record video
+        bottomMenuView.recordVideoClosure = { [weak self]  in
+            guard let self = self else { return }
+            if !self.isRecordingVideo {
+                do {
+                    let videoRecording = try self.sceneView.startVideoRecording()
+                    videoRecording.videoOutput = 
+                    self.isRecordingVideo = true
+                } catch {
+                    print("record video has error")
+                }
+            } else {
+                self.sceneView.finishVideoRecording { (videoRecording) in
+                    self.isRecordingVideo = false
+                    /* Process the captured video. Main thread. */
+                    let controller = RecorderResultViewController(mediaType: .video(videoRecording.url))
+                    self.addChild(controller)
+                    self.view.addSubview(controller.view)
+                    controller.view.snp.makeConstraints { make in
+                        make.center.equalTo(self.view)
+                        make.width.equalTo(self.view.frame.width * 0.8)
+                        make.height.equalTo(self.view.frame.height * 0.8)
+                    }
+                }
+            }
+        }
+        
+        // align
+        bottomMenuView.alignClosure = { [weak self]  in
+            guard let self = self else { return }
+            
+        }
+        
+        // save SCN file
+        bottomMenuView.saveSCNClosure = { [weak self]  in
+            guard let self = self else { return }
+            
+        }
+        
+        // auto settings
+        bottomMenuView.autoSettingClosure = { [weak self]  in
+            guard let self = self else { return }
+            
+            
+        }
+        
         
     }
     

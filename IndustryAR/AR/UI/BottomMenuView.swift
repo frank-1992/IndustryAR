@@ -8,16 +8,50 @@
 import UIKit
 
 class BottomMenuView: UIView {
+    
+    var takePictureClosure: (() -> Void)?
+    var recordVideoClosure: (() -> Void)?
+    var alignClosure: (() -> Void)?
+    var saveSCNClosure: (() -> Void)?
+    var autoSettingClosure: (() -> Void)?
+
 
     private lazy var takePhotoButton: UIButton = {
         let button = UIButton()
         button.setBackgroundImage(UIImage(named: "paizhao"), for: .normal)
+        button.addTarget(self, action: #selector(takePicture), for: .touchUpInside)
         return button
     }()
     
     private lazy var recordVideoButton: UIButton = {
         let button = UIButton()
         button.setBackgroundImage(UIImage(named: "luzhi"), for: .normal)
+        button.addTarget(self, action: #selector(recordVideo), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var alignButton: UIButton = {
+        let button = UIButton()
+        button.setBackgroundImage(UIImage(named: "duiqi"), for: .normal)
+        button.addTarget(self, action: #selector(alignModel), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var saveSCNButton: UIButton = {
+        let button = UIButton()
+        button.setBackgroundImage(UIImage(named: "baocun"), for: .normal)
+        button.addTarget(self, action: #selector(saveSCN), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var autoButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("AUTO", for: .normal)
+        button.titleLabel?.textColor = .black
+        button.titleLabel?.font = UIFont(name: "PingFang-SC-Medium", size: 28)
+        button.titleLabel?.textAlignment = .center
+        button.sizeToFit()
+        button.addTarget(self, action: #selector(autoSetting), for: .touchUpInside)
         return button
     }()
     
@@ -46,6 +80,52 @@ class BottomMenuView: UIView {
             make.centerY.equalTo(self)
             make.size.equalTo(CGSize(width: 48, height: 48))
         }
+        
+        addSubview(alignButton)
+        alignButton.snp.makeConstraints { make in
+            make.left.equalTo(recordVideoButton.snp.right).offset(20)
+            make.centerY.equalTo(self)
+            make.size.equalTo(CGSize(width: 48, height: 48))
+        }
+        
+        addSubview(saveSCNButton)
+        saveSCNButton.snp.makeConstraints { make in
+            make.left.equalTo(alignButton.snp.right).offset(20)
+            make.centerY.equalTo(self)
+            make.size.equalTo(CGSize(width: 48, height: 48))
+        }
+        
+        addSubview(autoButton)
+        autoButton.snp.makeConstraints { make in
+            make.left.equalTo(saveSCNButton.snp.right).offset(20)
+            make.centerY.equalTo(self)
+            make.height.equalTo(48)
+        }
+    }
+    
+    @objc
+    private func takePicture() {
+        takePictureClosure?()
+    }
+    
+    @objc
+    private func recordVideo() {
+        recordVideoClosure?()
+    }
+    
+    @objc
+    private func alignModel() {
+        alignClosure?()
+    }
+    
+    @objc
+    private func saveSCN() {
+        saveSCNClosure?()
+    }
+    
+    @objc
+    private func autoSetting() {
+        autoSettingClosure?()
     }
 
 }
