@@ -38,7 +38,7 @@ class RecorderResultViewController: UIViewController {
 
     private lazy var backButton: UIButton = {
         let backButton = UIButton()
-        backButton.setImage(UIImage(named: "back"), for: .normal)
+        backButton.setImage(UIImage(named: "close"), for: .normal)
         backButton.layer.zPosition = 1000
         backButton.translatesAutoresizingMaskIntoConstraints = false
         backButton.addTarget(self, action: #selector(backButtonClicked), for: .touchUpInside)
@@ -107,8 +107,9 @@ class RecorderResultViewController: UIViewController {
 
         view.addSubview(backButton)
         backButton.snp.makeConstraints { make in
-            make.leading.equalTo(10)
-            make.top.equalTo(view.snp.top).offset(statusHeight + 10)
+            make.right.equalTo(-15)
+            make.top.equalTo(view.snp.top).offset(15)
+            make.size.equalTo(CGSize(width: 40, height: 40))
         }
 
         view.addSubview(saveButton)

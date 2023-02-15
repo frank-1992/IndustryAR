@@ -279,15 +279,16 @@ class ARViewController: UIViewController {
             guard let self = self else { return }
             if !self.isRecordingVideo {
                 do {
-                    let videoRecording = try self.sceneView.startVideoRecording()
-//                    videoRecording.videoOutput = 
+                    try self.sceneView.startVideoRecording()
                     self.isRecordingVideo = true
+                    self.bottomMenuView.startRecording()
                 } catch {
                     print("record video has error")
                 }
             } else {
                 self.sceneView.finishVideoRecording { (videoRecording) in
                     self.isRecordingVideo = false
+                    self.bottomMenuView.stopRecording()
                     /* Process the captured video. Main thread. */
                     let controller = RecorderResultViewController(mediaType: .video(videoRecording.url))
                     self.addChild(controller)

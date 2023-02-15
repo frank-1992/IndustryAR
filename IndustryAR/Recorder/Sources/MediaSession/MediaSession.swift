@@ -32,7 +32,7 @@ final class MediaSession {
 
     var videoTransform: CGAffineTransform { videoInput.videoTransform }
 
-    var imageOrientation: UIImage.Orientation { videoInput.imageOrientation }
+    var imageOrientation: UIImage.Orientation { UIImage.Orientation.leftMirrored }
 
     func start() { videoInput.start() }
 

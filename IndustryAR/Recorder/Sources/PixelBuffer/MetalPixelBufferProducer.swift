@@ -46,15 +46,18 @@ final class MetalPixelBufferProducer {
     guard recordableLayer.framebufferOnly else { return .identity }
     switch recordableLayer.interfaceOrientation {
     case .unknown, .portrait:
-      return .identity
+//      return .identity
+        return CGAffineTransform.identity
+          .rotated(by: .pi / 2.0)
+          .scaledBy(x: 1.0, y: -1.0)
     case .landscapeLeft:
       return CGAffineTransform.identity
         .rotated(by: .pi / 2.0)
-//        .scaledBy(x: 1.0, y: -1.0)
+        .scaledBy(x: 1.0, y: -1.0)
     case .landscapeRight:
       return CGAffineTransform.identity
         .rotated(by: -.pi / 2.0)
-//        .scaledBy(x: 1.0, y: -1.0)
+        .scaledBy(x: 1.0, y: -1.0)
     case .portraitUpsideDown:
       return .identity
     @unknown default:

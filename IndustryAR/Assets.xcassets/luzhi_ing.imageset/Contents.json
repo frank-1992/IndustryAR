@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "luzhi_ing.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

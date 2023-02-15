@@ -127,5 +127,28 @@ class BottomMenuView: UIView {
     private func autoSetting() {
         autoSettingClosure?()
     }
-
+    
+    private func AlphaLight(time: CGFloat) -> CABasicAnimation {
+        let animation = CABasicAnimation.init(keyPath: "opacity")
+        animation.fromValue = 1
+        animation.toValue = 0
+        animation.autoreverses = true
+        animation.duration = CFTimeInterval(time)
+        animation.repeatCount = 1000
+        animation.isRemovedOnCompletion = false
+        animation.fillMode = .forwards
+        animation.timingFunction = CAMediaTimingFunction.init(name: .easeIn)
+        return animation
+    }
+    
+    func startRecording() {
+        recordVideoButton.setBackgroundImage(UIImage(named: "luzhi_ing"), for: .normal)
+        recordVideoButton.layer.add(AlphaLight(time: 1), forKey: "alpha")
+    }
+    
+    func stopRecording() {
+        recordVideoButton.layer.removeAnimation(forKey: "alpha")
+        recordVideoButton.setBackgroundImage(UIImage(named: "luzhi"), for: .normal)
+    }
 }
+
