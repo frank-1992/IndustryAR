@@ -7,6 +7,7 @@
 
 import UIKit
 import AVKit
+import PKHUD
 
 enum ARResultMediaType {
     case none
@@ -97,14 +98,6 @@ class RecorderResultViewController: UIViewController {
     }
     
     private func initSubviews() {
-        let statusHeight: CGFloat
-        if #available(iOS 13.0, *) {
-            statusHeight = UIApplication.shared.keyWindow?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
-        } else {
-            // Fallback on earlier versions
-            statusHeight = UIApplication.shared.statusBarFrame.height
-        }
-
         view.addSubview(backButton)
         backButton.snp.makeConstraints { make in
             make.right.equalTo(-15)
@@ -144,7 +137,7 @@ class RecorderResultViewController: UIViewController {
                 if videoCompatible {
                     UISaveVideoAtPathToSavedPhotosAlbum(filePath, self, #selector(self.didFinishSavingVideo(videoPath:error:contextInfo:)), nil)
                 } else {
-                    self.showAlert(with: "该视频无法保存至相册")
+                    HUD.flash(.labeledError(title: "The Video Can Not Be Saved", subtitle: nil), delay: 1.0)
                 }
             }
         case .none:
@@ -155,25 +148,21 @@ class RecorderResultViewController: UIViewController {
     @objc
     private func didFinishSavingVideo(videoPath: String, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
         if error != nil {
-            showAlert(with: "保存失败")
+            HUD.flash(.labeledError(title: "Save failed", subtitle: nil), delay: 1.0)
         } else {
-            showAlert(with: "保存成功")
+            HUD.flash(.label("Saved successfully"), delay: 1)
         }
     }
     
     @objc
     func didFinishSavingImage(_ image: UIImage, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
         if error != nil {
-            showAlert(with: "保存失败")
+            HUD.flash(.labeledError(title: "Save failed", subtitle: nil), delay: 1.0)
         } else {
-            showAlert(with: "保存成功")
+            HUD.flash(.label("Saved successfully"), delay: 1)
         }
     }
     
-    private func showAlert(with message: String) {
-//        let alert = XYAlert.createTextItemWithText(onMiddle: message)
-//        alert?.show()
-    }
     
     private func initImageView() {
         view.addSubview(imageView)
