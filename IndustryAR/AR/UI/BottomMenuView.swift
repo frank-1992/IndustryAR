@@ -13,7 +13,7 @@ class BottomMenuView: UIView {
     var recordVideoClosure: (() -> Void)?
     var alignClosure: (() -> Void)?
     var saveSCNClosure: (() -> Void)?
-    var autoSettingClosure: (() -> Void)?
+    var autoSettingClosure: ((UIButton) -> Void)?
 
 
     private lazy var takePhotoButton: UIButton = {
@@ -44,14 +44,14 @@ class BottomMenuView: UIView {
         return button
     }()
     
-    private lazy var autoButton: UIButton = {
+    lazy var autoButton: UIButton = {
         let button = UIButton()
-        button.setTitle("AUTO", for: .normal)
+        button.setTitle("SHOW", for: .normal)
         button.titleLabel?.textColor = .black
         button.titleLabel?.font = UIFont(name: "PingFang-SC-Medium", size: 28)
         button.titleLabel?.textAlignment = .center
         button.sizeToFit()
-        button.addTarget(self, action: #selector(autoSetting), for: .touchUpInside)
+        button.addTarget(self, action: #selector(autoSetting(sender:)), for: .touchUpInside)
         return button
     }()
     
@@ -124,8 +124,8 @@ class BottomMenuView: UIView {
     }
     
     @objc
-    private func autoSetting() {
-        autoSettingClosure?()
+    private func autoSetting(sender: UIButton) {
+        autoSettingClosure?(sender)
     }
     
     private func AlphaLight(time: CGFloat) -> CABasicAnimation {

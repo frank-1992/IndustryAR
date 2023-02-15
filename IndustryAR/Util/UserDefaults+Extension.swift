@@ -22,12 +22,14 @@ extension UserDefaults {
     }
     
     
-//    struct Settings {
-//        var lineColor: StrokeColor = .white
-//        var lineWidth: CGFloat = 0.002
-//        var lineType: LineType = .normal
-//        var textColor: StrokeColor = .white
-//        var fontSize: CGFloat = 24
-//        var fontName: String = "PingFang-SC-Medium"
-//    }
+    private static let kHasAutoShowBottomMenu = "IndustryAR-kHasAutoShow"
+    
+    static var hasAutoShowBottomMenu: Bool {
+        get {
+            self.standard.bool(forKey: kHasAutoShowBottomMenu)
+        }
+        set {
+            self.standard.set(newValue, forKey: kHasAutoShowBottomMenu)
+        }
+    }
 }

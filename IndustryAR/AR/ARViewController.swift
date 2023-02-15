@@ -203,6 +203,11 @@ class ARViewController: UIViewController {
             make.width.equalTo(400)
         }
         
+        if UserDefaults.hasAutoShowBottomMenu {
+            showBottomMenuView(sender: bottomMenuButton)
+            bottomMenuView.autoButton.setTitle("AUTO", for: .normal)
+        }
+        
         showSettingsVC()
         
         shapeMenuView.selectShapeTypeClosure = { [weak self] function in
@@ -315,13 +320,16 @@ class ARViewController: UIViewController {
         }
         
         // auto settings
-        bottomMenuView.autoSettingClosure = { [weak self]  in
+        bottomMenuView.autoSettingClosure = { [weak self] sender in
             guard let self = self else { return }
-            
-            
+            if !UserDefaults.hasAutoShowBottomMenu {
+                UserDefaults.hasAutoShowBottomMenu = true
+                sender.setTitle("AUTO", for: .normal)
+            } else {
+                UserDefaults.hasAutoShowBottomMenu = false
+                sender.setTitle("SHOW", for: .normal)
+            }
         }
-        
-        
     }
     
     // test geometry surface
