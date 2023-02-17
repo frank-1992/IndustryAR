@@ -151,6 +151,10 @@ class RecorderResultViewController: UIViewController {
             HUD.flash(.labeledError(title: "Save failed", subtitle: nil), delay: 1.0)
         } else {
             HUD.flash(.label("Saved successfully"), delay: 1)
+            do {
+                try FileManager.default.removeItem(atPath: videoPath)
+            } catch {
+            }
         }
     }
     

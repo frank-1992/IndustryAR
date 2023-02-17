@@ -17,9 +17,10 @@ public enum ObjectAlignment: Int {
 
 @available(iOS 13.0, *)
 public final class VirtualObject: SCNReferenceNode {
-
+    
     /// object name
     public var modelName: String = ""
+    public var modelURL: String = ""
     
     /// alignments - 'horizontal, vertical, any'
     public var allowedAlignment: ARRaycastQuery.TargetAlignment {
@@ -44,6 +45,7 @@ public final class VirtualObject: SCNReferenceNode {
     
     public init?(filePath: String, fileName: String) {
         super.init(url: URL(fileURLWithPath: filePath))
+        self.modelURL = filePath
         self.load()
         self.name = fileName
         self.modelName = fileName
@@ -57,9 +59,32 @@ public final class VirtualObject: SCNReferenceNode {
 //        setupHorizontalPivot()
 //    }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    required init?(coder aDecoder: NSCoder) {        
+        if let filePath = aDecoder.decodeObject(forKey: "modelURL") as? String,
+            let fileName = aDecoder.decodeObject(forKey: "modelName") as? String {
+            self.modelURL = filePath
+            self.modelName = fileName
+            
+        }
+        super.init(coder: aDecoder)
+//        super.init(url: URL(fileURLWithPath: self.modelURL))
+        self.load()
+        self.name = self.modelName
+        setupHorizontalPivot()
     }
+    
+    public override func encode(with aCoder: NSCoder) {
+        super.encode(with: aCoder)
+        aCoder.encode(modelURL, forKey: "modelURL")
+        aCoder.encode(modelName, forKey: "modelName")
+    }
+    
+    public override class var supportsSecureCoding: Bool {
+        return true
+    }
+    
+    
+    
     // MARK: - setup pivot
     public func setupHorizontalPivot() {
         self.pivot = SCNMatrix4MakeTranslation(

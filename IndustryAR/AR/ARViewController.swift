@@ -18,6 +18,8 @@ let keyWindow = UIApplication.shared.connectedScenes
 
 let statusHeight = keyWindow?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
 
+let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+
 class ARViewController: UIViewController {
     
     var assetModel: AssetModel?
@@ -112,7 +114,7 @@ class ARViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadARModel()
+//        loadARModel()
         setupUI()
         setupRecorder()
     }
@@ -309,14 +311,17 @@ class ARViewController: UIViewController {
         
         // align
         bottomMenuView.alignClosure = { [weak self]  in
-            guard let self = self else { return }
             
         }
         
         // save SCN file
         bottomMenuView.saveSCNClosure = { [weak self]  in
             guard let self = self else { return }
-            
+            guard let assetModel = self.assetModel else { return }
+            let fileName = assetModel.assetName.md5
+            let scene = self.sceneView.scene
+            let url = documentsPath.appendingPathComponent(fileName + ".scn")
+            scene.write(to: url, options: nil, delegate: nil, progressHandler: nil)
         }
         
         // auto settings
