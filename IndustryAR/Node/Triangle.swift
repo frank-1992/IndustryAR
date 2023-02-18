@@ -28,6 +28,19 @@ class Triangle: SCNNode {
     
     override init() {
         super.init()
+        create()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        create()
+    }
+    
+    override class var supportsSecureCoding: Bool {
+        return true
+    }
+    
+    private func create() {
         let s1 = Segment(name: "s1")
         let s2 = Segment(name: "s2")
         let s3 = Segment(name: "s3")
@@ -56,11 +69,6 @@ class Triangle: SCNNode {
         for segment in segments {
             positioningNode.addChildNode(segment)
         }
-        
         addChildNode(positioningNode)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

@@ -107,6 +107,8 @@
 		F033BC30299BD06600625BAC /* MTDMulticastDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F033BBEF299BD06600625BAC /* MTDMulticastDelegate.m */; };
 		F033BC31299BD06600625BAC /* MTDOriginMulticastDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F033BBF0299BD06600625BAC /* MTDOriginMulticastDelegate.m */; };
 		F033BC34299BDADC00625BAC /* RecorderResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC33299BDADC00625BAC /* RecorderResultViewController.swift */; };
+		F033BC7A299FDD6A00625BAC /* SceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC79299FDD6A00625BAC /* SceneModel.swift */; };
+		F033BC7C299FE93D00625BAC /* JsonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC7B299FE93D00625BAC /* JsonUtil.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -217,6 +219,8 @@
 		F033BBF0299BD06600625BAC /* MTDOriginMulticastDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTDOriginMulticastDelegate.m; sourceTree = "<group>"; };
 		F033BC32299BD16900625BAC /* Recorder-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Recorder-Bridging-Header.h"; sourceTree = "<group>"; };
 		F033BC33299BDADC00625BAC /* RecorderResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderResultViewController.swift; sourceTree = "<group>"; };
+		F033BC79299FDD6A00625BAC /* SceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneModel.swift; sourceTree = "<group>"; };
+		F033BC7B299FE93D00625BAC /* JsonUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonUtil.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -347,6 +351,7 @@
 		CECCE93A296833B10098B299 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				F033BC7B299FE93D00625BAC /* JsonUtil.swift */,
 				CE53FB8D298E66C50069CC7F /* ColorSettings.swift */,
 				CECCE93B296833D90098B299 /* ARUtilities.swift */,
 				CE53166A298E72C70069CC7F /* UserDefaults+Extension.swift */,
@@ -361,6 +366,7 @@
 				CECCE93E296835110098B299 /* ARView.swift */,
 				CECE42F4296BF8D400D0D795 /* ARViewController.swift */,
 				F033BC33299BDADC00625BAC /* RecorderResultViewController.swift */,
+				F033BC79299FDD6A00625BAC /* SceneModel.swift */,
 			);
 			path = AR;
 			sourceTree = "<group>";
@@ -822,9 +828,11 @@
 				F033BC07299BD06600625BAC /* AudioSettings.swift in Sources */,
 				F033BBF2299BD06600625BAC /* VideoSettings.swift in Sources */,
 				F033BBF6299BD06600625BAC /* MediaSessionInput.swift in Sources */,
+				F033BC7A299FDD6A00625BAC /* SceneModel.swift in Sources */,
 				CECCE9322968197D0098B299 /* AssetModel.swift in Sources */,
 				CE509C98298E32410081346C /* SphereNodesManager.swift in Sources */,
 				CE53FB8E298E66C50069CC7F /* ColorSettings.swift in Sources */,
+				F033BC7C299FE93D00625BAC /* JsonUtil.swift in Sources */,
 				CECCCEFD296817800098B299 /* ARFileManager.swift in Sources */,
 				F033BBFB299BD06600625BAC /* MetalTexturePoolFactory.swift in Sources */,
 				F033BBFC299BD06600625BAC /* MetalPixelBufferProducer.swift in Sources */,

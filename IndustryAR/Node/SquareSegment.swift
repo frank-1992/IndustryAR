@@ -39,6 +39,24 @@ class Segment: SCNNode {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("\(#function) has not been implemented")
+        plane = SCNPlane(width: Segment.thickness, height: Segment.length)
+        super.init(coder: aDecoder)
+        self.name = name
+        
+        let material = plane.firstMaterial!
+        material.diffuse.contents = Square.primaryColor
+        material.isDoubleSided = true
+        material.ambient.contents = UIColor.black
+        material.lightingModel = .constant
+        material.emission.contents = Square.primaryColor
+        geometry = plane
+        
+        material.writesToDepthBuffer = false
+        material.readsFromDepthBuffer = false
+        renderingOrder = 100
+    }
+    
+    override class var supportsSecureCoding: Bool {
+        return true
     }
 }

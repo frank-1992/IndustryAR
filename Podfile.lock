@@ -1,20 +1,24 @@
 PODS:
+  - HandyJSON (5.0.2)
   - PKHUD (5.3.0)
   - SnapKit (5.6.0)
 
 DEPENDENCIES:
+  - HandyJSON
   - PKHUD (~> 5.0)
   - SnapKit
 
 SPEC REPOS:
   trunk:
+    - HandyJSON
     - PKHUD
     - SnapKit
 
 SPEC CHECKSUMS:
+  HandyJSON: 9e4e236f5d2dbefad5155a77417bbea438201c03
   PKHUD: 98f3e4bc904b9c916f1c5bb6d765365b5357291b
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
 
-PODFILE CHECKSUM: 2b17fd8c8f78f7e4f454fc94e0bc2735cd7672eb
+PODFILE CHECKSUM: 06d229ad05ae9f6e71ee6688902062abc76ad6ba
 
 COCOAPODS: 1.11.3

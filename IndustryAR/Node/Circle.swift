@@ -23,7 +23,19 @@ class Circle: SCNNode {
     
     override init() {
         super.init()
-        
+        create()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        create()
+    }
+    
+    override class var supportsSecureCoding: Bool {
+        return true
+    }
+    
+    private func create() {
         let circleNode = SCNNode(geometry: SCNTorus(ringRadius: Circle.ringRadius, pipeRadius: Circle.thickness))
         circleNode.geometry?.firstMaterial?.diffuse.contents = Circle.primaryColor
         
@@ -34,12 +46,6 @@ class Circle: SCNNode {
         circleNode.geometry?.firstMaterial?.writesToDepthBuffer = false
         circleNode.geometry?.firstMaterial?.readsFromDepthBuffer = false
         renderingOrder = 100
-        
         addChildNode(positioningNode)
     }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
 }

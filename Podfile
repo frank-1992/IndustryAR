@@ -8,5 +8,5 @@ target 'IndustryAR' do
   # Pods for IndustryAR
   pod 'SnapKit'
   pod 'PKHUD', '~> 5.0'
-
+  pod 'HandyJSON'
 end
