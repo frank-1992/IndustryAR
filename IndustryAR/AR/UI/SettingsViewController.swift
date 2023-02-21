@@ -116,8 +116,7 @@ class SettingsViewController: UIViewController {
 
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        self.removeFromParent()
-//        self.view.removeFromSuperview()
+        self.view.resignFirstResponder()
         self.view.isHidden = true
         if let settingsClosure = settingsClosure {
             let settings = Settings(lineColor: currentLineColor,
@@ -154,6 +153,13 @@ extension SettingsViewController: UITableViewDataSource {
             cell.nameLabel.text = title
             cell.detailLabel.text = icon
         }
+        
+        if indexPath.row == 1 || indexPath.row == 4 {
+            cell.textField.isHidden = false
+        } else {
+            cell.textField.isHidden = true
+        }
+        
         return cell
     }
 }

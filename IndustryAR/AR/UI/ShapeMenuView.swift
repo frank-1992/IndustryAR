@@ -17,6 +17,7 @@ enum Function {
     case delete
     case settings
     case showSymbol
+    case none
 }
 
 class ShapeMenuView: UIView {
@@ -42,6 +43,7 @@ class ShapeMenuView: UIView {
     }()
     
     var selectShapeTypeClosure: ((Function) -> Void)?
+    var deselectShapeTypeClosure: ((Function) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -79,9 +81,26 @@ extension ShapeMenuView: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension ShapeMenuView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as? ShapeTypeTableViewCell ?? ShapeTypeTableViewCell()
+        if cell.selectedFlag {
+            tableView.deselectRow(at: indexPath, animated: true)
+            if let deselectShapeTypeClosure = deselectShapeTypeClosure {
+                deselectShapeTypeClosure(.none)
+            }
+            cell.selectedFlag = false
+        } else {
+            let function = functions[indexPath.row]
+            if let selectShapeTypeClosure = selectShapeTypeClosure {
+                selectShapeTypeClosure(function)
+            }
+            cell.selectedFlag = true
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         let function = functions[indexPath.row]
-        if let selectShapeTypeClosure = selectShapeTypeClosure {
-            selectShapeTypeClosure(function)
+        if let deselectShapeTypeClosure = deselectShapeTypeClosure {
+            deselectShapeTypeClosure(.none)
         }
     }
 }

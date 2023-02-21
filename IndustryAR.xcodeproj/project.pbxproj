@@ -109,6 +109,9 @@
 		F033BC34299BDADC00625BAC /* RecorderResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC33299BDADC00625BAC /* RecorderResultViewController.swift */; };
 		F033BC7A299FDD6A00625BAC /* SceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC79299FDD6A00625BAC /* SceneModel.swift */; };
 		F033BC7C299FE93D00625BAC /* JsonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC7B299FE93D00625BAC /* JsonUtil.swift */; };
+		F033BC9D29A4FEEE00625BAC /* SCNVector3+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC9829A4FEEE00625BAC /* SCNVector3+Extensions.swift */; };
+		F033BC9E29A4FEEE00625BAC /* SCNLineNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC9929A4FEEE00625BAC /* SCNLineNode.swift */; };
+		F033BC9F29A4FEEE00625BAC /* SCNGeometry+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC9B29A4FEEE00625BAC /* SCNGeometry+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -221,6 +224,9 @@
 		F033BC33299BDADC00625BAC /* RecorderResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderResultViewController.swift; sourceTree = "<group>"; };
 		F033BC79299FDD6A00625BAC /* SceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneModel.swift; sourceTree = "<group>"; };
 		F033BC7B299FE93D00625BAC /* JsonUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonUtil.swift; sourceTree = "<group>"; };
+		F033BC9829A4FEEE00625BAC /* SCNVector3+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNVector3+Extensions.swift"; sourceTree = "<group>"; };
+		F033BC9929A4FEEE00625BAC /* SCNLineNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCNLineNode.swift; sourceTree = "<group>"; };
+		F033BC9B29A4FEEE00625BAC /* SCNGeometry+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNGeometry+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -305,6 +311,7 @@
 		CEC5ADB6298E0EDD0054AD3A /* Line */ = {
 			isa = PBXGroup;
 			children = (
+				F033BC9729A4FEEE00625BAC /* SCNLine */,
 				CE509C93298E31D70081346C /* Maths.swift */,
 				CE509C97298E32410081346C /* SphereNodesManager.swift */,
 				CE509C95298E32010081346C /* StrokeAnchor.swift */,
@@ -638,6 +645,16 @@
 			path = MulticastDelegate;
 			sourceTree = "<group>";
 		};
+		F033BC9729A4FEEE00625BAC /* SCNLine */ = {
+			isa = PBXGroup;
+			children = (
+				F033BC9829A4FEEE00625BAC /* SCNVector3+Extensions.swift */,
+				F033BC9929A4FEEE00625BAC /* SCNLineNode.swift */,
+				F033BC9B29A4FEEE00625BAC /* SCNGeometry+Extensions.swift */,
+			);
+			path = SCNLine;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -754,6 +771,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F033BC13299BD06600625BAC /* SceneRecorder.swift in Sources */,
+				F033BC9F29A4FEEE00625BAC /* SCNGeometry+Extensions.swift in Sources */,
 				F033BC08299BD06600625BAC /* RecordableLayer.swift in Sources */,
 				F033BC1C299BD06600625BAC /* VideoOutput.swift in Sources */,
 				F033BC1D299BD06600625BAC /* Renderable.swift in Sources */,
@@ -763,6 +781,7 @@
 				F033BC20299BD06600625BAC /* Property.swift in Sources */,
 				F033BBF1299BD06600625BAC /* VideoRecording.swift in Sources */,
 				CE9FD6C12967C8780052C339 /* ChildProjectListViewController.swift in Sources */,
+				F033BC9D29A4FEEE00625BAC /* SCNVector3+Extensions.swift in Sources */,
 				CECE7761296D85D000D0D795 /* Triangle.swift in Sources */,
 				F033BC0F299BD06600625BAC /* VideoRecording.State.swift in Sources */,
 				F033BC2E299BD06600625BAC /* SelfRecordable.swift in Sources */,
@@ -850,6 +869,7 @@
 				CEC5ADBC298E1A590054AD3A /* ShapeMenuView.swift in Sources */,
 				F033BC0E299BD06600625BAC /* CALayer+InterfaceOrientation.swift in Sources */,
 				CECE42F5296BF8D400D0D795 /* ARViewController.swift in Sources */,
+				F033BC9E29A4FEEE00625BAC /* SCNLineNode.swift in Sources */,
 				F033BC22299BD06600625BAC /* UnfairAtomic.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

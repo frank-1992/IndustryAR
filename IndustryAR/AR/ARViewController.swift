@@ -21,6 +21,13 @@ let statusHeight = keyWindow?.windowScene?.statusBarManager?.statusBarFrame.heig
 
 let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 
+private extension SCNVector3 {
+    func distance(to vector: SCNVector3) -> Float {
+        let diff = SCNVector3(x - vector.x, y - vector.y, z - vector.z)
+        return sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z)
+    }
+}
+
 class ARViewController: UIViewController {
     
     var assetModel: AssetModel?
@@ -102,6 +109,18 @@ class ARViewController: UIViewController {
     var currentFingerPosition: CGPoint?
     var distanceFromCamera: Float = 1.0
     
+    // SCNLine
+    var pointTouching: CGPoint = .zero
+    var isDrawing: Bool = false
+    var drawingNode: SCNLineNode?
+    /// Used for calculating where to draw using hitTesting
+//    var cameraFrameNode = SCNNode(geometry: SCNFloor())
+    var centerVerticesCount: Int32 = 0
+    var hitVertices: [SCNVector3] = []
+    var lastPoint = SCNVector3Zero
+    var minimumMovement: Float = 0.005
+    
+    // ========================
     var function: Function?
     
     var settingsVC: SettingsViewController?
@@ -212,6 +231,11 @@ class ARViewController: UIViewController {
         }
         
         showSettingsVC()
+        
+        shapeMenuView.deselectShapeTypeClosure = { [weak self] function in
+            guard let self = self else { return }
+            self.function = function
+        }
         
         shapeMenuView.selectShapeTypeClosure = { [weak self] function in
             guard let self = self else { return }
@@ -365,7 +389,7 @@ class ARViewController: UIViewController {
         let tapPoint_local = hitResult.localCoordinates
         let tapNode = hitResult.node
         let tapPoint_world_scn = tapNode.convertPosition(tapPoint_local, to: cadModelRoot)
-        let tapPoint_world = simd_float3(tapPoint_world_scn.x, tapPoint_world_scn.y, tapPoint_world_scn.z);
+        let tapPoint_world = simd_float3(tapPoint_world_scn.x, tapPoint_world_scn.y, tapPoint_world_scn.z)
         //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
         
         guard let function = function else { return }
@@ -771,56 +795,58 @@ class ARViewController: UIViewController {
     private func loadARModel() {
         
         guard let assetModel = assetModel else { return }
-        let fileName = assetModel.assetName.md5
-        let url = documentsPath.appendingPathComponent(fileName + ".scn")
-        if FileManager.default.fileExists(atPath: url.relativePath) {
-            if let modelInfoString = UserDefaults.standard.object(forKey: fileName) as? String {
-                guard let modelInfo = JsonUtil.jsonToModel(modelInfoString, SceneModel.self) as? SceneModel else { return }
-                do {
-                    if let savedScene = try? SCNScene(url: url, options: [.checkConsistency : true]) {
-                        if let usdzFile = assetModel.usdzFilePaths.first, let usdzObject = VirtualObject(filePath: usdzFile.relativePath, fileName: assetModel.assetName) {
-                            if(cadModelRoot == nil) {
-                                let cadModelRoot1 = SCNNode()
-                                self.cadModelRoot = cadModelRoot1
-                                cadModelRoot1.name = "ModelRoot"
-
-                                cadModelRoot1.addChildNode(usdzObject)
-                                presetCadModel(cadModelNode: cadModelRoot1, bPivot: true, bSubdLevel: true)
-
-                                let markerRoot1 = SCNNode()
-                                markerRoot = markerRoot1
-
-                                markerRoot1.name = "MarkerRoot"
-                                cadModelRoot1.addChildNode(markerRoot1)
-
-                                cadModelRoot1.position = SCNVector3(x: modelInfo.modelPositionX, y: modelInfo.modelPositionY, z: modelInfo.modelPositionZ)
-                                cadModelRoot1.scale = SCNVector3(modelInfo.modelScale, modelInfo.modelScale, modelInfo.modelScale)
-                                cadModelRoot1.orientation = SCNQuaternion(modelInfo.modelOrientationX, modelInfo.modelOrientationY, modelInfo.modelOrientationZ, modelInfo.modelOrientationW)
-                                savedScene.rootNode.addChildNode(cadModelRoot1)
-                                sceneView.scene = savedScene
-                            }
-                        }
-                    }
+//        let fileName = assetModel.assetName.md5
+//        let url = documentsPath.appendingPathComponent(fileName + ".scn")
+//        if FileManager.default.fileExists(atPath: url.relativePath) {
+//            if let modelInfoString = UserDefaults.standard.object(forKey: fileName) as? String {
+//                guard let modelInfo = JsonUtil.jsonToModel(modelInfoString, SceneModel.self) as? SceneModel else { return }
+//                do {
+//                    if let savedScene = try? SCNScene(url: url, options: [.checkConsistency : true]) {
+//                        if let usdzFile = assetModel.usdzFilePaths.first, let usdzObject = VirtualObject(filePath: usdzFile.relativePath, fileName: assetModel.assetName) {
+//                            if(cadModelRoot == nil) {
+//                                let cadModelRoot1 = SCNNode()
+//                                self.cadModelRoot = cadModelRoot1
+//                                cadModelRoot1.name = "ModelRoot"
+//
+//                                cadModelRoot1.addChildNode(usdzObject)
+//                                presetCadModel(cadModelNode: cadModelRoot1, bPivot: true, bSubdLevel: true)
+//
+//                                let markerRoot1 = SCNNode()
+//                                markerRoot = markerRoot1
+//
+//                                markerRoot1.name = "MarkerRoot"
+//                                cadModelRoot1.addChildNode(markerRoot1)
+//
+//                                cadModelRoot1.position = SCNVector3(x: modelInfo.modelPositionX, y: modelInfo.modelPositionY, z: modelInfo.modelPositionZ)
+//                                cadModelRoot1.scale = SCNVector3(modelInfo.modelScale, modelInfo.modelScale, modelInfo.modelScale)
+//                                cadModelRoot1.orientation = SCNQuaternion(modelInfo.modelOrientationX, modelInfo.modelOrientationY, modelInfo.modelOrientationZ, modelInfo.modelOrientationW)
+//                                savedScene.rootNode.addChildNode(cadModelRoot1)
+//                                sceneView.scene = savedScene
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        } else {
+//
+//        }
+        
+        let usdzFiles = assetModel.usdzFilePaths
+        let scnFiles = assetModel.scnFilePaths
+        if !usdzFiles.isEmpty {
+            for usdzFile in usdzFiles {
+                if let usdzObject = VirtualObject(filePath: usdzFile.relativePath, fileName: assetModel.assetName) {
+                    usdzObjects.append(usdzObject)
+                    showVirtualObject(with: usdzObject)
                 }
             }
-        } else {
-            let usdzFiles = assetModel.usdzFilePaths
-            let scnFiles = assetModel.scnFilePaths
-            if !usdzFiles.isEmpty {
-                for usdzFile in usdzFiles {
-                    if let usdzObject = VirtualObject(filePath: usdzFile.relativePath, fileName: assetModel.assetName) {
-                        usdzObjects.append(usdzObject)
-                        showVirtualObject(with: usdzObject)
-                    }
-                }
-            }
-            
-            if !scnFiles.isEmpty {
-                for scnFile in scnFiles {
-                    if let scnObject = VirtualObject(filePath: scnFile.relativePath, fileName: assetModel.assetName) {
-                        scnObjects.append(scnObject)
-                        showVirtualObject(with: scnObject)
-                    }
+        }
+        
+        if !scnFiles.isEmpty {
+            for scnFile in scnFiles {
+                if let scnObject = VirtualObject(filePath: scnFile.relativePath, fileName: assetModel.assetName) {
+                    scnObjects.append(scnObject)
+                    showVirtualObject(with: scnObject)
                 }
             }
         }
@@ -888,27 +914,6 @@ class ARViewController: UIViewController {
         //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
 
     }
-    
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        // circle
-//        let circleNode = Circle()
-//        circleNode.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
-//        sceneView.scene.rootNode.addChildNode(circleNode)
-//
-//
-//        // square
-//        let squareNode = Square()
-//        squareNode.simdWorldPosition = simd_float3(x: 0, y: 0.2, z: -0.5)
-//        sceneView.scene.rootNode.addChildNode(squareNode)
-//        
-//        // triangle
-//        let triangleNode = Triangle()
-//        triangleNode.simdWorldPosition = simd_float3(x: 0, y: -0.2, z: -0.5)
-//        sceneView.scene.rootNode.addChildNode(triangleNode)
-
-        
-        // line
-//    }
     
     @objc
     private func showShapeMenuView(sender: UIButton) {
@@ -981,114 +986,185 @@ class ARViewController: UIViewController {
     }
     
     // MARK: Drawing
-    private func createSphereAndInsert(atPositions positions: [SCNVector3], andAddToStrokeAnchor strokeAnchor: StrokeAnchor) {
-        for position in positions {
-            createSphereAndInsert(atPosition: position, andAddToStrokeAnchor: strokeAnchor)
-        }
-    }
+//    private func createSphereAndInsert(atPositions positions: [SCNVector3], andAddToStrokeAnchor strokeAnchor: StrokeAnchor) {
+//        for position in positions {
+//            createSphereAndInsert(atPosition: position, andAddToStrokeAnchor: strokeAnchor)
+//        }
+//    }
     
-    private func createSphereAndInsert(atPosition position: SCNVector3, andAddToStrokeAnchor strokeAnchor: StrokeAnchor) {
-        guard let currentStrokeNode = currentStrokeAnchorNode else {
-            return
-        }
-        // Get the reference sphere node and clone it
-        let referenceSphereNode = sphereNodesManager.getReferenceSphereNode(forStrokeColor: strokeAnchor.color)
-        let newSphereNode = referenceSphereNode.clone()
-        // Convert the position from world transform to local transform (relative to the anchors default node)
-        let localPosition = currentStrokeNode.convertPosition(position, from: nil)
-        newSphereNode.position = localPosition
-        // Add the node to the default node of the anchor
-        currentStrokeNode.addChildNode(newSphereNode)
-        // Add the position of the node to the stroke anchors sphereLocations array (Used for saving/loading the world map)
-        strokeAnchor.sphereLocations.append([newSphereNode.position.x, newSphereNode.position.y, newSphereNode.position.z])
-    }
+//    private func createSphereAndInsert(atPosition position: SCNVector3, andAddToStrokeAnchor strokeAnchor: StrokeAnchor) {
+//        guard let currentStrokeNode = currentStrokeAnchorNode else {
+//            return
+//        }
+//        // Get the reference sphere node and clone it
+//        let referenceSphereNode = sphereNodesManager.getReferenceSphereNode(forStrokeColor: strokeAnchor.color)
+//        let newSphereNode = referenceSphereNode.clone()
+//        // Convert the position from world transform to local transform (relative to the anchors default node)
+//        let localPosition = currentStrokeNode.convertPosition(position, from: nil)
+//        newSphereNode.position = localPosition
+//        // Add the node to the default node of the anchor
+//        currentStrokeNode.addChildNode(newSphereNode)
+//        // Add the position of the node to the stroke anchors sphereLocations array (Used for saving/loading the world map)
+//        strokeAnchor.sphereLocations.append([newSphereNode.position.x, newSphereNode.position.y, newSphereNode.position.z])
+//    }
     
-    private func anchorForID(_ anchorID: UUID) -> StrokeAnchor? {
-        return sceneView.session.currentFrame?.anchors.first(where: { $0.identifier == anchorID }) as? StrokeAnchor
-    }
+//    private func anchorForID(_ anchorID: UUID) -> StrokeAnchor? {
+//        return sceneView.session.currentFrame?.anchors.first(where: { $0.identifier == anchorID }) as? StrokeAnchor
+//    }
     
-    private func sortStrokeAnchorIDsInOrderOfDateCreated() {
-        var strokeAnchorsArray: [StrokeAnchor] = []
-        for anchorID in strokeAnchorIDs {
-            if let strokeAnchor = anchorForID(anchorID) {
-                strokeAnchorsArray.append(strokeAnchor)
-            }
-        }
-        strokeAnchorsArray.sort(by: { $0.dateCreated < $1.dateCreated })
-        
-        strokeAnchorIDs = []
-        for anchor in strokeAnchorsArray {
-            strokeAnchorIDs.append(anchor.identifier)
-        }
-    }
+//    private func sortStrokeAnchorIDsInOrderOfDateCreated() {
+//        var strokeAnchorsArray: [StrokeAnchor] = []
+//        for anchorID in strokeAnchorIDs {
+//            if let strokeAnchor = anchorForID(anchorID) {
+//                strokeAnchorsArray.append(strokeAnchor)
+//            }
+//        }
+//        strokeAnchorsArray.sort(by: { $0.dateCreated < $1.dateCreated })
+//
+//        strokeAnchorIDs = []
+//        for anchor in strokeAnchorsArray {
+//            strokeAnchorIDs.append(anchor.identifier)
+//        }
+//    }
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        guard let function = function, function == .line else { return }
-        guard let touch = touches.first else { return }
-        let location = touch.location(in: sceneView)
-        guard let hitResult = sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else { return }
-        let tapPoint_world = hitResult.simdWorldCoordinates
-        let frame = sceneView.session.currentFrame
-        guard let transform = frame?.camera.transform else { return }
-        distanceFromCamera = calculateDistance(firstPosition: tapPoint_world, secondPosition: transform.translation)
+        //MARK: 1
+        guard let function = function, function == .line, let location = touches.first?.location(in: nil) else {
+            return
+        }
+        pointTouching = location
 
+        begin()
+        isDrawing = true
         
-        let touchPositionInFrontOfCamera = tapPoint_world//getPosition(ofPoint: touch.location(in: sceneView), atDistanceFromCamera: distanceFromCamera, inView: sceneView) else { return }
-        // Convert the position from SCNVector3 to float4x4
-        let strokeAnchor = StrokeAnchor(name: "strokeAnchor", transform: float4x4(SIMD4(x: 1, y: 0, z: 0, w: 0),
-                                                                                  SIMD4(x: 0, y: 1, z: 0, w: 0),
-                                                                                  SIMD4(x: 0, y: 0, z: 1, w: 0),
-                                                                                  SIMD4(x: touchPositionInFrontOfCamera.x,
-                                                                                        y: touchPositionInFrontOfCamera.y,
-                                                                                        z: touchPositionInFrontOfCamera.z,
-                                                                                        w: 1)))
-        strokeAnchor.color = currentStrokeColor
-        sceneView.session.add(anchor: strokeAnchor)
-        currentFingerPosition = touch.location(in: sceneView)
+        
+        //MARK: 2
+//        guard let function = function, function == .line else { return }
+//        guard let touch = touches.first else { return }
+//        let location = touch.location(in: sceneView)
+//        guard let hitResult = sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else { return }
+//        let tapPoint_world = hitResult.simdWorldCoordinates
+//        let frame = sceneView.session.currentFrame
+//        guard let transform = frame?.camera.transform else { return }
+//        distanceFromCamera = calculateDistance(firstPosition: tapPoint_world, secondPosition: transform.translation)
+//
+//
+//        let touchPositionInFrontOfCamera = tapPoint_world//getPosition(ofPoint: touch.location(in: sceneView), atDistanceFromCamera: distanceFromCamera, inView: sceneView) else { return }
+//        // Convert the position from SCNVector3 to float4x4
+//        let strokeAnchor = StrokeAnchor(name: "strokeAnchor", transform: float4x4(SIMD4(x: 1, y: 0, z: 0, w: 0),
+//                                                                                  SIMD4(x: 0, y: 1, z: 0, w: 0),
+//                                                                                  SIMD4(x: 0, y: 0, z: 1, w: 0),
+//                                                                                  SIMD4(x: touchPositionInFrontOfCamera.x,
+//                                                                                        y: touchPositionInFrontOfCamera.y,
+//                                                                                        z: touchPositionInFrontOfCamera.z,
+//                                                                                        w: 1)))
+//        strokeAnchor.color = currentStrokeColor
+//        sceneView.session.add(anchor: strokeAnchor)
+//        currentFingerPosition = touch.location(in: sceneView)
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let function = function, function == .line else { return }
-        guard let touch = touches.first else { return }
-        currentFingerPosition = touch.location(in: sceneView)
+        //MARK: 1
+        guard let function = function, function == .line, let location = touches.first?.location(in: nil) else {
+            return
+        }
+        pointTouching = location
+        
+        //MARK: 2
+//        guard let function = function, function == .line else { return }
+//        guard let touch = touches.first else { return }
+//        currentFingerPosition = touch.location(in: sceneView)
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        previousPoint = nil
-        currentStrokeAnchorNode = nil
-        currentFingerPosition = nil
+        //MARK: 1
+        isDrawing = false
+        reset()
+        
+        //MARK: 2
+//        previousPoint = nil
+//        currentStrokeAnchorNode = nil
+//        currentFingerPosition = nil
+       
     }
 
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        previousPoint = nil
-        currentStrokeAnchorNode = nil
-        currentFingerPosition = nil
+        
+        //MARK: 2
+//        previousPoint = nil
+//        currentStrokeAnchorNode = nil
+//        currentFingerPosition = nil
+    }
+    
+    private func begin() {
+        let drawingNode = SCNLineNode(with: [], radius: 0.001, edges: 12, maxTurning: 12)
+        let material = SCNMaterial()
+        material.diffuse.contents = UIColor.systemYellow
+        material.isDoubleSided = true
+        material.writesToDepthBuffer = false
+        material.readsFromDepthBuffer = false
+        drawingNode.lineMaterials = [material]
+        sceneView.scene.rootNode.addChildNode(drawingNode)
+        self.drawingNode = drawingNode
+        
+        guard let markerRoot = markerRoot else { return }
+        let transform = sceneView.scene.rootNode.convertTransform(drawingNode.transform, to: markerRoot)
+        markerRoot.addChildNode(drawingNode)
+        drawingNode.transform = transform
     }
 
+    private func addPointAndCreateVertices() {
+        guard let lastHit = sceneView.hitTest(self.pointTouching, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else {
+            return
+        }
+        
+        if lastHit.worldCoordinates.distance(to: lastPoint) > minimumMovement {
+            hitVertices.append(lastHit.worldCoordinates)
+            lastPoint = lastHit.worldCoordinates
+            updateGeometry(with: lastPoint)
+        }
+    }
+    
+    private func updateGeometry(with point: SCNVector3) {
+        guard hitVertices.count > 1, let drawNode = drawingNode else {
+            return
+        }
+        drawNode.add(point: point)
+    }
+    
+    private func reset() {
+        hitVertices.removeAll()
+        drawingNode = nil
+    }
 }
 
 // MARK: - ARSCNViewDelegate
 extension ARViewController: ARSCNViewDelegate {
-    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        if let strokeAnchor = anchor as? StrokeAnchor {
-            currentStrokeAnchorNode = node
-            
-            //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
-            markerRoot?.addChildNode(node)
-            //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
-            
-            strokeAnchorIDs.append(strokeAnchor.identifier)
-            for sphereLocation in strokeAnchor.sphereLocations {
-                createSphereAndInsert(atPosition: SCNVector3Make(sphereLocation[0], sphereLocation[1], sphereLocation[2]), andAddToStrokeAnchor: strokeAnchor)
-            }
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        if isDrawing {
+            addPointAndCreateVertices()
         }
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+//        if let strokeAnchor = anchor as? StrokeAnchor {
+//            currentStrokeAnchorNode = node
+//
+//            //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
+//            markerRoot?.addChildNode(node)
+//            //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
+//
+//            strokeAnchorIDs.append(strokeAnchor.identifier)
+//            for sphereLocation in strokeAnchor.sphereLocations {
+//                createSphereAndInsert(atPosition: SCNVector3Make(sphereLocation[0], sphereLocation[1], sphereLocation[2]), andAddToStrokeAnchor: strokeAnchor)
+//            }
+//        }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didRemove node: SCNNode, for anchor: ARAnchor) {
         // Remove the anchorID from the strokes array
-        strokeAnchorIDs.removeAll(where: { $0 == anchor.identifier })
+//        strokeAnchorIDs.removeAll(where: { $0 == anchor.identifier })
         
         //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
         node.removeFromParentNode()
@@ -1111,30 +1187,30 @@ extension ARViewController: ARSessionDelegate {
         }
         
         // Draw the spheres
-        guard let currentStrokeAnchorID = strokeAnchorIDs.last else { return }
-        let currentStrokeAnchor = anchorForID(currentStrokeAnchorID)
-        if currentFingerPosition != nil && currentStrokeAnchor != nil {
-//            guard let location = currentFingerPosition else { return }
-//            guard let hitResult = sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else { return }
-//            let tapPoint_world = hitResult.simdWorldCoordinates
-            guard let currentPointPosition = getPosition(ofPoint: currentFingerPosition!, atDistanceFromCamera: distanceFromCamera, inView: sceneView) else { return }
-            
-            if let previousPoint = previousPoint {
-                // Do not create any new spheres if the distance hasn't changed much
-                let distance = abs(previousPoint.distance(vector: currentPointPosition))
-                if distance > 0.00104 {
-                    createSphereAndInsert(atPosition: currentPointPosition, andAddToStrokeAnchor: currentStrokeAnchor!)
-                    // Draw spheres between the currentPoint and previous point if they are further than the specified distance (Otherwise fast movement will make the line blocky)
-                    // TODO: The spacing should depend on the brush size
-                    let positions = getPositionsOnLineBetween(point1: previousPoint, andPoint2: currentPointPosition, withSpacing: 0.001)
-                    createSphereAndInsert(atPositions: positions, andAddToStrokeAnchor: currentStrokeAnchor!)
-                    self.previousPoint = currentPointPosition
-                }
-            } else {
-                createSphereAndInsert(atPosition: currentPointPosition, andAddToStrokeAnchor: currentStrokeAnchor!)
-                self.previousPoint = currentPointPosition
-            }
-        }
+//        guard let currentStrokeAnchorID = strokeAnchorIDs.last else { return }
+//        let currentStrokeAnchor = anchorForID(currentStrokeAnchorID)
+//        if currentFingerPosition != nil && currentStrokeAnchor != nil {
+////            guard let location = currentFingerPosition else { return }
+////            guard let hitResult = sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else { return }
+////            let tapPoint_world = hitResult.simdWorldCoordinates
+//            guard let currentPointPosition = getPosition(ofPoint: currentFingerPosition!, atDistanceFromCamera: distanceFromCamera, inView: sceneView) else { return }
+//
+//            if let previousPoint = previousPoint {
+//                // Do not create any new spheres if the distance hasn't changed much
+//                let distance = abs(previousPoint.distance(vector: currentPointPosition))
+//                if distance > 0.00104 {
+//                    createSphereAndInsert(atPosition: currentPointPosition, andAddToStrokeAnchor: currentStrokeAnchor!)
+//                    // Draw spheres between the currentPoint and previous point if they are further than the specified distance (Otherwise fast movement will make the line blocky)
+//                    // TODO: The spacing should depend on the brush size
+//                    let positions = getPositionsOnLineBetween(point1: previousPoint, andPoint2: currentPointPosition, withSpacing: 0.001)
+//                    createSphereAndInsert(atPositions: positions, andAddToStrokeAnchor: currentStrokeAnchor!)
+//                    self.previousPoint = currentPointPosition
+//                }
+//            } else {
+//                createSphereAndInsert(atPosition: currentPointPosition, andAddToStrokeAnchor: currentStrokeAnchor!)
+//                self.previousPoint = currentPointPosition
+//            }
+//        }
         
     }
     

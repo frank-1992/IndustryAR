@@ -29,6 +29,17 @@ class SettingsTableViewCell: UITableViewCell {
         return label
     }()
     
+    lazy var textField: LineTextField = {
+        let textField = LineTextField(frame: .zero)
+        textField.backgroundColor = .white
+        textField.layer.cornerRadius = 4
+        textField.layer.masksToBounds = true
+        textField.layer.borderWidth = 0.5
+        textField.layer.borderColor = UIColor.black.cgColor
+        textField.placeholder = "1-100"
+        textField.textColor = .black
+        return textField
+    }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -61,5 +72,24 @@ class SettingsTableViewCell: UITableViewCell {
             make.right.equalTo(contentView).offset(-10)
             make.centerY.equalTo(contentView)
         }
+        
+        addSubview(textField)
+        textField.snp.makeConstraints { make in
+            make.centerY.equalTo(self)
+            make.right.equalTo(contentView).offset(-10)
+            make.size.equalTo(CGSize(width: 100, height: 40))
+        }
+    }
+}
+
+class LineTextField: UITextField {
+    override func textRect(forBounds bounds: CGRect) -> CGRect {
+        CGRect(x: 12, y: 0, width: bounds.width, height: bounds.height)
+    }
+    override func editingRect(forBounds bounds: CGRect) -> CGRect {
+        CGRect(x: 12, y: 0, width: bounds.width, height: bounds.height)
+    }
+    override func placeholderRect(forBounds bounds: CGRect) -> CGRect {
+        CGRect(x: 12, y: 0, width: bounds.width, height: bounds.height)
     }
 }

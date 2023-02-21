@@ -9,6 +9,8 @@ import UIKit
 
 class ShapeTypeTableViewCell: UITableViewCell {
 
+    var selectedFlag: Bool = false
+    
     private lazy var iconView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         return imageView
