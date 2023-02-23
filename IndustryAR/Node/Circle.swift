@@ -37,7 +37,7 @@ class Circle: SCNNode {
     
     private func create() {
         let circleNode = SCNNode(geometry: SCNTorus(ringRadius: Circle.ringRadius, pipeRadius: Circle.thickness))
-        circleNode.geometry?.firstMaterial?.diffuse.contents = Circle.primaryColor
+        circleNode.geometry?.firstMaterial?.diffuse.contents = Square.primaryColor
         
         positioningNode.eulerAngles.x = .pi / 2 // Horizontal
         positioningNode.simdScale = [1.0, 1.0, 1.0] * Circle.size

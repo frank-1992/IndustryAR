@@ -10,6 +10,7 @@ import ARKit
 import SceneKit
 import SnapKit
 import HandyJSON
+import PKHUD
 
 let keyWindow = UIApplication.shared.connectedScenes
         .filter({$0.activationState == .foregroundActive})
@@ -20,6 +21,7 @@ let keyWindow = UIApplication.shared.connectedScenes
 let statusHeight = keyWindow?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
 
 let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+let historyPath = documentsPath.appendingPathComponent("History", isDirectory: true)
 
 private extension SCNVector3 {
     func distance(to vector: SCNVector3) -> Float {
@@ -126,6 +128,9 @@ class ARViewController: UIViewController {
     var settingsVC: SettingsViewController?
     
     var isRecordingVideo: Bool = false
+    
+    // SCNTetx
+    var textNode: SCNNode?
     
     @objc
     private func backButtonClicked() {
@@ -235,6 +240,13 @@ class ARViewController: UIViewController {
         shapeMenuView.deselectShapeTypeClosure = { [weak self] function in
             guard let self = self else { return }
             self.function = function
+            if(self.bGestureRemoved)
+            {
+                self.sceneView.addGestureRecognizer(self.oneFingerPanGesture!)
+                self.sceneView.addGestureRecognizer(self.twoFingerPanGesture!)
+                self.sceneView.addGestureRecognizer(self.rotateZGesture!)
+                self.bGestureRemoved = false;
+            }
         }
         
         shapeMenuView.selectShapeTypeClosure = { [weak self] function in
@@ -266,6 +278,29 @@ class ARViewController: UIViewController {
                 // settings vc
 //                self.showSettingsVC()
                 self.settingsVC?.view.isHidden = false
+            }
+            
+            if function == .text {
+                let textInputView = TextInputView(frame: .zero)
+                self.view.addSubview(textInputView)
+                
+                textInputView.snp.makeConstraints { make in
+                    make.center.equalTo(self.view)
+                    make.size.equalTo(CGSize(width: 300, height: 140))
+                }
+                
+                textInputView.confirmTextClosure = { content in
+                    let text = SCNText(string: content, extrusionDepth: 0.01)
+                    text.font = UIFont(name: "PingFang-SC-Regular", size: 18)
+                    let material = SCNMaterial()
+                    material.diffuse.contents = self.settings.textColor.uiColor
+                    material.writesToDepthBuffer = false
+                    material.readsFromDepthBuffer = false
+                    text.materials = [material]
+                    let textNode = SCNNode(geometry: text)
+                    textNode.scale = SCNVector3(x: 0.01, y: 0.01, z: 0.01)
+                    self.textNode = textNode
+                }
             }
         }
         
@@ -345,8 +380,20 @@ class ARViewController: UIViewController {
             guard let assetModel = self.assetModel else { return }
             let fileName = assetModel.assetName.md5
             let scene = self.sceneView.scene
-            let url = documentsPath.appendingPathComponent(fileName + ".scn")
-            scene.write(to: url, options: nil, delegate: nil, progressHandler: nil)
+            
+            let url = historyPath.appendingPathComponent(fileName, isDirectory: true)
+            var isDirectory: ObjCBool = ObjCBool(false)
+            let isExist = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
+            if !isExist {
+                do {
+                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+                } catch {
+                    print("createDirectory error:\(error)")
+                }
+            }
+            
+            let fileURL = url.appendingPathComponent(fileName + ".scn")
+            scene.write(to: fileURL, options: nil, delegate: nil, progressHandler: nil)
             
             if let cadModelRoot = self.cadModelRoot {
                 let modelInfo = SceneModel()
@@ -361,6 +408,7 @@ class ARViewController: UIViewController {
                 
                 let modelInfoString = JsonUtil.modelToJson(modelInfo)
                 UserDefaults.standard.set(modelInfoString, forKey: fileName)
+                HUD.flash(.label("Saved successfully"), delay: 1)
             }
         }
         
@@ -478,6 +526,28 @@ class ARViewController: UIViewController {
              circleNode.simdScale = simd_float3(3, 3, 3)
             sceneView.scene.rootNode.addChildNode(circleNode)
             */
+        }
+        
+        if function == .text {
+            guard let textNode = textNode,
+                  let camera = sceneView.pointOfView else {
+                return
+            }
+
+            let min = textNode.boundingBox.min * 0.01
+            let max = textNode.boundingBox.max * 0.01
+            let width = max.x - min.x
+            let depth = max.z - min.z
+            
+            let centerX = tapPoint_world.x - width/2.0
+            let centerY = tapPoint_world.y
+            let centerZ = tapPoint_world.z - depth/2.0
+            
+            textNode.position = SCNVector3(x: centerX, y: centerY, z: centerZ)
+            textNode.orientation = camera.orientation
+            
+            markerRoot?.addChildNode(textNode)
+            self.textNode = nil
         }
     }
     
@@ -801,8 +871,10 @@ class ARViewController: UIViewController {
 //            if let modelInfoString = UserDefaults.standard.object(forKey: fileName) as? String {
 //                guard let modelInfo = JsonUtil.jsonToModel(modelInfoString, SceneModel.self) as? SceneModel else { return }
 //                do {
-//                    if let savedScene = try? SCNScene(url: url, options: [.checkConsistency : true]) {
-//                        if let usdzFile = assetModel.usdzFilePaths.first, let usdzObject = VirtualObject(filePath: usdzFile.relativePath, fileName: assetModel.assetName) {
+//                    if let savedScene = try? SCNScene(url: url) {
+//                        if let usdzFile = assetModel.usdzFilePaths.first,
+//                           let usdzObject = VirtualObject(filePath: usdzFile.relativePath,
+//                                                          fileName: assetModel.assetName) {
 //                            if(cadModelRoot == nil) {
 //                                let cadModelRoot1 = SCNNode()
 //                                self.cadModelRoot = cadModelRoot1
@@ -828,28 +900,26 @@ class ARViewController: UIViewController {
 //                }
 //            }
 //        } else {
-//
+            let usdzFiles = assetModel.usdzFilePaths
+            let scnFiles = assetModel.scnFilePaths
+            if !usdzFiles.isEmpty {
+                for usdzFile in usdzFiles {
+                    if let usdzObject = VirtualObject(filePath: usdzFile.relativePath, fileName: assetModel.assetName) {
+                        usdzObjects.append(usdzObject)
+                        showVirtualObject(with: usdzObject)
+                    }
+                }
+            }
+            
+            if !scnFiles.isEmpty {
+                for scnFile in scnFiles {
+                    if let scnObject = VirtualObject(filePath: scnFile.relativePath, fileName: assetModel.assetName) {
+                        scnObjects.append(scnObject)
+                        showVirtualObject(with: scnObject)
+                    }
+                }
+            }
 //        }
-        
-        let usdzFiles = assetModel.usdzFilePaths
-        let scnFiles = assetModel.scnFilePaths
-        if !usdzFiles.isEmpty {
-            for usdzFile in usdzFiles {
-                if let usdzObject = VirtualObject(filePath: usdzFile.relativePath, fileName: assetModel.assetName) {
-                    usdzObjects.append(usdzObject)
-                    showVirtualObject(with: usdzObject)
-                }
-            }
-        }
-        
-        if !scnFiles.isEmpty {
-            for scnFile in scnFiles {
-                if let scnObject = VirtualObject(filePath: scnFile.relativePath, fileName: assetModel.assetName) {
-                    scnObjects.append(scnObject)
-                    showVirtualObject(with: scnObject)
-                }
-            }
-        }
     }
     
     private func showVirtualObject(with model: VirtualObject) {
@@ -923,7 +993,6 @@ class ARViewController: UIViewController {
                 sender.transform = CGAffineTransform(translationX: -300, y: 0)
                 self.shapeMenuView.transform = CGAffineTransform(translationX: -300, y: 0)
             } completion: { _ in
-//                sender.setImage(UIImage(named: "close"), for: .normal)
             }
         } else {
             sender.tag = 100
@@ -931,11 +1000,11 @@ class ARViewController: UIViewController {
                 sender.transform = CGAffineTransformIdentity
                 self.shapeMenuView.transform = CGAffineTransformIdentity
             } completion: { _ in
-//                sender.setImage(UIImage(named: "menu"), for: .normal)
             }
         }
     }
     
+    private var settings: Settings = Settings()
     private func showSettingsVC() {
         let settingsVC = SettingsViewController()
         self.addChild(settingsVC)
@@ -948,7 +1017,8 @@ class ARViewController: UIViewController {
         
         settingsVC.settingsClosure = { [weak self] settings in
             guard let self = self else { return }
-            self.currentStrokeColor = settings.lineColor
+            self.settings = settings
+            Square.primaryColor = settings.lineColor.uiColor
         }
     }
     
@@ -1100,7 +1170,7 @@ class ARViewController: UIViewController {
     private func begin() {
         let drawingNode = SCNLineNode(with: [], radius: 0.001, edges: 12, maxTurning: 12)
         let material = SCNMaterial()
-        material.diffuse.contents = UIColor.systemYellow
+        material.diffuse.contents = settings.lineColor.uiColor
         material.isDoubleSided = true
         material.writesToDepthBuffer = false
         material.readsFromDepthBuffer = false

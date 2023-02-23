@@ -17,6 +17,7 @@ class ARFileManager: NSObject {
     private let manager = FileManager.default
     
     private let containerName = "ARAssets"
+    private let historyName = "History"
     
     public func setupAssetsContainer() {
         let urls: [URL] = manager.urls(for: .documentDirectory, in: .userDomainMask)
@@ -24,11 +25,20 @@ class ARFileManager: NSObject {
         
         
         let url = self.documentURL.appendingPathComponent(containerName, isDirectory: true)
+        let historyURL = self.documentURL.appendingPathComponent(historyName, isDirectory: true)
         var isDirectory: ObjCBool = ObjCBool(false)
         let isExist = manager.fileExists(atPath: url.path, isDirectory: &isDirectory)
+        let isExistHistory = manager.fileExists(atPath: historyURL.path, isDirectory: &isDirectory)
         if !isExist {
             do {
                 try manager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("createDirectory error:\(error)")
+            }
+        }
+        if !isExistHistory {
+            do {
+                try manager.createDirectory(at: historyURL, withIntermediateDirectories: true, attributes: nil)
             } catch {
                 print("createDirectory error:\(error)")
             }

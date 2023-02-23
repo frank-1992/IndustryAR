@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import BetterSegmentedControl
 
 class HomeContainerViewController: UIViewController {
     
@@ -40,6 +41,31 @@ class HomeContainerViewController: UIViewController {
 
     private func setupUI() {
         view.addSubview(collectionView)
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(view).offset(88)
+            make.left.right.equalTo(view)
+            make.bottom.equalTo(view)
+        }
+        
+        let control = BetterSegmentedControl(frame: CGRect(x: 100.0,
+                                                           y: 44,
+                                                           width: view.bounds.width - 200,
+                                                           height: 44.0))
+        control.segments = LabelSegment.segments(withTitles: ["Current", "History"],
+                                                          normalTextColor: UIColor(red: 0.48, green: 0.48, blue: 0.51, alpha: 1.00))
+        control.addTarget(self, action: #selector(segmentedControl1ValueChanged(_:)), for: .valueChanged)
+        view.addSubview(control)
+    }
+    
+    @objc
+    private func segmentedControl1ValueChanged(_ sender: BetterSegmentedControl) {
+        if sender.index == 0 {
+            // current
+            collectionView.isHidden = false
+        } else {
+            // history
+            collectionView.isHidden = true
+        }
     }
     
     // create assets container

@@ -116,7 +116,7 @@ class SettingsViewController: UIViewController {
 
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.resignFirstResponder()
+        self.view.endEditing(true)
         self.view.isHidden = true
         if let settingsClosure = settingsClosure {
             let settings = Settings(lineColor: currentLineColor,

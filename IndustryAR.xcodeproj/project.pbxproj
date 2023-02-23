@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		05F40DEA2994C10D0033C99E /* SCNNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F40DE92994C10D0033C99E /* SCNNode+Extensions.swift */; };
 		90A5358F00E577D0A8F2C422 /* Pods_IndustryAR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85061B28B0304062AE9528B4 /* Pods_IndustryAR.framework */; };
 		CE509C92298E1DA10081346C /* ShapeTypeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE509C91298E1DA10081346C /* ShapeTypeTableViewCell.swift */; };
 		CE509C94298E31D70081346C /* Maths.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE509C93298E31D70081346C /* Maths.swift */; };
@@ -112,10 +111,12 @@
 		F033BC9D29A4FEEE00625BAC /* SCNVector3+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC9829A4FEEE00625BAC /* SCNVector3+Extensions.swift */; };
 		F033BC9E29A4FEEE00625BAC /* SCNLineNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC9929A4FEEE00625BAC /* SCNLineNode.swift */; };
 		F033BC9F29A4FEEE00625BAC /* SCNGeometry+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BC9B29A4FEEE00625BAC /* SCNGeometry+Extensions.swift */; };
+		F033BCA229A7A7AF00625BAC /* TextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BCA129A7A7AF00625BAC /* TextInputView.swift */; };
+		F033BCA429A7A80A00625BAC /* SCNTextNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BCA329A7A80A00625BAC /* SCNTextNode.swift */; };
+		F033BCA629A7BDA100625BAC /* SCNNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BCA529A7BDA100625BAC /* SCNNode+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		05F40DE92994C10D0033C99E /* SCNNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNNode+Extensions.swift"; sourceTree = "<group>"; };
 		63939D8C61BAFB9C32E8B67C /* Pods-IndustryAR.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IndustryAR.debug.xcconfig"; path = "Target Support Files/Pods-IndustryAR/Pods-IndustryAR.debug.xcconfig"; sourceTree = "<group>"; };
 		85061B28B0304062AE9528B4 /* Pods_IndustryAR.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IndustryAR.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C332090FDEF32D528E1B8A7B /* Pods-IndustryAR.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IndustryAR.release.xcconfig"; path = "Target Support Files/Pods-IndustryAR/Pods-IndustryAR.release.xcconfig"; sourceTree = "<group>"; };
@@ -227,6 +228,9 @@
 		F033BC9829A4FEEE00625BAC /* SCNVector3+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNVector3+Extensions.swift"; sourceTree = "<group>"; };
 		F033BC9929A4FEEE00625BAC /* SCNLineNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCNLineNode.swift; sourceTree = "<group>"; };
 		F033BC9B29A4FEEE00625BAC /* SCNGeometry+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNGeometry+Extensions.swift"; sourceTree = "<group>"; };
+		F033BCA129A7A7AF00625BAC /* TextInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextInputView.swift; sourceTree = "<group>"; };
+		F033BCA329A7A80A00625BAC /* SCNTextNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCNTextNode.swift; sourceTree = "<group>"; };
+		F033BCA529A7BDA100625BAC /* SCNNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNNode+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -267,6 +271,7 @@
 				CE53FB85298E55FF0069CC7F /* SettingsTableViewCell.swift */,
 				CE53FB8B298E60590069CC7F /* ColorCollectionViewCell.swift */,
 				F033BB91299A883400625BAC /* BottomMenuView.swift */,
+				F033BCA129A7A7AF00625BAC /* TextInputView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -343,7 +348,8 @@
 		CECCE937296833700098B299 /* Node */ = {
 			isa = PBXGroup;
 			children = (
-				05F40DE92994C10D0033C99E /* SCNNode+Extensions.swift */,
+				F033BCA329A7A80A00625BAC /* SCNTextNode.swift */,
+				F033BCA529A7BDA100625BAC /* SCNNode+Extensions.swift */,
 				CEC5ADB6298E0EDD0054AD3A /* Line */,
 				CECCE938296833AC0098B299 /* VirtualObject.swift */,
 				CECE775C296D7C0D00D0D795 /* Square.swift */,
@@ -772,6 +778,7 @@
 			files = (
 				F033BC13299BD06600625BAC /* SceneRecorder.swift in Sources */,
 				F033BC9F29A4FEEE00625BAC /* SCNGeometry+Extensions.swift in Sources */,
+				F033BCA229A7A7AF00625BAC /* TextInputView.swift in Sources */,
 				F033BC08299BD06600625BAC /* RecordableLayer.swift in Sources */,
 				F033BC1C299BD06600625BAC /* VideoOutput.swift in Sources */,
 				F033BC1D299BD06600625BAC /* Renderable.swift in Sources */,
@@ -824,6 +831,7 @@
 				F033BC2D299BD06600625BAC /* SelfSceneRecordable.swift in Sources */,
 				CE9FD6BF2967C8780052C339 /* SceneDelegate.swift in Sources */,
 				F033BC2A299BD06600625BAC /* AssociatedStorage.swift in Sources */,
+				F033BCA629A7BDA100625BAC /* SCNNode+Extensions.swift in Sources */,
 				F033BC00299BD06600625BAC /* AudioEngine.Player.swift in Sources */,
 				F033BC23299BD06600625BAC /* UnfairLock.swift in Sources */,
 				F033BC2F299BD06600625BAC /* SCNView+SelfSceneRecordable.swift in Sources */,
@@ -839,7 +847,6 @@
 				F033BC06299BD06600625BAC /* MetalRecordable.swift in Sources */,
 				F033BC1F299BD06600625BAC /* Buffer.swift in Sources */,
 				F033BC1E299BD06600625BAC /* TimeScalable.swift in Sources */,
-				05F40DEA2994C10D0033C99E /* SCNNode+Extensions.swift in Sources */,
 				F033BC09299BD06600625BAC /* CAMetalLayer+RecordableLayer.swift in Sources */,
 				F033BC04299BD06600625BAC /* ARSCNView+CleanRecordable.swift in Sources */,
 				CECE775F296D7D1200D0D795 /* SquareSegment.swift in Sources */,
@@ -866,6 +873,7 @@
 				F033BC11299BD06600625BAC /* BaseRecorder.AudioInput.swift in Sources */,
 				CECCE935296820390098B299 /* ChildProjectTableViewCell.swift in Sources */,
 				F033BC0A299BD06600625BAC /* MTLPixelFormat+Helpers.swift in Sources */,
+				F033BCA429A7A80A00625BAC /* SCNTextNode.swift in Sources */,
 				CEC5ADBC298E1A590054AD3A /* ShapeMenuView.swift in Sources */,
 				F033BC0E299BD06600625BAC /* CALayer+InterfaceOrientation.swift in Sources */,
 				CECE42F5296BF8D400D0D795 /* ARViewController.swift in Sources */,

@@ -17,11 +17,8 @@ class Square: SCNNode {
     // Scale factor for the focus square when it is closed, w.r.t. the original size.
     static let scaleForClosedSquare: Float = 0.5
     
-    static let primaryColor = #colorLiteral(red: 1, green: 0.8, blue: 0, alpha: 1)
-    
-    // Color of the focus square fill.
-    static let fillColor = #colorLiteral(red: 1, green: 0.9254901961, blue: 0.4117647059, alpha: 1)
-    
+    static var primaryColor = #colorLiteral(red: 1, green: 0.8, blue: 0, alpha: 1)
+        
     private var segments: [Segment] = []
     
     private let positioningNode = SCNNode()
