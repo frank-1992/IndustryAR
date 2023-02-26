@@ -377,38 +377,58 @@ class ARViewController: UIViewController {
         // save SCN file
         bottomMenuView.saveSCNClosure = { [weak self]  in
             guard let self = self else { return }
-            guard let assetModel = self.assetModel else { return }
-            let fileName = assetModel.assetName.md5
-            let scene = self.sceneView.scene
             
-            let url = historyPath.appendingPathComponent(fileName, isDirectory: true)
-            var isDirectory: ObjCBool = ObjCBool(false)
-            let isExist = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
-            if !isExist {
-                do {
-                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-                } catch {
-                    print("createDirectory error:\(error)")
-                }
+            let textInputView = TextInputView(frame: .zero)
+            self.view.addSubview(textInputView)
+            
+            textInputView.snp.makeConstraints { make in
+                make.center.equalTo(self.view)
+                make.size.equalTo(CGSize(width: 300, height: 140))
             }
             
-            let fileURL = url.appendingPathComponent(fileName + ".scn")
-            scene.write(to: fileURL, options: nil, delegate: nil, progressHandler: nil)
-            
-            if let cadModelRoot = self.cadModelRoot {
-                let modelInfo = SceneModel()
-                modelInfo.modelPositionX = cadModelRoot.position.x
-                modelInfo.modelPositionY = cadModelRoot.position.y
-                modelInfo.modelPositionZ = cadModelRoot.position.z
-                modelInfo.modelScale = cadModelRoot.scale.x
-                modelInfo.modelOrientationX = cadModelRoot.orientation.x
-                modelInfo.modelOrientationY = cadModelRoot.orientation.y
-                modelInfo.modelOrientationZ = cadModelRoot.orientation.z
-                modelInfo.modelOrientationW = cadModelRoot.orientation.w
-                
-                let modelInfoString = JsonUtil.modelToJson(modelInfo)
-                UserDefaults.standard.set(modelInfoString, forKey: fileName)
-                HUD.flash(.label("Saved successfully"), delay: 1)
+            textInputView.confirmTextClosure = { name in
+                let fileName = name
+                let scene = self.sceneView.scene
+
+                let url = historyPath.appendingPathComponent(fileName, isDirectory: true)
+                var isDirectory: ObjCBool = ObjCBool(false)
+                let isExist = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
+                if !isExist {
+                    do {
+                        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+                    } catch {
+                        print("createDirectory error:\(error)")
+                    }
+                }
+
+                let fileURL = url.appendingPathComponent(fileName + ".scn")
+                scene.write(to: fileURL, options: nil, delegate: nil, progressHandler: nil)
+
+                // save screenshot
+                self.sceneView.takePhoto { (photo: UIImage) in
+                    let photoURL = url.appendingPathComponent(fileName + ".png")
+                    let imageData = photo.pngData()
+                    try? imageData?.write(to: photoURL)
+                }
+
+                if let cadModelRoot = self.cadModelRoot {
+                    let modelInfo = SceneModel()
+                    modelInfo.modelPositionX = cadModelRoot.position.x
+                    modelInfo.modelPositionY = cadModelRoot.position.y
+                    modelInfo.modelPositionZ = cadModelRoot.position.z
+                    modelInfo.modelScale = cadModelRoot.scale.x
+                    modelInfo.modelOrientationX = cadModelRoot.orientation.x
+                    modelInfo.modelOrientationY = cadModelRoot.orientation.y
+                    modelInfo.modelOrientationZ = cadModelRoot.orientation.z
+                    modelInfo.modelOrientationW = cadModelRoot.orientation.w
+
+                    // save model info json string
+                    let modelInfoString = JsonUtil.modelToJson(modelInfo)
+                    let modelInfoURL = url.appendingPathComponent(fileName + ".text")
+    //                UserDefaults.standard.set(modelInfoString, forKey: fileName)
+                    try? modelInfoString.write(to: modelInfoURL, atomically: true, encoding: .utf8)
+                    HUD.flash(.label("Saved successfully"), delay: 1)
+                }
             }
         }
         

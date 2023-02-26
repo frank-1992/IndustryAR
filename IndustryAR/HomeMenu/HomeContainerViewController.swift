@@ -15,7 +15,21 @@ class HomeContainerViewController: UIViewController {
     private let column: CGFloat = 3
     private let containerCellID = "containerCellID"
 
-    private lazy var collectionView: UICollectionView = {
+    private lazy var currentCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
+        let space = (UIScreen.main.bounds.width - itemWidth * column) / (column + 1)
+        layout.minimumLineSpacing = space
+        layout.minimumInteritemSpacing = space
+        layout.sectionInset = UIEdgeInsets(top: space, left: space, bottom: space, right: space)
+        let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
+        collectionView.register(HomeContainerCell.self, forCellWithReuseIdentifier: containerCellID)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        return collectionView
+    }()
+    
+    private lazy var historyCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
         let space = (UIScreen.main.bounds.width - itemWidth * column) / (column + 1)
@@ -40,8 +54,15 @@ class HomeContainerViewController: UIViewController {
     }
 
     private func setupUI() {
-        view.addSubview(collectionView)
-        collectionView.snp.makeConstraints { make in
+        view.addSubview(currentCollectionView)
+        currentCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(view).offset(88)
+            make.left.right.equalTo(view)
+            make.bottom.equalTo(view)
+        }
+        
+        view.addSubview(historyCollectionView)
+        historyCollectionView.snp.makeConstraints { make in
             make.top.equalTo(view).offset(88)
             make.left.right.equalTo(view)
             make.bottom.equalTo(view)
@@ -61,11 +82,20 @@ class HomeContainerViewController: UIViewController {
     private func segmentedControl1ValueChanged(_ sender: BetterSegmentedControl) {
         if sender.index == 0 {
             // current
-            collectionView.isHidden = false
+            currentCollectionView.isHidden = false
+            historyCollectionView.isHidden = true
         } else {
             // history
-            collectionView.isHidden = true
+            currentCollectionView.isHidden = true
+            historyCollectionView.isHidden = false
+            
+            // reload history list
+            
         }
+    }
+    
+    private func reloadHistoryData() {
+        
     }
     
     // create assets container
@@ -78,7 +108,7 @@ class HomeContainerViewController: UIViewController {
         ARFileManager.shared.traverseContainer { [weak self] projectModels in
             guard let self = self else { return }
             self.projectModels = projectModels
-            self.collectionView.reloadData()
+            self.currentCollectionView.reloadData()
         }
     }
 }
