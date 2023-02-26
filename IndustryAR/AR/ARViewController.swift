@@ -33,6 +33,7 @@ private extension SCNVector3 {
 class ARViewController: UIViewController {
     
     var assetModel: AssetModel?
+    var historyModel: HistoryModel?
     
     var usdzObjects: [VirtualObject] = []
     var scnObjects: [VirtualObject] = []
@@ -386,29 +387,39 @@ class ARViewController: UIViewController {
                 make.size.equalTo(CGSize(width: 300, height: 140))
             }
             
+            // save with name
             textInputView.confirmTextClosure = { name in
                 let fileName = name
                 let scene = self.sceneView.scene
 
-                let url = historyPath.appendingPathComponent(fileName, isDirectory: true)
+                let dirURL = historyPath.appendingPathComponent(fileName, isDirectory: true)
                 var isDirectory: ObjCBool = ObjCBool(false)
-                let isExist = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
+                let isExist = FileManager.default.fileExists(atPath: dirURL.path, isDirectory: &isDirectory)
                 if !isExist {
                     do {
-                        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+                        try FileManager.default.createDirectory(at: dirURL, withIntermediateDirectories: true, attributes: nil)
                     } catch {
                         print("createDirectory error:\(error)")
                     }
                 }
 
-                let fileURL = url.appendingPathComponent(fileName + ".scn")
+                let fileURL = dirURL.appendingPathComponent(fileName + ".scn")
                 scene.write(to: fileURL, options: nil, delegate: nil, progressHandler: nil)
 
                 // save screenshot
                 self.sceneView.takePhoto { (photo: UIImage) in
-                    let photoURL = url.appendingPathComponent(fileName + ".png")
+                    let photoURL = dirURL.appendingPathComponent(fileName + ".png")
                     let imageData = photo.pngData()
                     try? imageData?.write(to: photoURL)
+                }
+                
+                // copy usdz file
+                if let assetModel = self.assetModel {
+                    let usdzFiles = assetModel.usdzFilePaths
+                    if let usdzURL = usdzFiles.first {
+                        let newUSDZURL = dirURL.appendingPathComponent(fileName + ".usdz")
+                        try? FileManager.default.copyItem(at: usdzURL, to: newUSDZURL)
+                    }
                 }
 
                 if let cadModelRoot = self.cadModelRoot {
@@ -424,8 +435,7 @@ class ARViewController: UIViewController {
 
                     // save model info json string
                     let modelInfoString = JsonUtil.modelToJson(modelInfo)
-                    let modelInfoURL = url.appendingPathComponent(fileName + ".text")
-    //                UserDefaults.standard.set(modelInfoString, forKey: fileName)
+                    let modelInfoURL = dirURL.appendingPathComponent(fileName + ".txt")
                     try? modelInfoString.write(to: modelInfoURL, atomically: true, encoding: .utf8)
                     HUD.flash(.label("Saved successfully"), delay: 1)
                 }
@@ -883,43 +893,7 @@ class ARViewController: UIViewController {
     //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
     
     private func loadARModel() {
-        
-        guard let assetModel = assetModel else { return }
-//        let fileName = assetModel.assetName.md5
-//        let url = documentsPath.appendingPathComponent(fileName + ".scn")
-//        if FileManager.default.fileExists(atPath: url.relativePath) {
-//            if let modelInfoString = UserDefaults.standard.object(forKey: fileName) as? String {
-//                guard let modelInfo = JsonUtil.jsonToModel(modelInfoString, SceneModel.self) as? SceneModel else { return }
-//                do {
-//                    if let savedScene = try? SCNScene(url: url) {
-//                        if let usdzFile = assetModel.usdzFilePaths.first,
-//                           let usdzObject = VirtualObject(filePath: usdzFile.relativePath,
-//                                                          fileName: assetModel.assetName) {
-//                            if(cadModelRoot == nil) {
-//                                let cadModelRoot1 = SCNNode()
-//                                self.cadModelRoot = cadModelRoot1
-//                                cadModelRoot1.name = "ModelRoot"
-//
-//                                cadModelRoot1.addChildNode(usdzObject)
-//                                presetCadModel(cadModelNode: cadModelRoot1, bPivot: true, bSubdLevel: true)
-//
-//                                let markerRoot1 = SCNNode()
-//                                markerRoot = markerRoot1
-//
-//                                markerRoot1.name = "MarkerRoot"
-//                                cadModelRoot1.addChildNode(markerRoot1)
-//
-//                                cadModelRoot1.position = SCNVector3(x: modelInfo.modelPositionX, y: modelInfo.modelPositionY, z: modelInfo.modelPositionZ)
-//                                cadModelRoot1.scale = SCNVector3(modelInfo.modelScale, modelInfo.modelScale, modelInfo.modelScale)
-//                                cadModelRoot1.orientation = SCNQuaternion(modelInfo.modelOrientationX, modelInfo.modelOrientationY, modelInfo.modelOrientationZ, modelInfo.modelOrientationW)
-//                                savedScene.rootNode.addChildNode(cadModelRoot1)
-//                                sceneView.scene = savedScene
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        } else {
+        if let assetModel = assetModel {
             let usdzFiles = assetModel.usdzFilePaths
             let scnFiles = assetModel.scnFilePaths
             if !usdzFiles.isEmpty {
@@ -939,7 +913,44 @@ class ARViewController: UIViewController {
                     }
                 }
             }
-//        }
+        } else if let historyModel = historyModel {
+            guard let scnFileURL = historyModel.fileSCNPath,
+                  let usdzURL = historyModel.usdzPath,
+                  let tranformJsonStringURL = historyModel.fileTransformString else {
+                return
+            }
+            shapeMenuButton.isHidden = true
+            bottomMenuButton.isHidden = true
+            do {
+                guard let transformString = try? String(contentsOf: tranformJsonStringURL) else { return }
+                guard let modelInfo = JsonUtil.jsonToModel(transformString, SceneModel.self) as? SceneModel else { return }
+                if let savedScene = try? SCNScene(url: scnFileURL) {
+                    if let usdzObject = VirtualObject(filePath: usdzURL.relativePath,
+                                                      fileName: historyModel.fileName) {
+                        if(cadModelRoot == nil) {
+                            let cadModelRoot1 = SCNNode()
+                            self.cadModelRoot = cadModelRoot1
+                            cadModelRoot1.name = "ModelRoot"
+
+                            cadModelRoot1.addChildNode(usdzObject)
+                            presetCadModel(cadModelNode: cadModelRoot1, bPivot: true, bSubdLevel: true)
+
+                            let markerRoot1 = SCNNode()
+                            markerRoot = markerRoot1
+
+                            markerRoot1.name = "MarkerRoot"
+                            cadModelRoot1.addChildNode(markerRoot1)
+
+                            cadModelRoot1.position = SCNVector3(x: modelInfo.modelPositionX, y: modelInfo.modelPositionY, z: modelInfo.modelPositionZ)
+                            cadModelRoot1.scale = SCNVector3(modelInfo.modelScale, modelInfo.modelScale, modelInfo.modelScale)
+                            cadModelRoot1.orientation = SCNQuaternion(modelInfo.modelOrientationX, modelInfo.modelOrientationY, modelInfo.modelOrientationZ, modelInfo.modelOrientationW)
+                            savedScene.rootNode.addChildNode(cadModelRoot1)
+                            sceneView.scene = savedScene
+                        }
+                    }
+                }
+            }
+        }
     }
     
     private func showVirtualObject(with model: VirtualObject) {

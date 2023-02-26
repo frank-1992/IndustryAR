@@ -24,8 +24,8 @@ class ARFileManager: NSObject {
         self.documentURL = urls.first!
         
         
-        let url = self.documentURL.appendingPathComponent(containerName, isDirectory: true)
-        let historyURL = self.documentURL.appendingPathComponent(historyName, isDirectory: true)
+        let url = documentURL.appendingPathComponent(containerName, isDirectory: true)
+        let historyURL = documentURL.appendingPathComponent(historyName, isDirectory: true)
         var isDirectory: ObjCBool = ObjCBool(false)
         let isExist = manager.fileExists(atPath: url.path, isDirectory: &isDirectory)
         let isExistHistory = manager.fileExists(atPath: historyURL.path, isDirectory: &isDirectory)
@@ -42,6 +42,44 @@ class ARFileManager: NSObject {
             } catch {
                 print("createDirectory error:\(error)")
             }
+        }
+    }
+    
+    public func getHistoryChilds(completion: @escaping (_ historyList: [HistoryModel]) -> Void) {
+        do {
+            let historyURL = documentURL.appendingPathComponent(historyName, isDirectory: true)
+            let dirs = try manager.contentsOfDirectory(at: historyURL,
+                                                                includingPropertiesForKeys: nil,
+                                                                options: .skipsHiddenFiles)
+            var historyList = [HistoryModel]()
+            for childDir in dirs {
+                let dirPath = childDir.relativePath
+                let dirName = childDir.lastPathComponent
+                print("名称: \(dirName)")
+                let historyModel = HistoryModel()
+                historyModel.fileName = dirName
+                let dirURL = URL(fileURLWithPath: dirPath)
+                let usdzURL = dirURL.appendingPathComponent(dirName + ".usdz")
+                let screenShot = dirURL.appendingPathComponent(dirName + ".png")
+                let scnFile = dirURL.appendingPathComponent(dirName + ".scn")
+                let transformString = dirURL.appendingPathComponent(dirName + ".txt")
+                if manager.fileExists(atPath: usdzURL.relativePath) {
+                    historyModel.usdzPath = usdzURL
+                }
+                if manager.fileExists(atPath: screenShot.relativePath) {
+                    historyModel.fileThumbnail = screenShot
+                }
+                if manager.fileExists(atPath: scnFile.relativePath) {
+                    historyModel.fileSCNPath = scnFile
+                }
+                if manager.fileExists(atPath: transformString.relativePath) {
+                    historyModel.fileTransformString = transformString
+                }
+                historyList.append(historyModel)
+            }
+            completion(historyList)
+        } catch {
+            print("error:\(error)")
         }
     }
     

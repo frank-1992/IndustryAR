@@ -21,7 +21,6 @@ class ChildProjectListViewController: UIViewController {
         tableView.backgroundColor = .white
         tableView.delegate = self
         tableView.dataSource = self
-//        tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
         tableView.rowHeight = 200
         tableView.register(ChildProjectTableViewCell.self, forCellReuseIdentifier: childProjectTableViewCell)

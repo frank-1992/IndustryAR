@@ -114,6 +114,7 @@
 		F033BCA229A7A7AF00625BAC /* TextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BCA129A7A7AF00625BAC /* TextInputView.swift */; };
 		F033BCA429A7A80A00625BAC /* SCNTextNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BCA329A7A80A00625BAC /* SCNTextNode.swift */; };
 		F033BCA629A7BDA100625BAC /* SCNNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BCA529A7BDA100625BAC /* SCNNode+Extensions.swift */; };
+		F033BCA829AB23E400625BAC /* HistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BCA729AB23E400625BAC /* HistoryModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -231,6 +232,7 @@
 		F033BCA129A7A7AF00625BAC /* TextInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextInputView.swift; sourceTree = "<group>"; };
 		F033BCA329A7A80A00625BAC /* SCNTextNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCNTextNode.swift; sourceTree = "<group>"; };
 		F033BCA529A7BDA100625BAC /* SCNNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNNode+Extensions.swift"; sourceTree = "<group>"; };
+		F033BCA729AB23E400625BAC /* HistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -341,6 +343,7 @@
 				CECCCEFC296817800098B299 /* ARFileManager.swift */,
 				CECCE9312968197D0098B299 /* AssetModel.swift */,
 				CEC519AE297A74170054AD3A /* FileModel.swift */,
+				F033BCA729AB23E400625BAC /* HistoryModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -808,6 +811,7 @@
 				F033BC29299BD06600625BAC /* AudioAdapter.swift in Sources */,
 				CE509C92298E1DA10081346C /* ShapeTypeTableViewCell.swift in Sources */,
 				F033BC21299BD06600625BAC /* WeakCollection.swift in Sources */,
+				F033BCA829AB23E400625BAC /* HistoryModel.swift in Sources */,
 				CECCE93F296835110098B299 /* ARView.swift in Sources */,
 				CE53FB84298E4FFB0069CC7F /* SettingsViewController.swift in Sources */,
 				F033BBFA299BD06600625BAC /* PixelBufferPool.swift in Sources */,

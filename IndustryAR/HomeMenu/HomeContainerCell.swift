@@ -52,4 +52,10 @@ class HomeContainerCell: UICollectionViewCell {
         }
         nameLabel.text = projectModel.fileName
     }
+    
+    func setupHistoryUIWith(_ historyModel: HistoryModel) {
+        guard let modelThumbnailPath = historyModel.fileThumbnail else { return }
+        iconView.image = UIImage(contentsOfFile: modelThumbnailPath.relativePath)
+        nameLabel.text = historyModel.fileName
+    }
 }

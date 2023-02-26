@@ -14,6 +14,7 @@ class HomeContainerViewController: UIViewController {
     private let itemHeight: CGFloat = 300
     private let column: CGFloat = 3
     private let containerCellID = "containerCellID"
+    private let historyCellID = "historyCellID"
 
     private lazy var currentCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -37,13 +38,15 @@ class HomeContainerViewController: UIViewController {
         layout.minimumInteritemSpacing = space
         layout.sectionInset = UIEdgeInsets(top: space, left: space, bottom: space, right: space)
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
-        collectionView.register(HomeContainerCell.self, forCellWithReuseIdentifier: containerCellID)
+        collectionView.register(HomeContainerCell.self, forCellWithReuseIdentifier: historyCellID)
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.isHidden = true
         return collectionView
     }()
     
     private var projectModels: [FileModel] = [FileModel]()
+    private var historyModels: [HistoryModel] = [HistoryModel]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,12 +93,16 @@ class HomeContainerViewController: UIViewController {
             historyCollectionView.isHidden = false
             
             // reload history list
-            
+            reloadHistoryData()
         }
     }
     
     private func reloadHistoryData() {
-        
+        ARFileManager.shared.getHistoryChilds { [weak self] historyList in
+            guard let self = self else { return }
+            self.historyModels = historyList
+            self.historyCollectionView.reloadData()
+        }
     }
     
     // create assets container
@@ -116,24 +123,44 @@ class HomeContainerViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension HomeContainerViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return projectModels.count
+        if collectionView == currentCollectionView {
+            return projectModels.count
+        } else {
+            return historyModels.count
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let projectModel = projectModels[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: containerCellID, for: indexPath) as? HomeContainerCell ?? HomeContainerCell()
-        cell.setupUIWith(projectModel)
-        return cell
+        if collectionView == currentCollectionView {
+            let projectModel = projectModels[indexPath.row]
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: containerCellID, for: indexPath) as? HomeContainerCell ?? HomeContainerCell()
+            cell.setupUIWith(projectModel)
+            return cell
+        } else {
+            let historyModel = historyModels[indexPath.row]
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: historyCellID, for: indexPath) as? HomeContainerCell ?? HomeContainerCell()
+            cell.setupHistoryUIWith(historyModel)
+            return cell
+        }
+        
     }
 }
 
 // MARK: - UICollectionViewDelegate
 extension HomeContainerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let projectModel = projectModels[indexPath.row]
-        let childVC = ChildProjectListViewController()
-        childVC.modalPresentationStyle = .overFullScreen
-        childVC.projectModel = projectModel
-        present(childVC, animated: true)
+        if collectionView == currentCollectionView {
+            let projectModel = projectModels[indexPath.row]
+            let childVC = ChildProjectListViewController()
+            childVC.modalPresentationStyle = .overFullScreen
+            childVC.projectModel = projectModel
+            present(childVC, animated: true)
+        } else {
+            let model = historyModels[indexPath.row]
+            let arVC = ARViewController()
+            arVC.historyModel = model
+            arVC.modalPresentationStyle = .overFullScreen
+            present(arVC, animated: true)
+        }
     }
 }
