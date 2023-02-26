@@ -55,7 +55,6 @@ class ARFileManager: NSObject {
             for childDir in dirs {
                 let dirPath = childDir.relativePath
                 let dirName = childDir.lastPathComponent
-                print("名称: \(dirName)")
                 let historyModel = HistoryModel()
                 historyModel.fileName = dirName
                 let dirURL = URL(fileURLWithPath: dirPath)
@@ -63,6 +62,8 @@ class ARFileManager: NSObject {
                 let screenShot = dirURL.appendingPathComponent(dirName + ".png")
                 let scnFile = dirURL.appendingPathComponent(dirName + ".scn")
                 let transformString = dirURL.appendingPathComponent(dirName + ".txt")
+                let markerNameURL = dirURL.appendingPathComponent("markername.txt")
+                historyModel.markerNameURL = markerNameURL
                 if manager.fileExists(atPath: usdzURL.relativePath) {
                     historyModel.usdzPath = usdzURL
                 }

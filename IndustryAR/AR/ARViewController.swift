@@ -133,6 +133,23 @@ class ARViewController: UIViewController {
     // SCNTetx
     var textNode: SCNNode?
     
+    // SCNNode-----Circle
+    var circleNodes: [Circle] = [Circle]()
+    
+    // SCNNode-----Square
+    var squareNodes: [Square] = [Square]()
+    
+    // SCNNode-----Triangle
+    var triangleNodes: [Triangle] = [Triangle]()
+
+    // SCNNode-----Text
+    var textNodes: [SCNNode] = [SCNNode]()
+
+    // SCNNode-----Line
+    var lineNodes: [SCNLineNode] = [SCNLineNode]()
+
+    
+    
     @objc
     private func backButtonClicked() {
         dismiss(animated: true, completion: nil)
@@ -299,6 +316,7 @@ class ARViewController: UIViewController {
                     material.readsFromDepthBuffer = false
                     text.materials = [material]
                     let textNode = SCNNode(geometry: text)
+                    textNode.name = "text"
                     textNode.scale = SCNVector3(x: 0.01, y: 0.01, z: 0.01)
                     self.textNode = textNode
                 }
@@ -403,8 +421,7 @@ class ARViewController: UIViewController {
                     }
                 }
 
-                let fileURL = dirURL.appendingPathComponent(fileName + ".scn")
-                scene.write(to: fileURL, options: nil, delegate: nil, progressHandler: nil)
+                
 
                 // save screenshot
                 self.sceneView.takePhoto { (photo: UIImage) in
@@ -437,8 +454,47 @@ class ARViewController: UIViewController {
                     let modelInfoString = JsonUtil.modelToJson(modelInfo)
                     let modelInfoURL = dirURL.appendingPathComponent(fileName + ".txt")
                     try? modelInfoString.write(to: modelInfoURL, atomically: true, encoding: .utf8)
+                    
+                    // save marker names
+                    var markerName: [String] = [String]()
+                    for (index, circle) in self.circleNodes.enumerated() {
+                        let name = "circle" + "\(index)"
+                        circle.name = name
+                        markerName.append(name)
+                    }
+                    for (index, square) in self.squareNodes.enumerated() {
+                        let name = "square" + "\(index)"
+                        square.name = name
+                        markerName.append(name)
+                    }
+                    for (index, triangle) in self.triangleNodes.enumerated() {
+                        let name = "triangle" + "\(index)"
+                        triangle.name = name
+                        markerName.append(name)
+                    }
+                    for (index, textNode) in self.textNodes.enumerated() {
+                        let name = "text" + "\(index)"
+                        textNode.name = name
+                        markerName.append(name)
+                    }
+                    for (index, lineNode) in self.lineNodes.enumerated() {
+                        let name = "line" + "\(index)"
+                        lineNode.name = name
+                        markerName.append(name)
+                    }
+                    
+                    guard let markerData = try? JSONSerialization.data(withJSONObject: markerName, options: []),
+                          let markerString = String(data: markerData, encoding: String.Encoding.utf8) else {
+                        return
+                    }
+                    
+                    let markerURL = dirURL.appendingPathComponent("markername.txt")
+                    try? markerString.write(to: markerURL, atomically: true, encoding: .utf8)
                     HUD.flash(.label("Saved successfully"), delay: 1)
                 }
+                
+                let fileURL = dirURL.appendingPathComponent(fileName + ".scn")
+                scene.write(to: fileURL, options: nil, delegate: nil, progressHandler: nil)
             }
         }
         
@@ -473,7 +529,6 @@ class ARViewController: UIViewController {
         guard let function = function else { return }
         if function == .triangle {
             let triangleNode = Triangle()
-            
             //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
             
             //triangleNode.simdWorldPosition = tapPoint_world
@@ -492,6 +547,7 @@ class ARViewController: UIViewController {
             triangleNode.transform = localTransform
             
             markerRoot?.addChildNode(triangleNode)
+            triangleNodes.append(triangleNode)
             //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
             
             /*
@@ -502,7 +558,6 @@ class ARViewController: UIViewController {
         
         if function == .square {
             let squareNode = Square()
-            
             //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
             
             //squareNode.simdWorldPosition = tapPoint_world
@@ -521,6 +576,7 @@ class ARViewController: UIViewController {
             squareNode.transform = localTransform
             
             markerRoot?.addChildNode(squareNode)
+            squareNodes.append(squareNode)
             //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
              
             /*
@@ -531,7 +587,7 @@ class ARViewController: UIViewController {
         
         if function == .circle {
             let circleNode = Circle()
-            
+//            circleNode.name = "circle"
             //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
             
             //circleNode.simdWorldPosition = tapPoint_world
@@ -550,6 +606,7 @@ class ARViewController: UIViewController {
             circleNode.transform = localTransform
             
             markerRoot?.addChildNode(circleNode)
+            circleNodes.append(circleNode)
             //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
              
             /*
@@ -559,11 +616,14 @@ class ARViewController: UIViewController {
         }
         
         if function == .text {
-            guard let textNode = textNode,
-                  let camera = sceneView.pointOfView else {
+            guard let textNode = textNode else {
                 return
             }
 
+            let constraint = SCNBillboardConstraint()
+            constraint.freeAxes = SCNBillboardAxis.Y
+            textNode.constraints = [constraint]
+            
             let min = textNode.boundingBox.min * 0.01
             let max = textNode.boundingBox.max * 0.01
             let width = max.x - min.x
@@ -574,9 +634,9 @@ class ARViewController: UIViewController {
             let centerZ = tapPoint_world.z - depth/2.0
             
             textNode.position = SCNVector3(x: centerX, y: centerY, z: centerZ)
-            textNode.orientation = camera.orientation
             
             markerRoot?.addChildNode(textNode)
+            textNodes.append(textNode)
             self.textNode = nil
         }
     }
@@ -938,12 +998,29 @@ class ARViewController: UIViewController {
                             let markerRoot1 = SCNNode()
                             markerRoot = markerRoot1
 
+                           
+                            if let markerNameURL = historyModel.markerNameURL,
+                               let markerNameString = try? String(contentsOf: markerNameURL),
+                               let data = markerNameString.data(using: .utf8),
+                               let markerNames = try? JSONSerialization.jsonObject(with: data, options: []) as? [String] {
+                                for marker in markerNames {
+                                    if let childNode = savedScene.rootNode.childNode(withName: marker, recursively: true) {
+                                        markerRoot1.addChildNode(childNode)
+                                        
+//                                        let constraint = SCNLookAtConstraint(target: sceneView.pointOfView)
+//                                        constraint.isGimbalLockEnabled = true
+//                                        childNode.constraints = [constraint]
+                                    }
+                                }
+                            }
+                            
                             markerRoot1.name = "MarkerRoot"
                             cadModelRoot1.addChildNode(markerRoot1)
-
+                            
                             cadModelRoot1.position = SCNVector3(x: modelInfo.modelPositionX, y: modelInfo.modelPositionY, z: modelInfo.modelPositionZ)
                             cadModelRoot1.scale = SCNVector3(modelInfo.modelScale, modelInfo.modelScale, modelInfo.modelScale)
                             cadModelRoot1.orientation = SCNQuaternion(modelInfo.modelOrientationX, modelInfo.modelOrientationY, modelInfo.modelOrientationZ, modelInfo.modelOrientationW)
+                            
                             savedScene.rootNode.addChildNode(cadModelRoot1)
                             sceneView.scene = savedScene
                         }
@@ -1213,6 +1290,8 @@ class ARViewController: UIViewController {
         let transform = sceneView.scene.rootNode.convertTransform(drawingNode.transform, to: markerRoot)
         markerRoot.addChildNode(drawingNode)
         drawingNode.transform = transform
+        
+        lineNodes.append(drawingNode)
     }
 
     private func addPointAndCreateVertices() {
@@ -1237,6 +1316,12 @@ class ARViewController: UIViewController {
     private func reset() {
         hitVertices.removeAll()
         drawingNode = nil
+    }
+    
+    deinit {
+        sceneView.removeFromSuperview()
+        assetModel = nil
+        historyModel = nil
     }
 }
 

@@ -13,4 +13,5 @@ class HistoryModel: NSObject {
     var fileSCNPath: URL?
     var fileThumbnail: URL?
     var fileTransformString: URL?
+    var markerNameURL: URL?
 }
