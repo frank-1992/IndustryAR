@@ -1,0 +1,41 @@
+/* 
+  Localizable.strings
+  IndustryAR
+
+  Created by 吴熠 on 3/1/23.
+  
+*/
+
+"project" = "計画";
+"history" = "歴史";
+
+"drawing" = "フリーハンド";
+"triangle" = "三角形";
+"square" = "四角形";
+"circle" = "円";
+"text" = "テキスト";
+"insert_occlusion" = "オクルージョン復元";
+"remove_occlusion" = "オクルージョン";
+"delete" = "消去";
+"setting" = "設定";
+"marker" = "マーク表示";
+"none_marker" = "マーク非表示";
+
+"enter_text" = "テキストを入力してください";
+"cancel" = "キャンセル";
+"confirm" = "確認";
+
+"line_color" = "線色:";
+"line_thickness" = "線幅:";
+"line_type" = "線種:";
+"marker_size" = "マーカサイズ:";
+"text_color" = "テキスト色:";
+"text_size" = "テキストサイズ:";
+"text_font" = "テキストフォント:";
+
+"normal_line" = "実線";
+"dash_line" = "点線";
+
+"save_success" = "正常に保存";
+"save_fail" = "保存失敗";
+"save_error" = "ビデオを保存できませんでした";

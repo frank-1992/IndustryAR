@@ -13,7 +13,7 @@ enum Function {
     case square
     case circle
     case text
-    case depthSegmentation
+    case occlusion
     case delete
     case settings
     case showSymbol
@@ -25,8 +25,16 @@ class ShapeMenuView: UIView {
     private let shapeTableViewCell = "shapeTableViewCell"
     
     private let icons = ["quxian", "sanjiaoxing", "cub", "yuanxing", "wenzi", "zhedang", "shanchu", "shezhi", "biaoji"]
-    private let names = ["徒手画", "三角形", "四边形", "圆", "文字注解", "遮挡剔除", "删除", "设置", "标记显示"]
-    private let functions: [Function] = [.line, .triangle, .square, .circle, .text, .depthSegmentation, .delete, .settings, .showSymbol]
+    private var names = [drawing.localizedString(),
+                         triangle.localizedString(),
+                         square.localizedString(),
+                         circle.localizedString(),
+                         text_local.localizedString(),
+                         remove_occlusion.localizedString(),
+                         delete_local.localizedString(),
+                         setting_local.localizedString(),
+                         none_marker_local.localizedString()]
+    private let functions: [Function] = [.line, .triangle, .square, .circle, .text, .occlusion, .delete, .settings, .showSymbol]
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: self.bounds)
@@ -59,6 +67,22 @@ class ShapeMenuView: UIView {
         tableView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }
+    }
+    
+    func resetMarkerTitleState(title: String) {
+        names.remove(at: names.count - 1)
+        names.append(title.localizedString())
+        tableView.reloadData()
+    }
+    
+    func resetOcclusionTitleState(title: String) {
+        names.remove(at: 5)
+        names.insert(title.localizedString(), at: 5)
+        tableView.reloadData()
+    }
+    
+    func resetUI() {
+        tableView.reloadData()
     }
 
 }
@@ -98,7 +122,8 @@ extension ShapeMenuView: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let function = functions[indexPath.row]
+        let cell = tableView.cellForRow(at: indexPath) as? ShapeTypeTableViewCell ?? ShapeTypeTableViewCell()
+        cell.selectedFlag = false
         if let deselectShapeTypeClosure = deselectShapeTypeClosure {
             deselectShapeTypeClosure(.none)
         }

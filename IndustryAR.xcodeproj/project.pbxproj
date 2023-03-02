@@ -16,21 +16,17 @@
 		CE53FB84298E4FFB0069CC7F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE53FB83298E4FFB0069CC7F /* SettingsViewController.swift */; };
 		CE53FB86298E55FF0069CC7F /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE53FB85298E55FF0069CC7F /* SettingsTableViewCell.swift */; };
 		CE53FB8C298E60590069CC7F /* ColorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE53FB8B298E60590069CC7F /* ColorCollectionViewCell.swift */; };
-		CE53FB8E298E66C50069CC7F /* ColorSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE53FB8D298E66C50069CC7F /* ColorSettings.swift */; };
 		CE9FD6BD2967C8780052C339 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6BC2967C8780052C339 /* AppDelegate.swift */; };
-		CE9FD6BF2967C8780052C339 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6BE2967C8780052C339 /* SceneDelegate.swift */; };
 		CE9FD6C12967C8780052C339 /* ChildProjectListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9FD6C02967C8780052C339 /* ChildProjectListViewController.swift */; };
 		CE9FD6C42967C8780052C339 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE9FD6C22967C8780052C339 /* Main.storyboard */; };
 		CE9FD6C62967C87A0052C339 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE9FD6C52967C87A0052C339 /* Assets.xcassets */; };
 		CE9FD6C92967C87A0052C339 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE9FD6C72967C87A0052C339 /* LaunchScreen.storyboard */; };
-		CEC519AB297A6C8E0054AD3A /* HomeContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC519AA297A6C8E0054AD3A /* HomeContainerViewController.swift */; };
 		CEC519AD297A6EAA0054AD3A /* HomeContainerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC519AC297A6EAA0054AD3A /* HomeContainerCell.swift */; };
 		CEC519AF297A74170054AD3A /* FileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC519AE297A74170054AD3A /* FileModel.swift */; };
 		CEC5ADBC298E1A590054AD3A /* ShapeMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC5ADBB298E1A590054AD3A /* ShapeMenuView.swift */; };
 		CECCCEFD296817800098B299 /* ARFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCCEFC296817800098B299 /* ARFileManager.swift */; };
 		CECCE9322968197D0098B299 /* AssetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE9312968197D0098B299 /* AssetModel.swift */; };
 		CECCE935296820390098B299 /* ChildProjectTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE934296820390098B299 /* ChildProjectTableViewCell.swift */; };
-		CECCE939296833AC0098B299 /* VirtualObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE938296833AC0098B299 /* VirtualObject.swift */; };
 		CECCE93C296833D90098B299 /* ARUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE93B296833D90098B299 /* ARUtilities.swift */; };
 		CECCE93F296835110098B299 /* ARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCE93E296835110098B299 /* ARView.swift */; };
 		CECE42F5296BF8D400D0D795 /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE42F4296BF8D400D0D795 /* ARViewController.swift */; };
@@ -39,6 +35,17 @@
 		CECE7761296D85D000D0D795 /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE7760296D85D000D0D795 /* Triangle.swift */; };
 		CECE7763296E946A00D0D795 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE7762296E946A00D0D795 /* Circle.swift */; };
 		CECE7765296E9E2700D0D795 /* DashLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECE7764296E9E2700D0D795 /* DashLine.swift */; };
+		CEDF541529AC5ADD00C5AC95 /* CurrentProjectListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF541429AC5ADD00C5AC95 /* CurrentProjectListController.swift */; };
+		CEDF541729AC5B0500C5AC95 /* Regular.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF541629AC5B0500C5AC95 /* Regular.swift */; };
+		CEDF541B29AC662900C5AC95 /* RootTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF541A29AC662900C5AC95 /* RootTabbarController.swift */; };
+		CEDF541D29AC667C00C5AC95 /* BaseNavgationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF541C29AC667C00C5AC95 /* BaseNavgationController.swift */; };
+		CEDF542229AC672200C5AC95 /* UIFont+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF542129AC672200C5AC95 /* UIFont+Extension.swift */; };
+		CEDF542429AC68E400C5AC95 /* ColorSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF542329AC68E400C5AC95 /* ColorSettings.swift */; };
+		CEDF542629AC718F00C5AC95 /* HistoryProjectListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF542529AC718F00C5AC95 /* HistoryProjectListController.swift */; };
+		CEDF542B29ADA9B500C5AC95 /* ShapeSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF542A29ADA9B500C5AC95 /* ShapeSetting.swift */; };
+		CEDF542D29AE103D00C5AC95 /* ARViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF542C29AE103D00C5AC95 /* ARViewController+Extension.swift */; };
+		CEDF543B29AF215500C5AC95 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CEDF543D29AF215500C5AC95 /* Localizable.strings */; };
+		CEDF544129AF2D4E00C5AC95 /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF544029AF2D4E00C5AC95 /* Localizable.swift */; };
 		F033BB92299A883400625BAC /* BottomMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BB91299A883400625BAC /* BottomMenuView.swift */; };
 		F033BBF1299BD06600625BAC /* VideoRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BB97299BD06600625BAC /* VideoRecording.swift */; };
 		F033BBF2299BD06600625BAC /* VideoSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BB98299BD06600625BAC /* VideoSettings.swift */; };
@@ -129,23 +136,19 @@
 		CE53FB83298E4FFB0069CC7F /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		CE53FB85298E55FF0069CC7F /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
 		CE53FB8B298E60590069CC7F /* ColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionViewCell.swift; sourceTree = "<group>"; };
-		CE53FB8D298E66C50069CC7F /* ColorSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorSettings.swift; sourceTree = "<group>"; };
 		CE9FD6B92967C8780052C339 /* IndustryAR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IndustryAR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE9FD6BC2967C8780052C339 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		CE9FD6BE2967C8780052C339 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		CE9FD6C02967C8780052C339 /* ChildProjectListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProjectListViewController.swift; sourceTree = "<group>"; };
 		CE9FD6C32967C8780052C339 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CE9FD6C52967C87A0052C339 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CE9FD6C82967C87A0052C339 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CE9FD6CA2967C87A0052C339 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CEC519AA297A6C8E0054AD3A /* HomeContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeContainerViewController.swift; sourceTree = "<group>"; };
 		CEC519AC297A6EAA0054AD3A /* HomeContainerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeContainerCell.swift; sourceTree = "<group>"; };
 		CEC519AE297A74170054AD3A /* FileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileModel.swift; sourceTree = "<group>"; };
 		CEC5ADBB298E1A590054AD3A /* ShapeMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeMenuView.swift; sourceTree = "<group>"; };
 		CECCCEFC296817800098B299 /* ARFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARFileManager.swift; sourceTree = "<group>"; };
 		CECCE9312968197D0098B299 /* AssetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetModel.swift; sourceTree = "<group>"; };
 		CECCE934296820390098B299 /* ChildProjectTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProjectTableViewCell.swift; sourceTree = "<group>"; };
-		CECCE938296833AC0098B299 /* VirtualObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualObject.swift; sourceTree = "<group>"; };
 		CECCE93B296833D90098B299 /* ARUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARUtilities.swift; sourceTree = "<group>"; };
 		CECCE93E296835110098B299 /* ARView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARView.swift; sourceTree = "<group>"; };
 		CECE42F4296BF8D400D0D795 /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
@@ -154,6 +157,23 @@
 		CECE7760296D85D000D0D795 /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
 		CECE7762296E946A00D0D795 /* Circle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Circle.swift; sourceTree = "<group>"; };
 		CECE7764296E9E2700D0D795 /* DashLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashLine.swift; sourceTree = "<group>"; };
+		CEDF541429AC5ADD00C5AC95 /* CurrentProjectListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentProjectListController.swift; sourceTree = "<group>"; };
+		CEDF541629AC5B0500C5AC95 /* Regular.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Regular.swift; sourceTree = "<group>"; };
+		CEDF541A29AC662900C5AC95 /* RootTabbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabbarController.swift; sourceTree = "<group>"; };
+		CEDF541C29AC667C00C5AC95 /* BaseNavgationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNavgationController.swift; sourceTree = "<group>"; };
+		CEDF542129AC672200C5AC95 /* UIFont+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
+		CEDF542329AC68E400C5AC95 /* ColorSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorSettings.swift; sourceTree = "<group>"; };
+		CEDF542529AC718F00C5AC95 /* HistoryProjectListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryProjectListController.swift; sourceTree = "<group>"; };
+		CEDF542A29ADA9B500C5AC95 /* ShapeSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSetting.swift; sourceTree = "<group>"; };
+		CEDF542C29AE103D00C5AC95 /* ARViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARViewController+Extension.swift"; sourceTree = "<group>"; };
+		CEDF543529AF212700C5AC95 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
+		CEDF543629AF212700C5AC95 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		CEDF543729AF212F00C5AC95 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
+		CEDF543829AF212F00C5AC95 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		CEDF543C29AF215500C5AC95 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CEDF543E29AF215B00C5AC95 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		CEDF543F29AF215C00C5AC95 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CEDF544029AF2D4E00C5AC95 /* Localizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
 		F033BB91299A883400625BAC /* BottomMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomMenuView.swift; sourceTree = "<group>"; };
 		F033BB97299BD06600625BAC /* VideoRecording.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoRecording.swift; sourceTree = "<group>"; };
 		F033BB98299BD06600625BAC /* VideoSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoSettings.swift; sourceTree = "<group>"; };
@@ -299,6 +319,8 @@
 		CE9FD6BB2967C8780052C339 /* IndustryAR */ = {
 			isa = PBXGroup;
 			children = (
+				CEDF542E29AF1FAF00C5AC95 /* Language */,
+				CEDF541E29AC66E900C5AC95 /* Extension */,
 				F033BB93299BD03E00625BAC /* Recorder */,
 				CECCE93D296835080098B299 /* AR */,
 				CECCE93A296833B10098B299 /* Util */,
@@ -306,7 +328,6 @@
 				CECCE936296833460098B299 /* Model */,
 				CECCE933296820170098B299 /* HomeMenu */,
 				CE9FD6BC2967C8780052C339 /* AppDelegate.swift */,
-				CE9FD6BE2967C8780052C339 /* SceneDelegate.swift */,
 				CE9FD6C22967C8780052C339 /* Main.storyboard */,
 				CE9FD6C52967C87A0052C339 /* Assets.xcassets */,
 				CE9FD6C72967C87A0052C339 /* LaunchScreen.storyboard */,
@@ -329,10 +350,11 @@
 		CECCE933296820170098B299 /* HomeMenu */ = {
 			isa = PBXGroup;
 			children = (
+				CEDF542729AC8D3C00C5AC95 /* Root */,
 				CE9FD6C02967C8780052C339 /* ChildProjectListViewController.swift */,
 				CECCE934296820390098B299 /* ChildProjectTableViewCell.swift */,
-				CEC519AA297A6C8E0054AD3A /* HomeContainerViewController.swift */,
 				CEC519AC297A6EAA0054AD3A /* HomeContainerCell.swift */,
+				CEDF541629AC5B0500C5AC95 /* Regular.swift */,
 			);
 			path = HomeMenu;
 			sourceTree = "<group>";
@@ -354,12 +376,12 @@
 				F033BCA329A7A80A00625BAC /* SCNTextNode.swift */,
 				F033BCA529A7BDA100625BAC /* SCNNode+Extensions.swift */,
 				CEC5ADB6298E0EDD0054AD3A /* Line */,
-				CECCE938296833AC0098B299 /* VirtualObject.swift */,
 				CECE775C296D7C0D00D0D795 /* Square.swift */,
 				CECE7760296D85D000D0D795 /* Triangle.swift */,
 				CECE7762296E946A00D0D795 /* Circle.swift */,
 				CECE775E296D7D1200D0D795 /* SquareSegment.swift */,
 				CECE7764296E9E2700D0D795 /* DashLine.swift */,
+				CEDF542A29ADA9B500C5AC95 /* ShapeSetting.swift */,
 			);
 			path = Node;
 			sourceTree = "<group>";
@@ -368,7 +390,6 @@
 			isa = PBXGroup;
 			children = (
 				F033BC7B299FE93D00625BAC /* JsonUtil.swift */,
-				CE53FB8D298E66C50069CC7F /* ColorSettings.swift */,
 				CECCE93B296833D90098B299 /* ARUtilities.swift */,
 				CE53166A298E72C70069CC7F /* UserDefaults+Extension.swift */,
 			);
@@ -383,8 +404,38 @@
 				CECE42F4296BF8D400D0D795 /* ARViewController.swift */,
 				F033BC33299BDADC00625BAC /* RecorderResultViewController.swift */,
 				F033BC79299FDD6A00625BAC /* SceneModel.swift */,
+				CEDF542C29AE103D00C5AC95 /* ARViewController+Extension.swift */,
 			);
 			path = AR;
+			sourceTree = "<group>";
+		};
+		CEDF541E29AC66E900C5AC95 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF542329AC68E400C5AC95 /* ColorSettings.swift */,
+				CEDF542129AC672200C5AC95 /* UIFont+Extension.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		CEDF542729AC8D3C00C5AC95 /* Root */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF541A29AC662900C5AC95 /* RootTabbarController.swift */,
+				CEDF541C29AC667C00C5AC95 /* BaseNavgationController.swift */,
+				CEDF542529AC718F00C5AC95 /* HistoryProjectListController.swift */,
+				CEDF541429AC5ADD00C5AC95 /* CurrentProjectListController.swift */,
+			);
+			path = Root;
+			sourceTree = "<group>";
+		};
+		CEDF542E29AF1FAF00C5AC95 /* Language */ = {
+			isa = PBXGroup;
+			children = (
+				CEDF543D29AF215500C5AC95 /* Localizable.strings */,
+				CEDF544029AF2D4E00C5AC95 /* Localizable.swift */,
+			);
+			path = Language;
 			sourceTree = "<group>";
 		};
 		F033BB93299BD03E00625BAC /* Recorder */ = {
@@ -708,6 +759,8 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
+				ja,
 			);
 			mainGroup = CE9FD6B02967C8780052C339;
 			productRefGroup = CE9FD6BA2967C8780052C339 /* Products */;
@@ -725,6 +778,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE9FD6C92967C87A0052C339 /* LaunchScreen.storyboard in Resources */,
+				CEDF543B29AF215500C5AC95 /* Localizable.strings in Resources */,
 				CE9FD6C62967C87A0052C339 /* Assets.xcassets in Resources */,
 				CE9FD6C42967C8780052C339 /* Main.storyboard in Resources */,
 			);
@@ -786,6 +840,7 @@
 				F033BC1C299BD06600625BAC /* VideoOutput.swift in Sources */,
 				F033BC1D299BD06600625BAC /* Renderable.swift in Sources */,
 				F033BC27299BD06600625BAC /* Atomic.swift in Sources */,
+				CEDF541529AC5ADD00C5AC95 /* CurrentProjectListController.swift in Sources */,
 				F033BBFF299BD06600625BAC /* VideoSettings.CompressionProperties.swift in Sources */,
 				F033BC18299BD06600625BAC /* PixelBufferOutput.swift in Sources */,
 				F033BC20299BD06600625BAC /* Property.swift in Sources */,
@@ -800,6 +855,7 @@
 				F033BC17299BD06600625BAC /* VideoRecording.Info.swift in Sources */,
 				CE9FD6BD2967C8780052C339 /* AppDelegate.swift in Sources */,
 				F033BBF9299BD06600625BAC /* MetalTexture.swift in Sources */,
+				CEDF544129AF2D4E00C5AC95 /* Localizable.swift in Sources */,
 				CECE7765296E9E2700D0D795 /* DashLine.swift in Sources */,
 				F033BC31299BD06600625BAC /* MTDOriginMulticastDelegate.m in Sources */,
 				F033BBFD299BD06600625BAC /* PixelBuffer.swift in Sources */,
@@ -812,17 +868,19 @@
 				CE509C92298E1DA10081346C /* ShapeTypeTableViewCell.swift in Sources */,
 				F033BC21299BD06600625BAC /* WeakCollection.swift in Sources */,
 				F033BCA829AB23E400625BAC /* HistoryModel.swift in Sources */,
+				CEDF542429AC68E400C5AC95 /* ColorSettings.swift in Sources */,
 				CECCE93F296835110098B299 /* ARView.swift in Sources */,
 				CE53FB84298E4FFB0069CC7F /* SettingsViewController.swift in Sources */,
 				F033BBFA299BD06600625BAC /* PixelBufferPool.swift in Sources */,
-				CEC519AB297A6C8E0054AD3A /* HomeContainerViewController.swift in Sources */,
 				F033BC16299BD06600625BAC /* CleanRecorder.VideoInput.swift in Sources */,
 				F033BC28299BD06600625BAC /* Updater.swift in Sources */,
+				CEDF542629AC718F00C5AC95 /* HistoryProjectListController.swift in Sources */,
 				F033BC1A299BD06600625BAC /* VideoOutput.Error.swift in Sources */,
 				CEC519AF297A74170054AD3A /* FileModel.swift in Sources */,
 				F033BC03299BD06600625BAC /* CleanRecordable.swift in Sources */,
 				F033BB92299A883400625BAC /* BottomMenuView.swift in Sources */,
 				CECE775D296D7C0D00D0D795 /* Square.swift in Sources */,
+				CEDF541B29AC662900C5AC95 /* RootTabbarController.swift in Sources */,
 				F033BC30299BD06600625BAC /* MTDMulticastDelegate.m in Sources */,
 				F033BBF8299BD06600625BAC /* MetalTexturePool.swift in Sources */,
 				F033BBFE299BD06600625BAC /* PixelBufferPoolFactory.swift in Sources */,
@@ -833,13 +891,14 @@
 				F033BBF5299BD06600625BAC /* MediaSession.swift in Sources */,
 				F033BC1B299BD06600625BAC /* VideoOutput.State.swift in Sources */,
 				F033BC2D299BD06600625BAC /* SelfSceneRecordable.swift in Sources */,
-				CE9FD6BF2967C8780052C339 /* SceneDelegate.swift in Sources */,
 				F033BC2A299BD06600625BAC /* AssociatedStorage.swift in Sources */,
 				F033BCA629A7BDA100625BAC /* SCNNode+Extensions.swift in Sources */,
+				CEDF541D29AC667C00C5AC95 /* BaseNavgationController.swift in Sources */,
 				F033BC00299BD06600625BAC /* AudioEngine.Player.swift in Sources */,
 				F033BC23299BD06600625BAC /* UnfairLock.swift in Sources */,
 				F033BC2F299BD06600625BAC /* SCNView+SelfSceneRecordable.swift in Sources */,
 				F033BC02299BD06600625BAC /* AudioEngine.Player.State.swift in Sources */,
+				CEDF542229AC672200C5AC95 /* UIFont+Extension.swift in Sources */,
 				F033BC25299BD06600625BAC /* ReadWriteLock.swift in Sources */,
 				CE53FB86298E55FF0069CC7F /* SettingsTableViewCell.swift in Sources */,
 				F033BC15299BD06600625BAC /* CleanRecorder.swift in Sources */,
@@ -853,15 +912,16 @@
 				F033BC1E299BD06600625BAC /* TimeScalable.swift in Sources */,
 				F033BC09299BD06600625BAC /* CAMetalLayer+RecordableLayer.swift in Sources */,
 				F033BC04299BD06600625BAC /* ARSCNView+CleanRecordable.swift in Sources */,
+				CEDF542D29AE103D00C5AC95 /* ARViewController+Extension.swift in Sources */,
 				CECE775F296D7D1200D0D795 /* SquareSegment.swift in Sources */,
 				F033BC24299BD06600625BAC /* ReadWriteAtomic.swift in Sources */,
 				F033BC07299BD06600625BAC /* AudioSettings.swift in Sources */,
 				F033BBF2299BD06600625BAC /* VideoSettings.swift in Sources */,
 				F033BBF6299BD06600625BAC /* MediaSessionInput.swift in Sources */,
 				F033BC7A299FDD6A00625BAC /* SceneModel.swift in Sources */,
+				CEDF542B29ADA9B500C5AC95 /* ShapeSetting.swift in Sources */,
 				CECCE9322968197D0098B299 /* AssetModel.swift in Sources */,
 				CE509C98298E32410081346C /* SphereNodesManager.swift in Sources */,
-				CE53FB8E298E66C50069CC7F /* ColorSettings.swift in Sources */,
 				F033BC7C299FE93D00625BAC /* JsonUtil.swift in Sources */,
 				CECCCEFD296817800098B299 /* ARFileManager.swift in Sources */,
 				F033BBFB299BD06600625BAC /* MetalTexturePoolFactory.swift in Sources */,
@@ -869,7 +929,6 @@
 				F033BC05299BD06600625BAC /* SCNView+MetalRecordable.swift in Sources */,
 				F033BC2C299BD06600625BAC /* Weak.swift in Sources */,
 				F033BC14299BD06600625BAC /* SceneRecorder.VideoInput.swift in Sources */,
-				CECCE939296833AC0098B299 /* VirtualObject.swift in Sources */,
 				F033BC34299BDADC00625BAC /* RecorderResultViewController.swift in Sources */,
 				F033BC0D299BD06600625BAC /* IOSurface+Size.swift in Sources */,
 				CE509C96298E32010081346C /* StrokeAnchor.swift in Sources */,
@@ -878,6 +937,7 @@
 				CECCE935296820390098B299 /* ChildProjectTableViewCell.swift in Sources */,
 				F033BC0A299BD06600625BAC /* MTLPixelFormat+Helpers.swift in Sources */,
 				F033BCA429A7A80A00625BAC /* SCNTextNode.swift in Sources */,
+				CEDF541729AC5B0500C5AC95 /* Regular.swift in Sources */,
 				CEC5ADBC298E1A590054AD3A /* ShapeMenuView.swift in Sources */,
 				F033BC0E299BD06600625BAC /* CALayer+InterfaceOrientation.swift in Sources */,
 				CECE42F5296BF8D400D0D795 /* ARViewController.swift in Sources */,
@@ -893,6 +953,8 @@
 			isa = PBXVariantGroup;
 			children = (
 				CE9FD6C32967C8780052C339 /* Base */,
+				CEDF543529AF212700C5AC95 /* zh-Hans */,
+				CEDF543729AF212F00C5AC95 /* ja */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -901,8 +963,20 @@
 			isa = PBXVariantGroup;
 			children = (
 				CE9FD6C82967C87A0052C339 /* Base */,
+				CEDF543629AF212700C5AC95 /* zh-Hans */,
+				CEDF543829AF212F00C5AC95 /* ja */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		CEDF543D29AF215500C5AC95 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CEDF543C29AF215500C5AC95 /* en */,
+				CEDF543E29AF215B00C5AC95 /* zh-Hans */,
+				CEDF543F29AF215C00C5AC95 /* ja */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -912,6 +986,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -972,6 +1047,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1038,14 +1114,16 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wuyi.IndustryAR2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wuyi.IndustryAR;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "IndustryAR/Recorder/Recorder-Bridging-Header.h";
@@ -1070,14 +1148,16 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wuyi.IndustryAR2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wuyi.IndustryAR;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "IndustryAR/Recorder/Recorder-Bridging-Header.h";

@@ -9,16 +9,7 @@ import UIKit
 import SceneKit
 
 class Square: SCNNode {
-    static let size: Float = 0.17
-    
-    // Thickness of the focus square lines in meters.
-    static let thickness: Float = 0.018
-    
-    // Scale factor for the focus square when it is closed, w.r.t. the original size.
-    static let scaleForClosedSquare: Float = 0.5
-    
-    static var primaryColor = #colorLiteral(red: 1, green: 0.8, blue: 0, alpha: 1)
-        
+                
     private var segments: [Segment] = []
     
     private let positioningNode = SCNNode()
@@ -30,7 +21,6 @@ class Square: SCNNode {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        create()
     }
     
     override class var supportsSecureCoding: Bool {
@@ -38,14 +28,14 @@ class Square: SCNNode {
     }
     
     private func create() {
-        let s1 = Segment(name: "s1")
-        let s2 = Segment(name: "s2")
-        let s3 = Segment(name: "s3")
-        let s4 = Segment(name: "s4")
+        let s1 = Segment(name: "s1", lineLength: CGFloat(ShapeSetting.lineLength/1000) * 2)
+        let s2 = Segment(name: "s2", lineLength: CGFloat(ShapeSetting.lineLength/1000) * 2)
+        let s3 = Segment(name: "s3", lineLength: CGFloat(ShapeSetting.lineLength/1000) * 2)
+        let s4 = Segment(name: "s4", lineLength: CGFloat(ShapeSetting.lineLength/1000) * 2)
         segments = [s1, s2, s3, s4]
         
-        let sl: Float = 1  // segment length
-        let c: Float = Square.thickness / 2
+        let sl: Float = ShapeSetting.lineLength/1000 * 2
+        let c: Float = ShapeSetting.lineThickness / 2 / 10000
         s1.simdPosition = simd_float3(0, 0, -sl / 2)
         s1.simdRotation = simd_float4(0, 0, 1, .pi / 2)
         s1.simdLocalRotate(by: simd_quatf(angle: .pi / 2, axis: SIMD3(x: 0, y: 1, z: 0)))
@@ -63,8 +53,8 @@ class Square: SCNNode {
         s4.simdLocalRotate(by: simd_quatf(angle: .pi / 2, axis: SIMD3(x: 0, y: 1, z: 0)))
 
         
-        positioningNode.eulerAngles.x = .pi / 2 // Horizontal
-        positioningNode.simdScale = [1.0, 1.0, 1.0] * (Square.size * Square.scaleForClosedSquare)
+        positioningNode.eulerAngles.x = .pi / 2
+        positioningNode.simdScale = [1.0, 1.0, 1.0]
         for segment in segments {
             positioningNode.addChildNode(segment)
         }

@@ -1,0 +1,41 @@
+/* 
+  Localizable.strings
+  IndustryAR
+
+  Created by 吴熠 on 3/1/23.
+  
+*/
+
+"project" = "项目";
+"history" = "历史";
+
+"drawing" = "徒手画";
+"triangle" = "三角形";
+"square" = "四边形";
+"circle" = "圆";
+"text" = "文本注释";
+"insert_occlusion" = "遮挡恢复";
+"remove_occlusion" = "遮挡剔除";
+"delete" = "删除";
+"setting" = "设置";
+"marker" = "标记显示";
+"none_marker" = "标记隐藏";
+
+"enter_text" = "请输入文字";
+"cancel" = "取消";
+"confirm" = "确认";
+
+"line_color" = "线色:";
+"line_thickness" = "线粗:";
+"line_type" = "线种:";
+"marker_size" = "标记大小:";
+"text_color" = "文字颜色:";
+"text_size" = "文字字号:";
+"text_font" = "文字字体:";
+
+"normal_line" = "实线";
+"dash_line" = "虚线";
+
+"save_success" = "保存成功";
+"save_fail" = "保存失败";
+"save_error" = "视频无法保存";

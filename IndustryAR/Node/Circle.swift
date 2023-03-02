@@ -9,16 +9,7 @@ import UIKit
 import SceneKit
 
 class Circle: SCNNode {
-
-    static let size: Float = 0.05
-    
-    // Thickness of the focus square lines in meters.
-    static let thickness: CGFloat = 0.018
-    
-    static let ringRadius: CGFloat = 1.0
-    
-    static let primaryColor = #colorLiteral(red: 1, green: 0.9254901961, blue: 0.4117647059, alpha: 1)
-        
+            
     private let positioningNode = SCNNode()
     
     override init() {
@@ -28,7 +19,6 @@ class Circle: SCNNode {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        create()
     }
     
     override class var supportsSecureCoding: Bool {
@@ -36,11 +26,15 @@ class Circle: SCNNode {
     }
     
     private func create() {
-        let circleNode = SCNNode(geometry: SCNTorus(ringRadius: Circle.ringRadius, pipeRadius: Circle.thickness))
-        circleNode.geometry?.firstMaterial?.diffuse.contents = Square.primaryColor
+        let circleNode = SCNNode(geometry: SCNTorus(ringRadius:CGFloat(ShapeSetting.lineLength)/1000.0, pipeRadius: CGFloat(ShapeSetting.lineThickness)/15000))
+        circleNode.geometry?.firstMaterial?.diffuse.contents = ShapeSetting.lineColor
+//        circleNode.geometry?.firstMaterial?.isDoubleSided = true
+//        circleNode.geometry?.firstMaterial?.ambient.contents = UIColor.black
+//        circleNode.geometry?.firstMaterial?.lightingModel = .constant
+        circleNode.geometry?.firstMaterial?.emission.contents = ShapeSetting.lineColor
         
-        positioningNode.eulerAngles.x = .pi / 2 // Horizontal
-        positioningNode.simdScale = [1.0, 1.0, 1.0] * Circle.size
+        positioningNode.eulerAngles.x = .pi / 2
+        positioningNode.simdScale = [1.0, 1.0, 1.0]
         positioningNode.addChildNode(circleNode)
         
         circleNode.geometry?.firstMaterial?.writesToDepthBuffer = false

@@ -9,6 +9,8 @@ import UIKit
 
 class SettingsTableViewCell: UITableViewCell {
     
+    var textClosure: ((String) -> Void)?
+    
     lazy var iconView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         imageView.backgroundColor = .systemFill
@@ -17,14 +19,15 @@ class SettingsTableViewCell: UITableViewCell {
     
     lazy var nameLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.font = UIFont(name: "PingFang-SC-Medium", size: 22)
+        label.font = UIFont(name: "PingFang-SC-Medium", size: 16)
         label.textColor = .black
         return label
     }()
     
     lazy var detailLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.font = UIFont(name: "PingFang-SC-Medium", size: 22)
+        label.font = UIFont(name: "PingFang-SC-Medium", size: 16)
+        label.textAlignment = .right
         label.textColor = .black
         return label
     }()
@@ -36,8 +39,10 @@ class SettingsTableViewCell: UITableViewCell {
         textField.layer.masksToBounds = true
         textField.layer.borderWidth = 0.5
         textField.layer.borderColor = UIColor.black.cgColor
-        textField.placeholder = "1-100"
+        textField.placeholder = ""
+        textField.keyboardType = .numberPad
         textField.textColor = .black
+        textField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
         return textField
     }()
     
@@ -52,7 +57,7 @@ class SettingsTableViewCell: UITableViewCell {
     }
     
     private func setupUI() {
-        contentView.backgroundColor = ColorWithHex(0xE3E3E3, 1)
+        contentView.backgroundColor = SSColorWithHex(0xE3E3E3, 1)
         
         addSubview(iconView)
         iconView.snp.makeConstraints { make in
@@ -64,20 +69,29 @@ class SettingsTableViewCell: UITableViewCell {
         addSubview(nameLabel)
         nameLabel.snp.makeConstraints { make in
             make.centerY.equalTo(self)
-            make.left.equalTo(self).offset(10)
+            make.left.equalTo(contentView).offset(10)
+            make.width.equalTo(140)
         }
         
         addSubview(detailLabel)
         detailLabel.snp.makeConstraints { make in
             make.right.equalTo(contentView).offset(-10)
             make.centerY.equalTo(contentView)
+            make.left.equalTo(nameLabel.snp.right).offset(10)
         }
         
         addSubview(textField)
         textField.snp.makeConstraints { make in
-            make.centerY.equalTo(self)
+            make.centerY.equalTo(contentView)
             make.right.equalTo(contentView).offset(-10)
             make.size.equalTo(CGSize(width: 100, height: 40))
+        }
+    }
+    
+    @objc
+    private func textFieldDidChange(textField: LineTextField) {
+        if let textClosure = textClosure {
+            textClosure(textField.text ?? "")
         }
     }
 }

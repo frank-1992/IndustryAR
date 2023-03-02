@@ -10,6 +10,7 @@ import UIKit
 class TextInputView: UIView {
 
     var confirmTextClosure: ((String) -> Void)?
+    var cancelClosure: (() -> Void)?
     
     lazy var textField: LineTextField = {
         let textField = LineTextField(frame: .zero)
@@ -18,25 +19,25 @@ class TextInputView: UIView {
         textField.layer.masksToBounds = true
         textField.layer.borderWidth = 0.5
         textField.layer.borderColor = UIColor.black.cgColor
-        textField.placeholder = "请输入文字"
+        textField.placeholder = enter_text.localizedString()
         textField.textColor = .black
         return textField
     }()
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("取消", for: .normal)
+        button.setTitle(cancel.localizedString(), for: .normal)
         button.setTitleColor(UIColor.systemRed, for: .normal)
-        button.titleLabel?.font = UIFont(name: "PingFang-SC-Medium", size: 22)
+        button.titleLabel?.font = UIFont(name: "PingFang-SC-Medium", size: 20)
         button.addTarget(self, action: #selector(cancelAction), for: .touchUpInside)
         return button
     }()
     
     private lazy var confirmButton: UIButton = {
         let button = UIButton()
-        button.setTitle("确认", for: .normal)
+        button.setTitle(confirm.localizedString(), for: .normal)
         button.setTitleColor(UIColor.black, for: .normal)
-        button.titleLabel?.font = UIFont(name: "PingFang-SC-Medium", size: 22)
+        button.titleLabel?.font = UIFont(name: "PingFang-SC-Medium", size: 20)
         button.addTarget(self, action: #selector(confirmAction), for: .touchUpInside)
         return button
     }()
@@ -88,6 +89,9 @@ class TextInputView: UIView {
     
     @objc
     private func cancelAction() {
+        if let cancelClosure = cancelClosure {
+            cancelClosure()
+        }
         self.removeFromSuperview()
     }
 }

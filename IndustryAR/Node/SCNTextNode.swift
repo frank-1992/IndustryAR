@@ -13,7 +13,7 @@ public class SCNTextNode: SCNNode {
     var currentWidth: Float = 0
     var currentDepth: Float = 0
 
-    init(text: String, textColor: UIColor = .systemRed, textFont: UIFont = UIFont(name: "PingFang-SC-Regular", size: 20) ?? UIFont.systemFont(ofSize: 20), extrusionDepth: CGFloat = 0.01) {
+    init(text: String, textColor: UIColor = .systemRed, textFont: UIFont = UIFont(name: ShapeSetting.fontName, size: ShapeSetting.fontSize) ?? UIFont.systemFont(ofSize: 20), extrusionDepth: CGFloat = 0.01) {
         super.init()
         let text = SCNText(string: text, extrusionDepth: 0.01)
         text.font = textFont
@@ -30,6 +30,12 @@ public class SCNTextNode: SCNNode {
         let width = max.x - min.x
         let height = max.y - min.y
         let depth = max.z - min.z
+        
+        self.pivot = SCNMatrix4MakeTranslation(
+            self.boundingBox.min.x,
+            self.boundingBox.min.y,
+            self.boundingBox.min.z
+        )
         
         currentWidth = width
         currentDepth = depth

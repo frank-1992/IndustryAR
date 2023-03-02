@@ -27,19 +27,6 @@ class ChildProjectListViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var backButton: UIButton = {
-        let backButton = UIButton()
-        backButton.setImage(UIImage(named: "back"), for: .normal)
-        backButton.translatesAutoresizingMaskIntoConstraints = false
-        backButton.addTarget(self, action: #selector(backButtonClicked), for: .touchUpInside)
-        return backButton
-    }()
-
-    @objc
-    private func backButtonClicked() {
-        dismiss(animated: true, completion: nil)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -49,14 +36,7 @@ class ChildProjectListViewController: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = .white
-        
         view.addSubview(tableView)
-        
-        view.addSubview(backButton)
-        backButton.snp.makeConstraints { make in
-            make.leading.equalTo(10)
-            make.top.equalTo(view.snp.top).offset(statusHeight + 10)
-        }
     }
     
     // get assets
@@ -94,8 +74,7 @@ extension ChildProjectListViewController: UITableViewDelegate {
         let model = assetModels[indexPath.row]
         let arVC = ARViewController()
         arVC.assetModel = model
-        arVC.modalPresentationStyle = .overFullScreen
-        present(arVC, animated: true)
+        navigationController?.pushViewController(arVC, animated: true)
     }
 }
 

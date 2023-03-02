@@ -9,27 +9,6 @@ import UIKit
 import ARKit
 
 public class ARView: ARSCNView {
-
-    // MARK: Position Testing
-    func virtualObject(at point: CGPoint) -> VirtualObject? {
-        let hitTestOptions: [SCNHitTestOption: Any] = [.boundingBoxOnly: true]
-        let hitTestResults = hitTest(point, options: hitTestOptions)
-        
-        return hitTestResults.lazy.compactMap { result in
-            return VirtualObject.existingObjectContainingNode(result.node)
-        }.first
-    }
-    
-    // - MARK: Object anchors
-    func addOrUpdateAnchor(for object: VirtualObject) {
-        if let anchor = object.anchor {
-            session.remove(anchor: anchor)
-        }
-        
-        let newAnchor = ARAnchor(transform: object.simdWorldTransform)
-        object.anchor = newAnchor
-        session.add(anchor: newAnchor)
-    }
 }
 
 // MARK: - ARSCNView extensions

@@ -12,7 +12,8 @@ class ChildProjectTableViewCell: UITableViewCell {
     
     private lazy var iconView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
-        imageView.backgroundColor = .systemOrange
+        imageView.backgroundColor = .white
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     

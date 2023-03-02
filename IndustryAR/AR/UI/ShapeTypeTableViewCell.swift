@@ -9,7 +9,15 @@ import UIKit
 
 class ShapeTypeTableViewCell: UITableViewCell {
 
-    var selectedFlag: Bool = false
+    var selectedFlag: Bool = false {
+        didSet {
+            if selectedFlag {
+                stateImageView.isHighlighted = true
+            } else {
+                stateImageView.isHighlighted = false
+            }
+        }
+    }
     
     private lazy var iconView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
@@ -23,8 +31,16 @@ class ShapeTypeTableViewCell: UITableViewCell {
         return label
     }()
     
+    private lazy var stateImageView: UIImageView = {
+        let imageView = UIImageView(frame: .zero)
+        imageView.image = UIImage(named: "")
+        imageView.highlightedImage = creatImageWithColor(color: UIColor.lightGray)
+        return imageView
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
         setupUI()
     }
     
@@ -34,6 +50,11 @@ class ShapeTypeTableViewCell: UITableViewCell {
     
     private func setupUI() {
         backgroundColor = UIColor(white: 0, alpha: 0.3)
+        
+        addSubview(stateImageView)
+        stateImageView.snp.makeConstraints { make in
+            make.size.equalTo(self)
+        }
         
         addSubview(iconView)
         iconView.snp.makeConstraints { make in
@@ -53,4 +74,16 @@ class ShapeTypeTableViewCell: UITableViewCell {
         iconView.image = UIImage(named: iconName)
         nameLabel.text = typeName
     }
+    
+    private func creatImageWithColor(color: UIColor) -> UIImage? {
+        let rect = CGRect(x: 0,y: 0,width: 1,height: 1)
+        UIGraphicsBeginImageContext(rect.size)
+        let context = UIGraphicsGetCurrentContext()
+        context?.setFillColor(color.cgColor)
+        context?.fill(rect)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
+    }
+
 }

@@ -9,13 +9,6 @@ import UIKit
 import SceneKit
 
 class Triangle: SCNNode {
-    static let size: Float = 0.17
-    
-    // Thickness of the focus square lines in meters.
-    static let thickness: Float = 0.018
-    
-    // Scale factor for the focus square when it is closed, w.r.t. the original size.
-    static let scaleForClosedSquare: Float = 0.5
     
     private var segments: [Segment] = []
     
@@ -28,7 +21,6 @@ class Triangle: SCNNode {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        create()
     }
     
     override class var supportsSecureCoding: Bool {
@@ -36,13 +28,15 @@ class Triangle: SCNNode {
     }
     
     private func create() {
-        let s1 = Segment(name: "s1")
-        let s2 = Segment(name: "s2")
-        let s3 = Segment(name: "s3")
+        let centerLine = ShapeSetting.lineLength * 2
+        let length = centerLine / sin(.pi/3)
+        
+        let s1 = Segment(name: "s1", lineLength: CGFloat(length/1000))
+        let s2 = Segment(name: "s2", lineLength: CGFloat(length/1000))
+        let s3 = Segment(name: "s3", lineLength: CGFloat(length/1000))
         segments = [s1, s2, s3]
         
-        let sl: Float = 1  // segment length
-        let c: Float = Square.thickness / 2
+        let sl: Float = length/1000
         let temp: Float = sl / 2 * sin(.pi / 3)
         s1.simdPosition = simd_float3(0, 0, temp)
         s1.simdRotation = simd_float4(0, 0, 1, .pi / 2)
@@ -59,8 +53,8 @@ class Triangle: SCNNode {
         s3.simdLocalRotate(by: simd_quatf(angle: -.pi / 6, axis: SIMD3(x: 0, y: 0, z: 1)))
         
         
-        positioningNode.eulerAngles.x = .pi / 2 // Horizontal
-        positioningNode.simdScale = [1.0, 1.0, 1.0] * (Triangle.size * Triangle.scaleForClosedSquare)
+        positioningNode.eulerAngles.x = .pi / 2
+        positioningNode.simdScale = [1.0, 1.0, 1.0]
         for segment in segments {
             positioningNode.addChildNode(segment)
         }

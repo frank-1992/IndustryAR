@@ -17,27 +17,24 @@ enum LineType {
     case dash
 }
 
-struct Settings {
-    var lineColor: StrokeColor = .white
-    var lineWidth: CGFloat = 0.002
-    var lineType: LineType = .normal
-    var textColor: StrokeColor = .white
-    var fontSize: CGFloat = 24
-    var fontName: String = "PingFang-SC-Medium"
-}
-
-
 class SettingsViewController: UIViewController {
     
-    var settingsClosure: ((Settings) -> Void)?
+    var settingsClosure: (() -> Void)?
+    var selectFontClosure: (() -> Void)?
 
     private let settingsTableViewCellID = "settingsTableViewCell"
     private let colorsCollectionViewCellID = "colorsCollectionViewCell"
     
-    private let settingsName = ["线色:", "线粗:", "线种:", "文字颜色:", "文字字号:", "文字字体:"]
-    private let detailName = ["", "", "", "", "24", "PingFang"]
+    private let settingsName = [line_color.localizedString(),
+                                line_thickness.localizedString(),
+                                line_type.localizedString(),
+                                marker_size.localizedString(),
+                                text_color.localizedString(),
+                                text_size.localizedString(),
+                                text_font.localizedString()]
+    private let detailName = ["", "", normal_line.localizedString(), "", "", "24", "PingFang"]
     
-    private let colors: [StrokeColor] = [.black,
+    private let colors: [UIColor] = [.black,
                                    .blue,
                                    .yellow,
                                    .white,
@@ -48,7 +45,7 @@ class SettingsViewController: UIViewController {
                                    .orange,
                                    .purple]
     
-    private lazy var tableView: UITableView = {
+    lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero)
         tableView.delegate = self
         tableView.dataSource = self
@@ -58,6 +55,9 @@ class SettingsViewController: UIViewController {
         tableView.rowHeight = 80
         tableView.isScrollEnabled = false
         tableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: settingsTableViewCellID)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapAction))
+        tapGesture.delegate = self
+        tableView.addGestureRecognizer(tapGesture)
         return tableView
     }()
     
@@ -78,10 +78,10 @@ class SettingsViewController: UIViewController {
         return collectionView
     }()
     
-    private var currentLineColor: StrokeColor = .white
+    private var currentLineColor: UIColor = .white
     private var currentLineWidth: CGFloat = 0.002
     private var currentLineType: LineType = .normal
-    private var currentTextColor: StrokeColor = .white
+    private var currentTextColor: UIColor = .white
     private var currentTextSize: CGFloat = 24
     private var currentTextFontName: String = "PingFang-SC-Medium"
 
@@ -119,14 +119,13 @@ class SettingsViewController: UIViewController {
         self.view.endEditing(true)
         self.view.isHidden = true
         if let settingsClosure = settingsClosure {
-            let settings = Settings(lineColor: currentLineColor,
-                                    lineWidth: currentLineWidth,
-                                    lineType: .normal,
-                                    textColor: currentTextColor,
-                                    fontSize: currentTextSize,
-                                    fontName: currentTextFontName)
-            settingsClosure(settings)
+            settingsClosure()
         }
+    }
+    
+    @objc
+    private func tapAction() {
+        view.endEditing(true)
     }
 }
 
@@ -141,21 +140,45 @@ extension SettingsViewController: UITableViewDataSource {
         let icon = detailName[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: settingsTableViewCellID, for: indexPath) as? SettingsTableViewCell ?? SettingsTableViewCell()
         if indexPath.row == 0 {
-            cell.iconView.backgroundColor = currentLineColor.uiColor
+            cell.iconView.backgroundColor = currentLineColor
             cell.nameLabel.text = settingsName[0]
             cell.detailLabel.text = detailName[0]
-        } else if indexPath.row == 3 {
-            cell.iconView.backgroundColor = currentTextColor.uiColor
-            cell.nameLabel.text = settingsName[3]
-            cell.detailLabel.text = detailName[3]
+        } else if indexPath.row == 4 {
+            cell.iconView.backgroundColor = currentTextColor
+            cell.nameLabel.text = settingsName[4]
+            cell.detailLabel.text = detailName[4]
+        } else if indexPath.row == 6 {
+            cell.iconView.backgroundColor = .clear
+            cell.nameLabel.text = title
+            cell.detailLabel.text = ShapeSetting.fontName
         } else {
             cell.iconView.backgroundColor = .clear
             cell.nameLabel.text = title
             cell.detailLabel.text = icon
         }
         
-        if indexPath.row == 1 || indexPath.row == 4 {
+        if indexPath.row == 1 || indexPath.row == 3 || indexPath.row == 5 {
             cell.textField.isHidden = false
+            
+            if indexPath.row == 1 {
+                cell.textField.text = String(ShapeSetting.lineThickness)
+                cell.textClosure = { text in
+                    ShapeSetting.lineThickness = Float(text) ?? 1
+                }
+            }
+            if indexPath.row == 3 {
+                cell.textField.text = String(ShapeSetting.lineLength)
+                cell.textClosure = { text in
+                    ShapeSetting.lineLength = Float(text) ?? 100
+                }
+            }
+            if indexPath.row == 5 {
+                cell.textField.text = String(Float(ShapeSetting.fontSize))
+                cell.textClosure = { text in
+                    ShapeSetting.fontSize = CGFloat(Float(text) ?? 1)
+                }
+            }
+            
         } else {
             cell.textField.isHidden = true
         }
@@ -167,15 +190,21 @@ extension SettingsViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension SettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 0 || indexPath.row == 3 {
+        if indexPath.row == 0 || indexPath.row == 4 {
             if indexPath.row == 0 {
                 colorType = .line
+                view.endEditing(true)
             }
-            if indexPath.row == 3 {
+            if indexPath.row == 4 {
                 colorType = .text
             }
             UIView.animate(withDuration: 0.3) {
                 self.colorsCollectionView.alpha = 1.0
+            }
+        }
+        if indexPath.row == 6 {
+            if let selectFontClosure = selectFontClosure {
+                selectFontClosure()
             }
         }
     }
@@ -190,7 +219,7 @@ extension SettingsViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let color = colors[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: colorsCollectionViewCellID, for: indexPath) as? ColorCollectionViewCell ?? ColorCollectionViewCell()
-        cell.backgroundColor = color.uiColor
+        cell.backgroundColor = color
         return cell
     }
 }
@@ -202,12 +231,24 @@ extension SettingsViewController: UICollectionViewDelegate {
         switch colorType {
         case .line:
             currentLineColor = color
+            ShapeSetting.lineColor = color
         case .text:
             currentTextColor = color
+            ShapeSetting.textColor = color
         }
         UIView.animate(withDuration: 0.3) {
             self.colorsCollectionView.alpha = 0
         }
         tableView.reloadData()
+    }
+}
+
+extension SettingsViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if NSStringFromClass((touch.view?.classForCoder)!) == "UITableViewCellContentView" {
+            view.endEditing(true)
+            return false
+        }
+        return true
     }
 }

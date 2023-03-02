@@ -10,18 +10,6 @@ import UIKit
 
 extension UserDefaults {
     
-    private static let kLineColor = "kLineColor"
-    
-    static var lineColor: UIColor {
-        get {
-            self.standard.object(forKey: kLineColor) as! UIColor
-        }
-        set {
-            self.standard.set(newValue, forKey: kLineColor)
-        }
-    }
-    
-    
     private static let kHasAutoShowBottomMenu = "IndustryAR-kHasAutoShow"
     
     static var hasAutoShowBottomMenu: Bool {

@@ -35,8 +35,8 @@ class ARViewController: UIViewController {
     var assetModel: AssetModel?
     var historyModel: HistoryModel?
     
-    var usdzObjects: [VirtualObject] = []
-    var scnObjects: [VirtualObject] = []
+    var usdzObjects: [SCNNode] = []
+    var scnObjects: [SCNNode] = []
     
     //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
     var bGestureRemoved: Bool = false
@@ -62,11 +62,13 @@ class ARViewController: UIViewController {
     private lazy var sceneView: ARSCNView = {
         let sceneView = ARSCNView(frame: view.bounds)
         sceneView.delegate = self
-        sceneView.session.delegate = self
         sceneView.automaticallyUpdatesLighting = true
         sceneView.preferredFramesPerSecond = 60
+        sceneView.debugOptions = [.showBoundingBoxes]
         return sceneView
     }()
+    
+    var configuration = ARWorldTrackingConfiguration()
     
     private lazy var backButton: UIButton = {
         let backButton = UIButton()
@@ -100,24 +102,35 @@ class ARViewController: UIViewController {
     
     private lazy var bottomMenuView: BottomMenuView = {
         let view = BottomMenuView(frame: .zero)
+        view.isHidden = true
         return view
     }()
     
-    // About Line
-    var strokeAnchorIDs: [UUID] = []
-    var currentStrokeAnchorNode: SCNNode?
-    var currentStrokeColor: StrokeColor = .white
-    let sphereNodesManager = SphereNodesManager()
-    var previousPoint: SCNVector3?
-    var currentFingerPosition: CGPoint?
-    var distanceFromCamera: Float = 1.0
+    lazy var fontPickerView: UIPickerView = {
+        let fontPickerView = UIPickerView()
+        fontPickerView.dataSource = self
+        fontPickerView.delegate = self
+        fontPickerView.backgroundColor = .white
+        return fontPickerView
+    }()
+    
+    lazy var fontToolBar: UIToolbar = {
+        let toolBar = UIToolbar(frame: .zero)
+        toolBar.barStyle = UIBarStyle.black
+        toolBar.sizeToFit()
+        let cancelButton = UIBarButtonItem(title: cancel.localizedString(), style: .plain, target: self, action: #selector(cancelAction))
+        let confirmButton = UIBarButtonItem(title: confirm.localizedString(), style: .plain, target: self, action: #selector(confirmAction))
+        let flexSpace = UIBarButtonItem(systemItem: .flexibleSpace)
+        toolBar.setItems([cancelButton, flexSpace, confirmButton], animated: true)
+        return toolBar
+    }()
+    
+    var currentFontName: String = "PingFang-SC-Regular"
     
     // SCNLine
     var pointTouching: CGPoint = .zero
     var isDrawing: Bool = false
     var drawingNode: SCNLineNode?
-    /// Used for calculating where to draw using hitTesting
-//    var cameraFrameNode = SCNNode(geometry: SCNFloor())
     var centerVerticesCount: Int32 = 0
     var hitVertices: [SCNVector3] = []
     var lastPoint = SCNVector3Zero
@@ -147,12 +160,12 @@ class ARViewController: UIViewController {
 
     // SCNNode-----Line
     var lineNodes: [SCNLineNode] = [SCNLineNode]()
-
     
+    var removedOcclusion: Bool = false
     
     @objc
     private func backButtonClicked() {
-        dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
     }
     
     override func viewDidLoad() {
@@ -164,11 +177,13 @@ class ARViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = true
         resetTracking()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        navigationController?.navigationBar.isHidden = false
         sceneView.session.pause()
     }
     
@@ -178,18 +193,14 @@ class ARViewController: UIViewController {
         configuration.isLightEstimationEnabled = true
         configuration.environmentTexturing = .automatic
        
-        
-        guard ARWorldTrackingConfiguration.supportsFrameSemantics(.personSegmentationWithDepth) else {
-            fatalError("People occlusion is not supported on this device.")
-        }
-        switch configuration.frameSemantics {
-        case [.personSegmentationWithDepth]:
-            configuration.frameSemantics.remove(.personSegmentationWithDepth)
-        default:
-            configuration.frameSemantics.insert(.personSegmentationWithDepth)
-        }
-        
-        
+//        if ARWorldTrackingConfiguration.supportsFrameSemantics(.personSegmentationWithDepth) {
+//            switch configuration.frameSemantics {
+//            case [.personSegmentationWithDepth]:
+//                configuration.frameSemantics.remove(.personSegmentationWithDepth)
+//            default:
+//                configuration.frameSemantics.insert(.personSegmentationWithDepth)
+//            }
+//        }
         //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
 //        guard ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) else {
 //            fatalError("People occlusion is not supported on this device.")
@@ -203,7 +214,7 @@ class ARViewController: UIViewController {
         //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
         
         sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-        currentStrokeAnchorNode = nil
+        self.configuration = configuration
     }
     
     private func setupRecorder() {
@@ -249,7 +260,6 @@ class ARViewController: UIViewController {
         }
         
         if UserDefaults.hasAutoShowBottomMenu {
-            showBottomMenuView(sender: bottomMenuButton)
             bottomMenuView.autoButton.setTitle("AUTO", for: .normal)
         }
         
@@ -294,7 +304,6 @@ class ARViewController: UIViewController {
             
             if function == .settings {
                 // settings vc
-//                self.showSettingsVC()
                 self.settingsVC?.view.isHidden = false
             }
             
@@ -309,17 +318,54 @@ class ARViewController: UIViewController {
                 
                 textInputView.confirmTextClosure = { content in
                     let text = SCNText(string: content, extrusionDepth: 0.01)
-                    text.font = UIFont(name: "PingFang-SC-Regular", size: 18)
+                    text.font = UIFont(name: "PingFang-SC-Regular", size: ShapeSetting.fontSize)
                     let material = SCNMaterial()
-                    material.diffuse.contents = self.settings.textColor.uiColor
+                    material.diffuse.contents = ShapeSetting.textColor
                     material.writesToDepthBuffer = false
                     material.readsFromDepthBuffer = false
                     text.materials = [material]
                     let textNode = SCNNode(geometry: text)
                     textNode.name = "text"
-                    textNode.scale = SCNVector3(x: 0.01, y: 0.01, z: 0.01)
+                    textNode.scale = SCNVector3(x: ShapeSetting.textScale, y: ShapeSetting.textScale, z: ShapeSetting.textScale)
                     self.textNode = textNode
+                    
+                    self.shapeMenuView.resetUI()
                 }
+                
+                textInputView.cancelClosure = {
+                    self.shapeMenuView.resetUI()
+                }
+            }
+            
+            if function == .occlusion {
+                guard ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) else {
+                    fatalError("sceneDepth is not supported on this device.")
+                }
+                
+                if self.removedOcclusion {
+                    self.removedOcclusion = false
+                    self.configuration.frameSemantics.insert(.sceneDepth)
+//                    self.configuration.frameSemantics.insert(.personSegmentationWithDepth)
+                    self.shapeMenuView.resetOcclusionTitleState(title: remove_occlusion.localizedString())
+                } else {
+                    self.removedOcclusion = true
+                    self.configuration.frameSemantics.remove(.sceneDepth)
+//                    self.configuration.frameSemantics.remove(.personSegmentationWithDepth)
+                    self.shapeMenuView.resetOcclusionTitleState(title: insert_occlusion.localizedString())
+                }
+                
+                self.sceneView.session.run(self.configuration)
+            }
+            
+            if function == .showSymbol {
+                guard let markerRoot = self.markerRoot else { return }
+                markerRoot.isHidden = !markerRoot.isHidden
+                if markerRoot.isHidden {
+                    self.shapeMenuView.resetMarkerTitleState(title: marker_local.localizedString())
+                } else {
+                    self.shapeMenuView.resetMarkerTitleState(title: none_marker_local.localizedString())
+                }
+                self.shapeMenuView.resetUI()
             }
         }
         
@@ -358,6 +404,8 @@ class ARViewController: UIViewController {
                     make.height.equalTo(self.view.frame.height * 0.8)
                 }
             }
+            // auto show
+            self.resetBottomMenuView()
         }
         
         // record video
@@ -373,6 +421,9 @@ class ARViewController: UIViewController {
                 }
             } else {
                 self.sceneView.finishVideoRecording { (videoRecording) in
+                    // auto show
+                    self.resetBottomMenuView()
+                    
                     self.isRecordingVideo = false
                     self.bottomMenuView.stopRecording()
                     /* Process the captured video. Main thread. */
@@ -390,7 +441,10 @@ class ARViewController: UIViewController {
         
         // align
         bottomMenuView.alignClosure = { [weak self]  in
+            guard let self = self else { return }
             
+            // auto show
+            self.resetBottomMenuView()
         }
         
         // save SCN file
@@ -421,8 +475,6 @@ class ARViewController: UIViewController {
                     }
                 }
 
-                
-
                 // save screenshot
                 self.sceneView.takePhoto { (photo: UIImage) in
                     let photoURL = dirURL.appendingPathComponent(fileName + ".png")
@@ -436,6 +488,13 @@ class ARViewController: UIViewController {
                     if let usdzURL = usdzFiles.first {
                         let newUSDZURL = dirURL.appendingPathComponent(fileName + ".usdz")
                         try? FileManager.default.copyItem(at: usdzURL, to: newUSDZURL)
+                    }
+                }
+                
+                if let historyModel = self.historyModel {
+                    if let usdzFileURL = historyModel.usdzPath {
+                        let newUSDZURL = dirURL.appendingPathComponent(fileName + ".usdz")
+                        try? FileManager.default.copyItem(at: usdzFileURL, to: newUSDZURL)
                     }
                 }
 
@@ -490,11 +549,13 @@ class ARViewController: UIViewController {
                     
                     let markerURL = dirURL.appendingPathComponent("markername.txt")
                     try? markerString.write(to: markerURL, atomically: true, encoding: .utf8)
-                    HUD.flash(.label("Saved successfully"), delay: 1)
+                    HUD.flash(.label(save_success.localizedString()), delay: 1)
                 }
                 
                 let fileURL = dirURL.appendingPathComponent(fileName + ".scn")
                 scene.write(to: fileURL, options: nil, delegate: nil, progressHandler: nil)
+                // auto show
+                self.resetBottomMenuView()
             }
         }
         
@@ -509,6 +570,37 @@ class ARViewController: UIViewController {
                 sender.setTitle("SHOW", for: .normal)
             }
         }
+        
+        addLongpressGesture()
+    }
+    
+    private func addLongpressGesture() {
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.deleteNode(longpress:)))
+        longPressGesture.numberOfTouchesRequired = 1
+        self.sceneView.addGestureRecognizer(longPressGesture)
+    }
+    
+    @objc
+    private func deleteNode(longpress: UILongPressGestureRecognizer) {
+        guard let function = function else { return }
+        if function == .delete {
+            let touchPoint = longpress.location(ofTouch: 0, in: sceneView)
+            guard let hitTestNode = sceneView.hitTest(touchPoint, options: [SCNHitTestOption.boundingBoxOnly: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first?.node else { return }
+            for node in hitTestNode.childNodes {
+                print("点击node\(node.name)")
+            }
+        }
+    }
+    
+    
+    private func resetBottomMenuView() {
+        if UserDefaults.hasAutoShowBottomMenu {
+            bottomMenuButton.tag = 201
+            showBottomMenuView(sender: bottomMenuButton)
+        } else {
+            bottomMenuButton.tag = 200
+            showBottomMenuView(sender: bottomMenuButton)
+        }
     }
     
     // test geometry surface
@@ -518,7 +610,6 @@ class ARViewController: UIViewController {
         guard let hitResult = self.sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else { return }
         
         //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
-        //let tapPoint_world = hitResult.simdWorldCoordinates
         
         let tapPoint_local = hitResult.localCoordinates
         let tapNode = hitResult.node
@@ -531,8 +622,13 @@ class ARViewController: UIViewController {
             let triangleNode = Triangle()
             //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
             
-            //triangleNode.simdWorldPosition = tapPoint_world
             triangleNode.simdScale = simd_float3(1, 1, 1)
+//            let boundingbox = triangleNode.boundingBox
+//            print("三角形boundingbox: \(boundingbox)")
+            
+            let constraint = SCNBillboardConstraint()
+            constraint.freeAxes = SCNBillboardAxis.Y
+            triangleNode.constraints = [constraint]
             
             //cadModelRoot
             guard let cadModelRootNode = cadModelRoot else { return }
@@ -549,19 +645,17 @@ class ARViewController: UIViewController {
             markerRoot?.addChildNode(triangleNode)
             triangleNodes.append(triangleNode)
             //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
-            
-            /*
-            triangleNode.simdScale = simd_float3(3, 3, 3)
-            sceneView.scene.rootNode.addChildNode(triangleNode)
-             */
         }
         
         if function == .square {
             let squareNode = Square()
             //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
             
-            //squareNode.simdWorldPosition = tapPoint_world
             squareNode.simdScale = simd_float3(1, 1, 1)
+            
+            let constraint = SCNBillboardConstraint()
+            constraint.freeAxes = SCNBillboardAxis.Y
+            squareNode.constraints = [constraint]
             
             //cadModelRoot
             guard let cadModelRootNode = cadModelRoot else { return }
@@ -578,20 +672,17 @@ class ARViewController: UIViewController {
             markerRoot?.addChildNode(squareNode)
             squareNodes.append(squareNode)
             //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
-             
-            /*
-            squareNode.simdScale = simd_float3(3, 3, 3)
-            sceneView.scene.rootNode.addChildNode(squareNode)
-            */
         }
         
         if function == .circle {
             let circleNode = Circle()
-//            circleNode.name = "circle"
             //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
             
-            //circleNode.simdWorldPosition = tapPoint_world
             circleNode.simdScale = simd_float3(1, 1, 1)
+            
+            let constraint = SCNBillboardConstraint()
+            constraint.freeAxes = SCNBillboardAxis.Y
+            circleNode.constraints = [constraint]
             
             //cadModelRoot
             guard let cadModelRootNode = cadModelRoot else { return }
@@ -608,11 +699,6 @@ class ARViewController: UIViewController {
             markerRoot?.addChildNode(circleNode)
             circleNodes.append(circleNode)
             //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
-             
-            /*
-             circleNode.simdScale = simd_float3(3, 3, 3)
-            sceneView.scene.rootNode.addChildNode(circleNode)
-            */
         }
         
         if function == .text {
@@ -620,24 +706,27 @@ class ARViewController: UIViewController {
                 return
             }
 
+            guard let newTextNode = textNode.copy() as? SCNNode else {
+                return
+            }
+            
             let constraint = SCNBillboardConstraint()
             constraint.freeAxes = SCNBillboardAxis.Y
-            textNode.constraints = [constraint]
+            newTextNode.constraints = [constraint]
             
-            let min = textNode.boundingBox.min * 0.01
-            let max = textNode.boundingBox.max * 0.01
+            let min = newTextNode.boundingBox.min * 0.01
+            let max = newTextNode.boundingBox.max * 0.01
             let width = max.x - min.x
             let depth = max.z - min.z
             
-            let centerX = tapPoint_world.x - width/2.0
+            let centerX = tapPoint_world.x//- width/2.0
             let centerY = tapPoint_world.y
             let centerZ = tapPoint_world.z - depth/2.0
             
-            textNode.position = SCNVector3(x: centerX, y: centerY, z: centerZ)
+            newTextNode.position = SCNVector3(x: centerX, y: centerY, z: centerZ)
             
-            markerRoot?.addChildNode(textNode)
-            textNodes.append(textNode)
-            self.textNode = nil
+            markerRoot?.addChildNode(newTextNode)
+            textNodes.append(newTextNode)
         }
     }
     
@@ -919,11 +1008,6 @@ class ARViewController: UIViewController {
                   
                   prevTwoFingerDelta = delta
                   if(dirSign == 1) {
-                      //print("prevTwoFingerDelta = ", prevTwoFingerDelta)
-                      //print("delta = ", delta)
-
-                      //print("camera coordinate delta = ", delta)
-                      
                       var orig = SCNVector3(0,0,0)
                       if let camera = sceneView.pointOfView { // カメラを取得
                           orig = camera.convertPosition(orig, to: nil)
@@ -933,12 +1017,9 @@ class ARViewController: UIViewController {
                           let moveAction = SCNAction.move(by: delta, duration: 0)
                           cadModelNode.runAction(moveAction)
                       }
-                      
-                      //print("world coordinate delta = ", delta)
                   }
                   
                   prevTwoFingerLocation = location
-                  
               }
               
           case .ended, .cancelled:
@@ -958,7 +1039,9 @@ class ARViewController: UIViewController {
             let scnFiles = assetModel.scnFilePaths
             if !usdzFiles.isEmpty {
                 for usdzFile in usdzFiles {
-                    if let usdzObject = VirtualObject(filePath: usdzFile.relativePath, fileName: assetModel.assetName) {
+                    if let usdzObject = SCNReferenceNode(url: usdzFile) {
+                        usdzObject.name = "usdz"
+                        usdzObject.load()
                         usdzObjects.append(usdzObject)
                         showVirtualObject(with: usdzObject)
                     }
@@ -967,7 +1050,9 @@ class ARViewController: UIViewController {
             
             if !scnFiles.isEmpty {
                 for scnFile in scnFiles {
-                    if let scnObject = VirtualObject(filePath: scnFile.relativePath, fileName: assetModel.assetName) {
+                    if let scnObject = SCNReferenceNode(url: scnFile) {
+                        scnObject.name = "scn"
+                        scnObject.load()
                         scnObjects.append(scnObject)
                         showVirtualObject(with: scnObject)
                     }
@@ -979,41 +1064,76 @@ class ARViewController: UIViewController {
                   let tranformJsonStringURL = historyModel.fileTransformString else {
                 return
             }
-            shapeMenuButton.isHidden = true
-            bottomMenuButton.isHidden = true
+
             do {
                 guard let transformString = try? String(contentsOf: tranformJsonStringURL) else { return }
                 guard let modelInfo = JsonUtil.jsonToModel(transformString, SceneModel.self) as? SceneModel else { return }
                 if let savedScene = try? SCNScene(url: scnFileURL) {
-                    if let usdzObject = VirtualObject(filePath: usdzURL.relativePath,
-                                                      fileName: historyModel.fileName) {
+                    
+                    // delete saved node
+//                    if let childNode = savedScene.rootNode.childNode(withName: "usdz", recursively: true) {
+//                        childNode.removeFromParentNode()
+//                    }
+
+                    if let usdzObject = SCNReferenceNode(url: usdzURL) {
+                        usdzObject.load()
                         if(cadModelRoot == nil) {
                             let cadModelRoot1 = SCNNode()
                             self.cadModelRoot = cadModelRoot1
                             cadModelRoot1.name = "ModelRoot"
 
-                            cadModelRoot1.addChildNode(usdzObject)
+                            if let childNode = savedScene.rootNode.childNode(withName: "usdz", recursively: true) {
+                                childNode.name = "usdz"
+                                cadModelRoot1.addChildNode(childNode)
+                            }
+                            
+//                            cadModelRoot1.addChildNode(usdzObject)
                             presetCadModel(cadModelNode: cadModelRoot1, bPivot: true, bSubdLevel: true)
 
                             let markerRoot1 = SCNNode()
                             markerRoot = markerRoot1
 
-                           
                             if let markerNameURL = historyModel.markerNameURL,
                                let markerNameString = try? String(contentsOf: markerNameURL),
                                let data = markerNameString.data(using: .utf8),
                                let markerNames = try? JSONSerialization.jsonObject(with: data, options: []) as? [String] {
                                 for marker in markerNames {
                                     if let childNode = savedScene.rootNode.childNode(withName: marker, recursively: true) {
-                                        markerRoot1.addChildNode(childNode)
                                         
-//                                        let constraint = SCNLookAtConstraint(target: sceneView.pointOfView)
-//                                        constraint.isGimbalLockEnabled = true
-//                                        childNode.constraints = [constraint]
+                                        markerRoot1.addChildNode(childNode)
+                                        if marker.contains("circle") {
+                                            if let childNode = childNode as? Circle {
+                                                circleNodes.append(childNode)
+                                            }
+                                        }
+                                        if marker.contains("square") {
+                                            if let childNode = childNode as? Square {
+                                                squareNodes.append(childNode)
+                                            }
+                                        }
+                                        if marker.contains("triangle") {
+                                            if let childNode = childNode as? Triangle {
+                                                triangleNodes.append(childNode)
+                                            }
+                                        }
+                                        if marker.contains("text") {
+                                            textNodes.append(childNode)
+                                        }
+                                        if marker.contains("line") {
+                                            if let childNode = childNode as? SCNLineNode {
+                                                lineNodes.append(childNode)
+                                            }
+                                        }
+                                        if !marker.contains("line") {
+                                            let constraint = SCNBillboardConstraint()
+                                            constraint.freeAxes = SCNBillboardAxis.Y
+                                            childNode.constraints = [constraint]
+                                        }
+                                        
                                     }
                                 }
                             }
-                            
+                
                             markerRoot1.name = "MarkerRoot"
                             cadModelRoot1.addChildNode(markerRoot1)
                             
@@ -1030,7 +1150,7 @@ class ARViewController: UIViewController {
         }
     }
     
-    private func showVirtualObject(with model: VirtualObject) {
+    private func showVirtualObject(with model: SCNNode) {
         let boundingBox = model.boundingBox
         let bmax = boundingBox.max
         let bmin = boundingBox.min
@@ -1038,12 +1158,6 @@ class ARViewController: UIViewController {
         let depth = bmax.z - bmin.z
         let height = bmax.y - bmin.y
 
-        /*
-        model.scale = SCNVector3(1, 1, 1)
-        model.simdWorldPosition = simd_float3(x: 0, y: -height / 2.0, z: -1 - depth)
-
-        sceneView.scene.rootNode.addChildNode(model)
-        */
         
         //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
         
@@ -1090,7 +1204,6 @@ class ARViewController: UIViewController {
         }
         
         //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
-
     }
     
     @objc
@@ -1100,6 +1213,8 @@ class ARViewController: UIViewController {
             UIView.animate(withDuration: 0.3) {
                 sender.transform = CGAffineTransform(translationX: -300, y: 0)
                 self.shapeMenuView.transform = CGAffineTransform(translationX: -300, y: 0)
+                self.shapeMenuView.resetUI()
+                self.function = Function.none
             } completion: { _ in
             }
         } else {
@@ -1112,7 +1227,6 @@ class ARViewController: UIViewController {
         }
     }
     
-    private var settings: Settings = Settings()
     private func showSettingsVC() {
         let settingsVC = SettingsViewController()
         self.addChild(settingsVC)
@@ -1123,10 +1237,14 @@ class ARViewController: UIViewController {
             make.edges.equalTo(view)
         }
         
-        settingsVC.settingsClosure = { [weak self] settings in
+        settingsVC.settingsClosure = { [weak self] in
             guard let self = self else { return }
-            self.settings = settings
-            Square.primaryColor = settings.lineColor.uiColor
+            self.shapeMenuView.resetUI()
+        }
+        
+        settingsVC.selectFontClosure = { [weak self] in
+            guard let self = self else { return }
+            self.addFontPickerView()
         }
     }
     
@@ -1134,6 +1252,7 @@ class ARViewController: UIViewController {
     private func showBottomMenuView(sender: UIButton) {
         if sender.tag == 200 {
             sender.tag = 201
+            bottomMenuView.isHidden = false
             UIView.animate(withDuration: 0.3) {
                 sender.transform = CGAffineTransform(translationX: 400, y: 0)
                 self.bottomMenuView.transform = CGAffineTransform(translationX: 400, y: 0)
@@ -1148,6 +1267,7 @@ class ARViewController: UIViewController {
             }
         } else {
             sender.tag = 200
+            bottomMenuView.isHidden = true
             UIView.animate(withDuration: 0.3) {
                 sender.transform = CGAffineTransformIdentity
                 self.bottomMenuView.transform = CGAffineTransformIdentity
@@ -1163,49 +1283,6 @@ class ARViewController: UIViewController {
         }
     }
     
-    // MARK: Drawing
-//    private func createSphereAndInsert(atPositions positions: [SCNVector3], andAddToStrokeAnchor strokeAnchor: StrokeAnchor) {
-//        for position in positions {
-//            createSphereAndInsert(atPosition: position, andAddToStrokeAnchor: strokeAnchor)
-//        }
-//    }
-    
-//    private func createSphereAndInsert(atPosition position: SCNVector3, andAddToStrokeAnchor strokeAnchor: StrokeAnchor) {
-//        guard let currentStrokeNode = currentStrokeAnchorNode else {
-//            return
-//        }
-//        // Get the reference sphere node and clone it
-//        let referenceSphereNode = sphereNodesManager.getReferenceSphereNode(forStrokeColor: strokeAnchor.color)
-//        let newSphereNode = referenceSphereNode.clone()
-//        // Convert the position from world transform to local transform (relative to the anchors default node)
-//        let localPosition = currentStrokeNode.convertPosition(position, from: nil)
-//        newSphereNode.position = localPosition
-//        // Add the node to the default node of the anchor
-//        currentStrokeNode.addChildNode(newSphereNode)
-//        // Add the position of the node to the stroke anchors sphereLocations array (Used for saving/loading the world map)
-//        strokeAnchor.sphereLocations.append([newSphereNode.position.x, newSphereNode.position.y, newSphereNode.position.z])
-//    }
-    
-//    private func anchorForID(_ anchorID: UUID) -> StrokeAnchor? {
-//        return sceneView.session.currentFrame?.anchors.first(where: { $0.identifier == anchorID }) as? StrokeAnchor
-//    }
-    
-//    private func sortStrokeAnchorIDsInOrderOfDateCreated() {
-//        var strokeAnchorsArray: [StrokeAnchor] = []
-//        for anchorID in strokeAnchorIDs {
-//            if let strokeAnchor = anchorForID(anchorID) {
-//                strokeAnchorsArray.append(strokeAnchor)
-//            }
-//        }
-//        strokeAnchorsArray.sort(by: { $0.dateCreated < $1.dateCreated })
-//
-//        strokeAnchorIDs = []
-//        for anchor in strokeAnchorsArray {
-//            strokeAnchorIDs.append(anchor.identifier)
-//        }
-//    }
-    
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         //MARK: 1
         guard let function = function, function == .line, let location = touches.first?.location(in: nil) else {
@@ -1215,31 +1292,6 @@ class ARViewController: UIViewController {
 
         begin()
         isDrawing = true
-        
-        
-        //MARK: 2
-//        guard let function = function, function == .line else { return }
-//        guard let touch = touches.first else { return }
-//        let location = touch.location(in: sceneView)
-//        guard let hitResult = sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else { return }
-//        let tapPoint_world = hitResult.simdWorldCoordinates
-//        let frame = sceneView.session.currentFrame
-//        guard let transform = frame?.camera.transform else { return }
-//        distanceFromCamera = calculateDistance(firstPosition: tapPoint_world, secondPosition: transform.translation)
-//
-//
-//        let touchPositionInFrontOfCamera = tapPoint_world//getPosition(ofPoint: touch.location(in: sceneView), atDistanceFromCamera: distanceFromCamera, inView: sceneView) else { return }
-//        // Convert the position from SCNVector3 to float4x4
-//        let strokeAnchor = StrokeAnchor(name: "strokeAnchor", transform: float4x4(SIMD4(x: 1, y: 0, z: 0, w: 0),
-//                                                                                  SIMD4(x: 0, y: 1, z: 0, w: 0),
-//                                                                                  SIMD4(x: 0, y: 0, z: 1, w: 0),
-//                                                                                  SIMD4(x: touchPositionInFrontOfCamera.x,
-//                                                                                        y: touchPositionInFrontOfCamera.y,
-//                                                                                        z: touchPositionInFrontOfCamera.z,
-//                                                                                        w: 1)))
-//        strokeAnchor.color = currentStrokeColor
-//        sceneView.session.add(anchor: strokeAnchor)
-//        currentFingerPosition = touch.location(in: sceneView)
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -1248,48 +1300,34 @@ class ARViewController: UIViewController {
             return
         }
         pointTouching = location
-        
-        //MARK: 2
-//        guard let function = function, function == .line else { return }
-//        guard let touch = touches.first else { return }
-//        currentFingerPosition = touch.location(in: sceneView)
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         //MARK: 1
         isDrawing = false
         reset()
-        
-        //MARK: 2
-//        previousPoint = nil
-//        currentStrokeAnchorNode = nil
-//        currentFingerPosition = nil
-       
     }
 
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        //MARK: 2
-//        previousPoint = nil
-//        currentStrokeAnchorNode = nil
-//        currentFingerPosition = nil
     }
     
     private func begin() {
-        let drawingNode = SCNLineNode(with: [], radius: 0.001, edges: 12, maxTurning: 12)
+        let drawingNode = SCNLineNode(with: [], radius: ShapeSetting.lineThickness, edges: 12, maxTurning: 12)
         let material = SCNMaterial()
-        material.diffuse.contents = settings.lineColor.uiColor
+        material.diffuse.contents = ShapeSetting.lineColor
         material.isDoubleSided = true
         material.writesToDepthBuffer = false
         material.readsFromDepthBuffer = false
+        material.isDoubleSided = true
+        material.ambient.contents = UIColor.black
+        material.lightingModel = .constant
+        material.emission.contents = ShapeSetting.lineColor
         drawingNode.lineMaterials = [material]
         sceneView.scene.rootNode.addChildNode(drawingNode)
         self.drawingNode = drawingNode
         
         guard let markerRoot = markerRoot else { return }
-        let transform = sceneView.scene.rootNode.convertTransform(drawingNode.transform, to: markerRoot)
         markerRoot.addChildNode(drawingNode)
-        drawingNode.transform = transform
         
         lineNodes.append(drawingNode)
     }
@@ -1301,7 +1339,9 @@ class ARViewController: UIViewController {
         
         if lastHit.worldCoordinates.distance(to: lastPoint) > minimumMovement {
             hitVertices.append(lastHit.worldCoordinates)
-            lastPoint = lastHit.worldCoordinates
+            let tapPoint_local = lastHit.localCoordinates
+            let tapNode = lastHit.node
+            let lastPoint = tapNode.convertPosition(tapPoint_local, to: markerRoot)
             updateGeometry(with: lastPoint)
         }
     }
@@ -1334,96 +1374,13 @@ extension ARViewController: ARSCNViewDelegate {
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-//        if let strokeAnchor = anchor as? StrokeAnchor {
-//            currentStrokeAnchorNode = node
-//
-//            //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
-//            markerRoot?.addChildNode(node)
-//            //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
-//
-//            strokeAnchorIDs.append(strokeAnchor.identifier)
-//            for sphereLocation in strokeAnchor.sphereLocations {
-//                createSphereAndInsert(atPosition: SCNVector3Make(sphereLocation[0], sphereLocation[1], sphereLocation[2]), andAddToStrokeAnchor: strokeAnchor)
-//            }
-//        }
+        
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didRemove node: SCNNode, for anchor: ARAnchor) {
-        // Remove the anchorID from the strokes array
-//        strokeAnchorIDs.removeAll(where: { $0 == anchor.identifier })
-        
         //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
         node.removeFromParentNode()
         //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
-    }
-}
-
-// MARK: - ARSessionDelegate
-extension ARViewController: ARSessionDelegate {
-    func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        if !usdzObjects.isEmpty || !scnObjects.isEmpty {
-            let camera = frame.camera
-            let transform = camera.transform
-            if let usdz = usdzObjects.first?.worldPosition {
-                calculateDistanceFromCamera(node: SIMD3(usdz.x, usdz.y, usdz.z), camera: transform.translation)
-            } else if let scn = scnObjects.first?.worldPosition {
-                calculateDistanceFromCamera(node: SIMD3(scn.x, scn.y, scn.z), camera: transform.translation)
-            }
-            
-        }
-        
-        // Draw the spheres
-//        guard let currentStrokeAnchorID = strokeAnchorIDs.last else { return }
-//        let currentStrokeAnchor = anchorForID(currentStrokeAnchorID)
-//        if currentFingerPosition != nil && currentStrokeAnchor != nil {
-////            guard let location = currentFingerPosition else { return }
-////            guard let hitResult = sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else { return }
-////            let tapPoint_world = hitResult.simdWorldCoordinates
-//            guard let currentPointPosition = getPosition(ofPoint: currentFingerPosition!, atDistanceFromCamera: distanceFromCamera, inView: sceneView) else { return }
-//
-//            if let previousPoint = previousPoint {
-//                // Do not create any new spheres if the distance hasn't changed much
-//                let distance = abs(previousPoint.distance(vector: currentPointPosition))
-//                if distance > 0.00104 {
-//                    createSphereAndInsert(atPosition: currentPointPosition, andAddToStrokeAnchor: currentStrokeAnchor!)
-//                    // Draw spheres between the currentPoint and previous point if they are further than the specified distance (Otherwise fast movement will make the line blocky)
-//                    // TODO: The spacing should depend on the brush size
-//                    let positions = getPositionsOnLineBetween(point1: previousPoint, andPoint2: currentPointPosition, withSpacing: 0.001)
-//                    createSphereAndInsert(atPositions: positions, andAddToStrokeAnchor: currentStrokeAnchor!)
-//                    self.previousPoint = currentPointPosition
-//                }
-//            } else {
-//                createSphereAndInsert(atPosition: currentPointPosition, andAddToStrokeAnchor: currentStrokeAnchor!)
-//                self.previousPoint = currentPointPosition
-//            }
-//        }
-        
-    }
-    
-    func calculateDistanceFromCamera(node: SIMD3<Float>, camera: SIMD3<Float>) {
-        let start = node
-        let end = camera
-        
-        let distance = sqrt(
-            pow(end.x - start.x, 2) +
-            pow(end.y - start.y, 2) +
-            pow(end.z - start.z, 2)
-        )
-        
-//        distanceFromCamera = distance
-    }
-    
-    func calculateDistance(firstPosition: SIMD3<Float>, secondPosition: SIMD3<Float>) -> Float{
-        let start = firstPosition
-        let end = secondPosition
-        
-        let distance = sqrt(
-            pow(end.x - start.x, 2) +
-            pow(end.y - start.y, 2) +
-            pow(end.z - start.z, 2)
-        )
-        
-        return distance
     }
 }
 

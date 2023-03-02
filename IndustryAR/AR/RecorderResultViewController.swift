@@ -137,7 +137,7 @@ class RecorderResultViewController: UIViewController {
                 if videoCompatible {
                     UISaveVideoAtPathToSavedPhotosAlbum(filePath, self, #selector(self.didFinishSavingVideo(videoPath:error:contextInfo:)), nil)
                 } else {
-                    HUD.flash(.labeledError(title: "The Video Can Not Be Saved", subtitle: nil), delay: 1.0)
+                    HUD.flash(.labeledError(title: save_error.localizedString(), subtitle: nil), delay: 1.0)
                 }
             }
         case .none:
@@ -148,22 +148,18 @@ class RecorderResultViewController: UIViewController {
     @objc
     private func didFinishSavingVideo(videoPath: String, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
         if error != nil {
-            HUD.flash(.labeledError(title: "Save failed", subtitle: nil), delay: 1.0)
+            HUD.flash(.labeledError(title: save_fail.localizedString(), subtitle: nil), delay: 1.0)
         } else {
-            HUD.flash(.label("Saved successfully"), delay: 1)
-            do {
-                try FileManager.default.removeItem(atPath: videoPath)
-            } catch {
-            }
+            HUD.flash(.label(save_success.localizedString()), delay: 1)
         }
     }
     
     @objc
     func didFinishSavingImage(_ image: UIImage, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
         if error != nil {
-            HUD.flash(.labeledError(title: "Save failed", subtitle: nil), delay: 1.0)
+            HUD.flash(.labeledError(title: save_fail.localizedString(), subtitle: nil), delay: 1.0)
         } else {
-            HUD.flash(.label("Saved successfully"), delay: 1)
+            HUD.flash(.label(save_success.localizedString()), delay: 1)
         }
     }
     
@@ -193,6 +189,19 @@ class RecorderResultViewController: UIViewController {
     
     @objc
     private func backButtonClicked() {
+        switch mediaType {
+        case .video(let videoURL):
+            do {
+                if let videoURL = videoURL {
+                    try FileManager.default.removeItem(atPath: videoURL.path)
+                }
+            } catch {
+            }
+        case .image(_):
+            break
+        case .none:
+            break
+        }
         self.view.removeFromSuperview()
         self.removeFromParent()
     }

@@ -1,0 +1,41 @@
+/* 
+  Localizable.strings
+  IndustryAR
+
+  Created by 吴熠 on 3/1/23.
+  
+*/
+
+"project" = "Project";
+"history" = "Histoty";
+
+"drawing" = "Draw";
+"triangle" = "Triangle";
+"square" = "Square";
+"circle" = "Circle";
+"text" = "Text";
+"insert_occlusion" = "Insert Occlusion";
+"remove_occlusion" = "Remove Occlusion";
+"delete" = "Delete";
+"setting" = "Setting";
+"marker" = "Display Marker";
+"none_marker" = "Hide Marker";
+
+"enter_text" = "Please enter text";
+"cancel" = "Cancel";
+"confirm" = "OK";
+
+"line_color" = "Line Color:";
+"line_thickness" = "Line Thickness:";
+"line_type" = "Line Type:";
+"marker_size" = "Marker Size:";
+"text_color" = "Text Color:";
+"text_size" = "Text Size:";
+"text_font" = "Text Font:";
+
+"normal_line" = "line";
+"dash_line" = "dash line";
+
+"save_success" = "Saved successfully";
+"save_fail" = "Save failed";
+"save_error" = "The Video Can Not Be Saved";
