@@ -12,9 +12,9 @@ enum ColorType {
     case text
 }
 
-enum LineType {
-    case normal
-    case dash
+enum LineType: Int {
+    case normal = 0
+    case dash = 1
 }
 
 class SettingsViewController: UIViewController {
@@ -78,10 +78,10 @@ class SettingsViewController: UIViewController {
         return collectionView
     }()
     
-    private var currentLineColor: UIColor = .white
+//    private var currentLineColor: UIColor = .white
     private var currentLineWidth: CGFloat = 0.002
     private var currentLineType: LineType = .normal
-    private var currentTextColor: UIColor = .white
+//    private var currentTextColor: UIColor = .white
     private var currentTextSize: CGFloat = 24
     private var currentTextFontName: String = "PingFang-SC-Medium"
 
@@ -140,11 +140,11 @@ extension SettingsViewController: UITableViewDataSource {
         let icon = detailName[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: settingsTableViewCellID, for: indexPath) as? SettingsTableViewCell ?? SettingsTableViewCell()
         if indexPath.row == 0 {
-            cell.iconView.backgroundColor = currentLineColor
+            cell.iconView.backgroundColor = ShapeSetting.lineColor
             cell.nameLabel.text = settingsName[0]
             cell.detailLabel.text = detailName[0]
         } else if indexPath.row == 4 {
-            cell.iconView.backgroundColor = currentTextColor
+            cell.iconView.backgroundColor = ShapeSetting.textColor
             cell.nameLabel.text = settingsName[4]
             cell.detailLabel.text = detailName[4]
         } else if indexPath.row == 6 {
@@ -230,10 +230,8 @@ extension SettingsViewController: UICollectionViewDelegate {
         let color = colors[indexPath.row]
         switch colorType {
         case .line:
-            currentLineColor = color
             ShapeSetting.lineColor = color
         case .text:
-            currentTextColor = color
             ShapeSetting.textColor = color
         }
         UIView.animate(withDuration: 0.3) {
