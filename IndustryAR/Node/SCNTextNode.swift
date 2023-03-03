@@ -1,47 +1,50 @@
 //
 //  SCNTextNode.swift
-//  SCNTextNode
+//  IndustryAR
 //
-//
-//  Created by 吴熠 on 2/23/23.
+//  Created by  吴 熠 on 2023/3/2.
 //
 
+import UIKit
 import SceneKit
 
-public class SCNTextNode: SCNNode {
+class SCNTextNode: SCNNode {
     
-    var currentWidth: Float = 0
-    var currentDepth: Float = 0
-
-    init(text: String, textColor: UIColor = .systemRed, textFont: UIFont = UIFont(name: ShapeSetting.fontName, size: ShapeSetting.fontSize) ?? UIFont.systemFont(ofSize: 20), extrusionDepth: CGFloat = 0.01) {
+    private var deleteFlag: SCNNode = SCNNode()
+    
+    init(geometry: SCNGeometry) {
         super.init()
-        let text = SCNText(string: text, extrusionDepth: 0.01)
-        text.font = textFont
-        let material = SCNMaterial()
-        material.diffuse.contents = textColor
-        material.writesToDepthBuffer = false
-        material.readsFromDepthBuffer = false
-        text.materials = [material]
-        let textNode = SCNNode(geometry: text)
-        textNode.scale = SCNVector3(x: 0.01, y: 0.01, z: 0.01)
-        
-        let min = textNode.boundingBox.min * 0.01
-        let max = textNode.boundingBox.max * 0.01
-        let width = max.x - min.x
-        let height = max.y - min.y
-        let depth = max.z - min.z
-        
+        self.geometry = geometry
+        self.name = "text"
+        self.scale = SCNVector3(x: ShapeSetting.textScale, y: ShapeSetting.textScale, z: ShapeSetting.textScale)
+                
         self.pivot = SCNMatrix4MakeTranslation(
             self.boundingBox.min.x,
             self.boundingBox.min.y,
             self.boundingBox.min.z
         )
         
-        currentWidth = width
-        currentDepth = depth
+        let plane = SCNPlane(width: CGFloat(ShapeSetting.fontSize), height: CGFloat(ShapeSetting.fontSize))
+        plane.firstMaterial?.diffuse.contents = UIImage(named: "shanchu-ar")
+        plane.firstMaterial?.writesToDepthBuffer = false
+        plane.firstMaterial?.readsFromDepthBuffer = false
+        let planeNode = SCNNode(geometry: plane)
+        planeNode.name = "plane_for_hit"
+        planeNode.simdPosition = simd_float3(self.boundingBox.min.x, self.boundingBox.min.y, self.boundingBox.min.z)
+        addChildNode(planeNode)
+        deleteFlag = planeNode
+//        deleteFlag.isHidden = true
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func showDeleteFlag() {
+        deleteFlag.isHidden = false
+    }
+    
+    func hideDeleteFlag() {
+        deleteFlag.isHidden = true
     }
 }

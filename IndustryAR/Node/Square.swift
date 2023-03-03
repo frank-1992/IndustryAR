@@ -12,6 +12,8 @@ class Square: SCNNode {
                 
     private var segments: [Segment] = []
     
+    private var deleteFlag: SCNNode = SCNNode()
+    
     private let positioningNode = SCNNode()
     
     override init() {
@@ -59,5 +61,24 @@ class Square: SCNNode {
             positioningNode.addChildNode(segment)
         }
         addChildNode(positioningNode)
+        
+        let plane = SCNPlane(width: CGFloat(ShapeSetting.lineLength/1000), height: CGFloat(ShapeSetting.lineLength/1000))
+        plane.firstMaterial?.diffuse.contents = UIImage(named: "shanchu-ar")
+        plane.firstMaterial?.writesToDepthBuffer = false
+        plane.firstMaterial?.readsFromDepthBuffer = false
+        let planeNode = SCNNode(geometry: plane)
+        planeNode.name = "plane_for_hit"
+        planeNode.simdPosition = simd_float3(0, 0, 0)
+        addChildNode(planeNode)
+        deleteFlag = planeNode
+//        deleteFlag.isHidden = true
+    }
+    
+    func showDeleteFlag() {
+        deleteFlag.isHidden = false
+    }
+    
+    func hideDeleteFlag() {
+        deleteFlag.isHidden = true
     }
 }

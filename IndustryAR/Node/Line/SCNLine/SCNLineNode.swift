@@ -39,6 +39,8 @@ public class SCNLineNode: SCNNode {
     }
     public private(set) var gParts: GeometryParts?
     
+    private var deleteFlag: SCNNode = SCNNode()
+    
     /// Initialiser for a SCNLineNode
     ///
     /// - Parameters:
@@ -61,6 +63,29 @@ public class SCNLineNode: SCNNode {
             self.geometry = geomParts.buildGeometry()
             self.length = len
         }
+    }
+    
+    public func addDeleteFlagNode(initialHitTest: SCNHitTestResult) {
+        let plane = SCNPlane(width: 0.1, height: 0.1)
+        plane.firstMaterial?.diffuse.contents = UIImage(named: "shanchu-ar")
+        plane.firstMaterial?.writesToDepthBuffer = false
+        plane.firstMaterial?.readsFromDepthBuffer = false
+        let planeNode = SCNNode(geometry: plane)
+        planeNode.name = "plane_for_hit"
+        
+        let lastPoint = initialHitTest.node.convertPosition(initialHitTest.localCoordinates, to: self)
+        planeNode.position = SCNVector3(x: lastPoint.x, y: lastPoint.y, z: lastPoint.z)
+        self.addChildNode(planeNode)
+        deleteFlag = planeNode
+//        deleteFlag.isHidden = true
+    }
+    
+    func showDeleteFlag() {
+        deleteFlag.isHidden = false
+    }
+    
+    func hideDeleteFlag() {
+        deleteFlag.isHidden = true
     }
     
     /// Add a point to the collection for this SCNLineNode

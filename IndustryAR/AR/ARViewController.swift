@@ -64,7 +64,6 @@ class ARViewController: UIViewController {
         sceneView.delegate = self
         sceneView.automaticallyUpdatesLighting = true
         sceneView.preferredFramesPerSecond = 60
-        sceneView.debugOptions = [.showBoundingBoxes]
         return sceneView
     }()
     
@@ -144,7 +143,7 @@ class ARViewController: UIViewController {
     var isRecordingVideo: Bool = false
     
     // SCNTetx
-    var textNode: SCNNode?
+    var textGeometry: SCNGeometry?
     
     // SCNNode-----Circle
     var circleNodes: [Circle] = [Circle]()
@@ -156,7 +155,7 @@ class ARViewController: UIViewController {
     var triangleNodes: [Triangle] = [Triangle]()
 
     // SCNNode-----Text
-    var textNodes: [SCNNode] = [SCNNode]()
+    var textNodes: [SCNTextNode] = [SCNTextNode]()
 
     // SCNNode-----Line
     var lineNodes: [SCNLineNode] = [SCNLineNode]()
@@ -203,7 +202,7 @@ class ARViewController: UIViewController {
 //        }
         //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
 //        guard ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) else {
-//            fatalError("People occlusion is not supported on this device.")
+//            fatalError("SceneDepth is not supported on this device.")
 //        }
 //        switch configuration.frameSemantics {
 //        case [.sceneDepth]:
@@ -324,10 +323,12 @@ class ARViewController: UIViewController {
                     material.writesToDepthBuffer = false
                     material.readsFromDepthBuffer = false
                     text.materials = [material]
-                    let textNode = SCNNode(geometry: text)
-                    textNode.name = "text"
-                    textNode.scale = SCNVector3(x: ShapeSetting.textScale, y: ShapeSetting.textScale, z: ShapeSetting.textScale)
-                    self.textNode = textNode
+                    self.textGeometry = text
+//                    let textNode = SCNNode(geometry: text)
+//                    textNode.name = "text"
+//                    textNode.scale = SCNVector3(x: ShapeSetting.textScale, y: ShapeSetting.textScale, z: ShapeSetting.textScale)
+//                    let textNode = SCNTextNode(text: content)
+//                    self.textNode = textNode
                     
                     self.shapeMenuView.resetUI()
                 }
@@ -585,9 +586,10 @@ class ARViewController: UIViewController {
         guard let function = function else { return }
         if function == .delete {
             let touchPoint = longpress.location(ofTouch: 0, in: sceneView)
-            guard let hitTestNode = sceneView.hitTest(touchPoint, options: [SCNHitTestOption.boundingBoxOnly: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first?.node else { return }
-            for node in hitTestNode.childNodes {
-                print("点击node\(node.name)")
+            guard let hitTestNode = sceneView.hitTest(touchPoint, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first?.node else { return }
+            print("name \(hitTestNode.name)")
+            if hitTestNode.name == "plane_for_hit" {
+                hitTestNode.parent?.removeFromParentNode()
             }
         }
     }
@@ -702,20 +704,19 @@ class ARViewController: UIViewController {
         }
         
         if function == .text {
-            guard let textNode = textNode else {
+            guard let textGeometry = textGeometry else {
                 return
             }
 
-            guard let newTextNode = textNode.copy() as? SCNNode else {
-                return
-            }
+            let newTextNode = SCNTextNode(geometry: textGeometry)
+
             
             let constraint = SCNBillboardConstraint()
             constraint.freeAxes = SCNBillboardAxis.Y
             newTextNode.constraints = [constraint]
             
-            let min = newTextNode.boundingBox.min * 0.01
-            let max = newTextNode.boundingBox.max * 0.01
+            let min = newTextNode.boundingBox.min * ShapeSetting.textScale
+            let max = newTextNode.boundingBox.max * ShapeSetting.textScale
             let width = max.x - min.x
             let depth = max.z - min.z
             
@@ -724,7 +725,7 @@ class ARViewController: UIViewController {
             let centerZ = tapPoint_world.z - depth/2.0
             
             newTextNode.position = SCNVector3(x: centerX, y: centerY, z: centerZ)
-            
+
             markerRoot?.addChildNode(newTextNode)
             textNodes.append(newTextNode)
         }
@@ -1117,7 +1118,9 @@ class ARViewController: UIViewController {
                                             }
                                         }
                                         if marker.contains("text") {
-                                            textNodes.append(childNode)
+                                            if let childNode = childNode as? SCNTextNode {
+                                                textNodes.append(childNode)
+                                            }
                                         }
                                         if marker.contains("line") {
                                             if let childNode = childNode as? SCNLineNode {
@@ -1283,15 +1286,47 @@ class ARViewController: UIViewController {
         }
     }
     
+    var touchPoints: [CGPoint] = [CGPoint]()
+
+    var firstPoint: CGPoint = .zero
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         //MARK: 1
         guard let function = function, function == .line, let location = touches.first?.location(in: nil) else {
             return
         }
+        
+        
+        
+        
+        
         pointTouching = location
-
-        begin()
+        touchPoints.append(pointTouching)
+        
+        guard let location = touches.first?.location(in: nil),
+              let lastHit = sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else {
+            return
+        }
+        
+        begin(hit: lastHit)
         isDrawing = true
+        
+        if let drawingNode = drawingNode {
+//            let plane = SCNPlane(width: 0.1, height: 0.1)
+//            plane.firstMaterial?.diffuse.contents = UIColor.red
+//            plane.firstMaterial?.writesToDepthBuffer = false
+//            plane.firstMaterial?.readsFromDepthBuffer = false
+//            let planeNode = SCNNode(geometry: plane)
+//            planeNode.name = "plane_for_hit"
+//            
+//            guard let location = touches.first?.location(in: nil),
+//                  let lastHit = sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else {
+//                return
+//            }
+//            let lastPoint = lastHit.node.convertPosition(lastHit.localCoordinates, to: drawingNode)
+//            planeNode.position = SCNVector3(x: lastPoint.x, y: lastPoint.y, z: lastPoint.z)
+//            drawingNode.addChildNode(planeNode)
+        }
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -1300,18 +1335,20 @@ class ARViewController: UIViewController {
             return
         }
         pointTouching = location
+        touchPoints.append(pointTouching)
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         //MARK: 1
         isDrawing = false
         reset()
+        
     }
 
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
     }
     
-    private func begin() {
+    private func begin(hit: SCNHitTestResult) {
         let drawingNode = SCNLineNode(with: [], radius: ShapeSetting.lineThickness, edges: 12, maxTurning: 12)
         let material = SCNMaterial()
         material.diffuse.contents = ShapeSetting.lineColor
@@ -1323,13 +1360,14 @@ class ARViewController: UIViewController {
         material.lightingModel = .constant
         material.emission.contents = ShapeSetting.lineColor
         drawingNode.lineMaterials = [material]
-        sceneView.scene.rootNode.addChildNode(drawingNode)
         self.drawingNode = drawingNode
         
         guard let markerRoot = markerRoot else { return }
         markerRoot.addChildNode(drawingNode)
         
         lineNodes.append(drawingNode)
+        
+        drawingNode.addDeleteFlagNode(initialHitTest: hit)
     }
 
     private func addPointAndCreateVertices() {

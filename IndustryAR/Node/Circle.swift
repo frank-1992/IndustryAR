@@ -12,6 +12,8 @@ class Circle: SCNNode {
             
     private let positioningNode = SCNNode()
     
+    private var deleteFlag: SCNNode = SCNNode()
+    
     override init() {
         super.init()
         create()
@@ -28,9 +30,9 @@ class Circle: SCNNode {
     private func create() {
         let circleNode = SCNNode(geometry: SCNTorus(ringRadius:CGFloat(ShapeSetting.lineLength)/1000.0, pipeRadius: CGFloat(ShapeSetting.lineThickness)/15000))
         circleNode.geometry?.firstMaterial?.diffuse.contents = ShapeSetting.lineColor
-//        circleNode.geometry?.firstMaterial?.isDoubleSided = true
-//        circleNode.geometry?.firstMaterial?.ambient.contents = UIColor.black
-//        circleNode.geometry?.firstMaterial?.lightingModel = .constant
+        circleNode.geometry?.firstMaterial?.isDoubleSided = true
+        circleNode.geometry?.firstMaterial?.ambient.contents = UIColor.black
+        circleNode.geometry?.firstMaterial?.lightingModel = .constant
         circleNode.geometry?.firstMaterial?.emission.contents = ShapeSetting.lineColor
         
         positioningNode.eulerAngles.x = .pi / 2
@@ -41,5 +43,24 @@ class Circle: SCNNode {
         circleNode.geometry?.firstMaterial?.readsFromDepthBuffer = false
         renderingOrder = 100
         addChildNode(positioningNode)
+        
+        let plane = SCNPlane(width: CGFloat(ShapeSetting.lineLength)/1000.0, height: CGFloat(ShapeSetting.lineLength)/1000.0)
+        plane.firstMaterial?.diffuse.contents = UIImage(named: "shanchu-ar")
+        plane.firstMaterial?.writesToDepthBuffer = false
+        plane.firstMaterial?.readsFromDepthBuffer = false
+        let planeNode = SCNNode(geometry: plane)
+        planeNode.name = "plane_for_hit"
+        planeNode.simdPosition = simd_float3(0, 0, 0)
+        addChildNode(planeNode)
+        deleteFlag = planeNode
+//        deleteFlag.isHidden = true
+    }
+    
+    func showDeleteFlag() {
+        deleteFlag.isHidden = false
+    }
+    
+    func hideDeleteFlag() {
+        deleteFlag.isHidden = true
     }
 }

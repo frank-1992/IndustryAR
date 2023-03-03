@@ -15,7 +15,7 @@ class ShapeSetting: NSObject {
     static var textColor: UIColor = .white
     static var fontSize: CGFloat = 10 {
         didSet {
-            textScale = Float(fontSize/10 * 0.003)
+            ShapeSetting.textScale = Float(fontSize/10 * 0.003)
         }
     }
     static var textScale: Float = 0.003
