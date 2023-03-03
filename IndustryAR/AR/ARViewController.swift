@@ -352,22 +352,18 @@ class ARViewController: UIViewController {
             }
             
             if function == .occlusion {
-                guard ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) else {
-                    fatalError("sceneDepth is not supported on this device.")
-                }
-                
                 if self.removedOcclusion {
                     self.removedOcclusion = false
                     let configuration = ARWorldTrackingConfiguration()
                     configuration.planeDetection = [.horizontal, .vertical]
                     configuration.isLightEstimationEnabled = true
                     configuration.environmentTexturing = .automatic
-                   
+                    
                     if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
                         configuration.sceneReconstruction = .mesh
                     }
-                    
                     self.sceneView.session.run(configuration, options: [.resetSceneReconstruction])
+                    
                     self.shapeMenuView.resetOcclusionTitleState(title: remove_occlusion.localizedString())
                 } else {
                     self.removedOcclusion = true
@@ -379,8 +375,6 @@ class ARViewController: UIViewController {
                     
                     self.shapeMenuView.resetOcclusionTitleState(title: insert_occlusion.localizedString())
                 }
-                
-                
             }
             
             if function == .showSymbol {
@@ -1489,14 +1483,11 @@ extension ARViewController: ARSCNViewDelegate {
         let normals = meshGeometry.normals
         let faces = meshGeometry.faces
         
-        // use the MTL buffer that ARKit gives us
         let vertexSource = SCNGeometrySource(buffer: vertices.buffer, vertexFormat: vertices.format, semantic: .vertex, vertexCount: vertices.count, dataOffset: vertices.offset, dataStride: vertices.stride)
         
         let normalsSource = SCNGeometrySource(buffer: normals.buffer, vertexFormat: normals.format, semantic: .normal, vertexCount: normals.count, dataOffset: normals.offset, dataStride: normals.stride)
-        // Copy bytes as we may use them later
         let faceData = Data(bytes: faces.buffer.contents(), count: faces.buffer.length)
         
-        // create the geometry element
         let geometryElement = SCNGeometryElement(data: faceData, primitiveType: primitiveType(type: faces.primitiveType), primitiveCount: faces.count, bytesPerIndex: faces.bytesPerIndex)
         
         return SCNGeometry(sources: [vertexSource, normalsSource], elements: [geometryElement])
