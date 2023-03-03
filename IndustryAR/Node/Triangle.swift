@@ -67,7 +67,7 @@ class Triangle: SCNNode {
         plane.firstMaterial?.readsFromDepthBuffer = false
         let planeNode = SCNNode(geometry: plane)
         planeNode.name = "plane_for_hit"
-        planeNode.simdPosition = simd_float3(0, -ShapeSetting.lineLength/2000, 0)
+        planeNode.simdPosition = simd_float3(0, -ShapeSetting.lineLength/2000, 0.1)
         addChildNode(planeNode)
         planeNode.isHidden = true
     }

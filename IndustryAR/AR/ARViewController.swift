@@ -1429,10 +1429,9 @@ class ARViewController: UIViewController {
         
         guard let markerRoot = markerRoot else { return }
         markerRoot.addChildNode(drawingNode)
+        drawingNode.addDeleteFlagNode(initialHitTest: hit)
         
         lineNodes.append(drawingNode)
-        
-        drawingNode.addDeleteFlagNode(initialHitTest: hit)
     }
 
     private func addPointAndCreateVertices() {
