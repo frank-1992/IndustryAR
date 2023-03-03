@@ -67,7 +67,7 @@ class ARViewController: UIViewController {
         return sceneView
     }()
     
-    var configuration = ARWorldTrackingConfiguration()
+//    var configuration = ARWorldTrackingConfiguration()
     
     private lazy var backButton: UIButton = {
         let backButton = UIButton()
@@ -192,28 +192,11 @@ class ARViewController: UIViewController {
         configuration.isLightEstimationEnabled = true
         configuration.environmentTexturing = .automatic
        
-//        if ARWorldTrackingConfiguration.supportsFrameSemantics(.personSegmentationWithDepth) {
-//            switch configuration.frameSemantics {
-//            case [.personSegmentationWithDepth]:
-//                configuration.frameSemantics.remove(.personSegmentationWithDepth)
-//            default:
-//                configuration.frameSemantics.insert(.personSegmentationWithDepth)
-//            }
-//        }
-        //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
-//        guard ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) else {
-//            fatalError("SceneDepth is not supported on this device.")
-//        }
-//        switch configuration.frameSemantics {
-//        case [.sceneDepth]:
-//            configuration.frameSemantics.remove(.sceneDepth)
-//        default:
-//            configuration.frameSemantics.insert(.sceneDepth)
-//        }
-        //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
+        if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
+            configuration.sceneReconstruction = .mesh
+        }
         
         sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-        self.configuration = configuration
     }
     
     private func setupRecorder() {
@@ -268,7 +251,6 @@ class ARViewController: UIViewController {
             guard let self = self else { return }
             self.function = function
             for circleNode in self.circleNodes {
-//                circleNode.hideDeleteFlag()
                 for deleteFlagNode in circleNode.childNodes {
                     if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
                         deleteFlagNode.isHidden = true
@@ -276,7 +258,6 @@ class ARViewController: UIViewController {
                 }
             }
             for squareNode in self.squareNodes {
-//                squareNode.hideDeleteFlag()
                 for deleteFlagNode in squareNode.childNodes {
                     if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
                         deleteFlagNode.isHidden = true
@@ -284,7 +265,6 @@ class ARViewController: UIViewController {
                 }
             }
             for triangleNode in self.triangleNodes {
-//                triangleNode.hideDeleteFlag()
                 for deleteFlagNode in triangleNode.childNodes {
                     if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
                         deleteFlagNode.isHidden = true
@@ -292,7 +272,6 @@ class ARViewController: UIViewController {
                 }
             }
             for textNode in self.textNodes {
-//                textNode.hideDeleteFlag()
                 for deleteFlagNode in textNode.childNodes {
                     if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
                         deleteFlagNode.isHidden = true
@@ -300,7 +279,6 @@ class ARViewController: UIViewController {
                 }
             }
             for lineNode in self.lineNodes {
-//                lineNode.hideDeleteFlag()
                 for deleteFlagNode in lineNode.childNodes {
                     if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
                         deleteFlagNode.isHidden = true
@@ -380,17 +358,29 @@ class ARViewController: UIViewController {
                 
                 if self.removedOcclusion {
                     self.removedOcclusion = false
-//                    self.configuration.frameSemantics.insert(.sceneDepth)
-//                    self.configuration.frameSemantics.insert(.personSegmentationWithDepth)
+                    let configuration = ARWorldTrackingConfiguration()
+                    configuration.planeDetection = [.horizontal, .vertical]
+                    configuration.isLightEstimationEnabled = true
+                    configuration.environmentTexturing = .automatic
+                   
+                    if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
+                        configuration.sceneReconstruction = .mesh
+                    }
+                    
+                    self.sceneView.session.run(configuration, options: [.resetSceneReconstruction])
                     self.shapeMenuView.resetOcclusionTitleState(title: remove_occlusion.localizedString())
                 } else {
                     self.removedOcclusion = true
-//                    self.configuration.frameSemantics.remove(.sceneDepth)
-//                    self.configuration.frameSemantics.remove(.personSegmentationWithDepth)
+                    let configuration = ARWorldTrackingConfiguration()
+                    configuration.planeDetection = [.horizontal, .vertical]
+                    configuration.isLightEstimationEnabled = true
+                    configuration.environmentTexturing = .automatic
+                    self.sceneView.session.run(configuration, options: [.resetSceneReconstruction])
+                    
                     self.shapeMenuView.resetOcclusionTitleState(title: insert_occlusion.localizedString())
                 }
                 
-                self.sceneView.session.run(self.configuration)
+                
             }
             
             if function == .showSymbol {
@@ -406,7 +396,6 @@ class ARViewController: UIViewController {
             
             if function == .delete {
                 for circleNode in self.circleNodes {
-//                    circleNode.showDeleteFlag()
                     for deleteFlagNode in circleNode.childNodes {
                         if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
                             deleteFlagNode.isHidden = false
@@ -414,7 +403,6 @@ class ARViewController: UIViewController {
                     }
                 }
                 for squareNode in self.squareNodes {
-//                    squareNode.showDeleteFlag()
                     for deleteFlagNode in squareNode.childNodes {
                         if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
                             deleteFlagNode.isHidden = false
@@ -422,7 +410,6 @@ class ARViewController: UIViewController {
                     }
                 }
                 for triangleNode in self.triangleNodes {
-//                    triangleNode.showDeleteFlag()
                     for deleteFlagNode in triangleNode.childNodes {
                         if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
                             deleteFlagNode.isHidden = false
@@ -430,7 +417,6 @@ class ARViewController: UIViewController {
                     }
                 }
                 for textNode in self.textNodes {
-//                    textNode.showDeleteFlag()
                     for deleteFlagNode in textNode.childNodes {
                         if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
                             deleteFlagNode.isHidden = false
@@ -438,7 +424,6 @@ class ARViewController: UIViewController {
                     }
                 }
                 for lineNode in self.lineNodes {
-//                    lineNode.showDeleteFlag()
                     for deleteFlagNode in lineNode.childNodes {
                         if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
                             deleteFlagNode.isHidden = false
@@ -1133,11 +1118,6 @@ class ARViewController: UIViewController {
                 guard let transformString = try? String(contentsOf: tranformJsonStringURL) else { return }
                 guard let modelInfo = JsonUtil.jsonToModel(transformString, SceneModel.self) as? SceneModel else { return }
                 if let savedScene = try? SCNScene(url: scnFileURL) {
-                    
-                    // delete saved node
-//                    if let childNode = savedScene.rootNode.childNode(withName: "usdz", recursively: true) {
-//                        childNode.removeFromParentNode()
-//                    }
 
                     if let usdzObject = SCNReferenceNode(url: usdzURL) {
                         usdzObject.load()
@@ -1151,7 +1131,6 @@ class ARViewController: UIViewController {
                                 cadModelRoot1.addChildNode(childNode)
                             }
                             
-//                            cadModelRoot1.addChildNode(usdzObject)
                             presetCadModel(cadModelNode: cadModelRoot1, bPivot: true, bSubdLevel: true)
 
                             let markerRoot1 = SCNNode()
@@ -1375,23 +1354,6 @@ class ARViewController: UIViewController {
         
         begin(hit: lastHit)
         isDrawing = true
-        
-        if let drawingNode = drawingNode {
-//            let plane = SCNPlane(width: 0.1, height: 0.1)
-//            plane.firstMaterial?.diffuse.contents = UIColor.red
-//            plane.firstMaterial?.writesToDepthBuffer = false
-//            plane.firstMaterial?.readsFromDepthBuffer = false
-//            let planeNode = SCNNode(geometry: plane)
-//            planeNode.name = "plane_for_hit"
-//            
-//            guard let location = touches.first?.location(in: nil),
-//                  let lastHit = sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else {
-//                return
-//            }
-//            let lastPoint = lastHit.node.convertPosition(lastHit.localCoordinates, to: drawingNode)
-//            planeNode.position = SCNVector3(x: lastPoint.x, y: lastPoint.y, z: lastPoint.z)
-//            drawingNode.addChildNode(planeNode)
-        }
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -1469,6 +1431,27 @@ class ARViewController: UIViewController {
 
 // MARK: - ARSCNViewDelegate
 extension ARViewController: ARSCNViewDelegate {
+    
+    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
+        guard let meshAnchor = anchor as? ARMeshAnchor else {
+                return nil
+            }
+
+        let geometry = createGeometryFromAnchor(meshAnchor: meshAnchor)
+
+        //apply occlusion material
+        geometry.firstMaterial?.colorBufferWriteMask = []
+        geometry.firstMaterial?.writesToDepthBuffer = true
+        geometry.firstMaterial?.readsFromDepthBuffer = true
+            
+
+        let node = SCNNode(geometry: geometry)
+        //change rendering order so it renders before  our virtual object
+        node.renderingOrder = -1
+        
+        return node
+    }
+    
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if isDrawing {
             addPointAndCreateVertices()
@@ -1483,6 +1466,48 @@ extension ARViewController: ARSCNViewDelegate {
         //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
         node.removeFromParentNode()
         //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        guard let meshAnchor = anchor as? ARMeshAnchor else {
+                return
+            }
+        let geometry = createGeometryFromAnchor(meshAnchor: meshAnchor)
+
+            // Optionally hide the node from rendering as well
+            geometry.firstMaterial?.colorBufferWriteMask = []
+            geometry.firstMaterial?.writesToDepthBuffer = true
+            geometry.firstMaterial?.readsFromDepthBuffer = true
+            
+        node.geometry = geometry
+    }
+    
+    
+    func createGeometryFromAnchor(meshAnchor: ARMeshAnchor) -> SCNGeometry {
+        let meshGeometry = meshAnchor.geometry
+        let vertices = meshGeometry.vertices
+        let normals = meshGeometry.normals
+        let faces = meshGeometry.faces
+        
+        // use the MTL buffer that ARKit gives us
+        let vertexSource = SCNGeometrySource(buffer: vertices.buffer, vertexFormat: vertices.format, semantic: .vertex, vertexCount: vertices.count, dataOffset: vertices.offset, dataStride: vertices.stride)
+        
+        let normalsSource = SCNGeometrySource(buffer: normals.buffer, vertexFormat: normals.format, semantic: .normal, vertexCount: normals.count, dataOffset: normals.offset, dataStride: normals.stride)
+        // Copy bytes as we may use them later
+        let faceData = Data(bytes: faces.buffer.contents(), count: faces.buffer.length)
+        
+        // create the geometry element
+        let geometryElement = SCNGeometryElement(data: faceData, primitiveType: primitiveType(type: faces.primitiveType), primitiveCount: faces.count, bytesPerIndex: faces.bytesPerIndex)
+        
+        return SCNGeometry(sources: [vertexSource, normalsSource], elements: [geometryElement])
+    }
+
+    func primitiveType(type: ARGeometryPrimitiveType) -> SCNGeometryPrimitiveType {
+            switch type {
+                case .line: return .line
+                case .triangle: return .triangles
+            default : return .triangles
+            }
     }
 }
 
