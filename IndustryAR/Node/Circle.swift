@@ -50,7 +50,7 @@ class Circle: SCNNode {
         plane.firstMaterial?.readsFromDepthBuffer = false
         let planeNode = SCNNode(geometry: plane)
         planeNode.name = "plane_for_hit"
-        planeNode.simdPosition = simd_float3(0, 0, 0.1)
+        planeNode.simdPosition = simd_float3(0, 0, 0.01)
         addChildNode(planeNode)
         planeNode.isHidden = true
     }

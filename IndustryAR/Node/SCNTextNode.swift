@@ -28,7 +28,7 @@ class SCNTextNode: SCNNode {
         plane.firstMaterial?.readsFromDepthBuffer = false
         let planeNode = SCNNode(geometry: plane)
         planeNode.name = "plane_for_hit"
-        planeNode.simdPosition = simd_float3(self.boundingBox.min.x, self.boundingBox.min.y, self.boundingBox.min.z + 0.1)
+        planeNode.simdPosition = simd_float3(self.boundingBox.min.x, self.boundingBox.min.y, self.boundingBox.min.z + 0.01)
         addChildNode(planeNode)
         planeNode.isHidden = true
     }
