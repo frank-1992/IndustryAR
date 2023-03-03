@@ -267,6 +267,46 @@ class ARViewController: UIViewController {
         shapeMenuView.deselectShapeTypeClosure = { [weak self] function in
             guard let self = self else { return }
             self.function = function
+            for circleNode in self.circleNodes {
+//                circleNode.hideDeleteFlag()
+                for deleteFlagNode in circleNode.childNodes {
+                    if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                        deleteFlagNode.isHidden = true
+                    }
+                }
+            }
+            for squareNode in self.squareNodes {
+//                squareNode.hideDeleteFlag()
+                for deleteFlagNode in squareNode.childNodes {
+                    if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                        deleteFlagNode.isHidden = true
+                    }
+                }
+            }
+            for triangleNode in self.triangleNodes {
+//                triangleNode.hideDeleteFlag()
+                for deleteFlagNode in triangleNode.childNodes {
+                    if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                        deleteFlagNode.isHidden = true
+                    }
+                }
+            }
+            for textNode in self.textNodes {
+//                textNode.hideDeleteFlag()
+                for deleteFlagNode in textNode.childNodes {
+                    if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                        deleteFlagNode.isHidden = true
+                    }
+                }
+            }
+            for lineNode in self.lineNodes {
+//                lineNode.hideDeleteFlag()
+                for deleteFlagNode in lineNode.childNodes {
+                    if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                        deleteFlagNode.isHidden = true
+                    }
+                }
+            }
             if(self.bGestureRemoved)
             {
                 self.sceneView.addGestureRecognizer(self.oneFingerPanGesture!)
@@ -324,11 +364,6 @@ class ARViewController: UIViewController {
                     material.readsFromDepthBuffer = false
                     text.materials = [material]
                     self.textGeometry = text
-//                    let textNode = SCNNode(geometry: text)
-//                    textNode.name = "text"
-//                    textNode.scale = SCNVector3(x: ShapeSetting.textScale, y: ShapeSetting.textScale, z: ShapeSetting.textScale)
-//                    let textNode = SCNTextNode(text: content)
-//                    self.textNode = textNode
                     
                     self.shapeMenuView.resetUI()
                 }
@@ -345,12 +380,12 @@ class ARViewController: UIViewController {
                 
                 if self.removedOcclusion {
                     self.removedOcclusion = false
-                    self.configuration.frameSemantics.insert(.sceneDepth)
+//                    self.configuration.frameSemantics.insert(.sceneDepth)
 //                    self.configuration.frameSemantics.insert(.personSegmentationWithDepth)
                     self.shapeMenuView.resetOcclusionTitleState(title: remove_occlusion.localizedString())
                 } else {
                     self.removedOcclusion = true
-                    self.configuration.frameSemantics.remove(.sceneDepth)
+//                    self.configuration.frameSemantics.remove(.sceneDepth)
 //                    self.configuration.frameSemantics.remove(.personSegmentationWithDepth)
                     self.shapeMenuView.resetOcclusionTitleState(title: insert_occlusion.localizedString())
                 }
@@ -367,6 +402,49 @@ class ARViewController: UIViewController {
                     self.shapeMenuView.resetMarkerTitleState(title: none_marker_local.localizedString())
                 }
                 self.shapeMenuView.resetUI()
+            }
+            
+            if function == .delete {
+                for circleNode in self.circleNodes {
+//                    circleNode.showDeleteFlag()
+                    for deleteFlagNode in circleNode.childNodes {
+                        if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                            deleteFlagNode.isHidden = false
+                        }
+                    }
+                }
+                for squareNode in self.squareNodes {
+//                    squareNode.showDeleteFlag()
+                    for deleteFlagNode in squareNode.childNodes {
+                        if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                            deleteFlagNode.isHidden = false
+                        }
+                    }
+                }
+                for triangleNode in self.triangleNodes {
+//                    triangleNode.showDeleteFlag()
+                    for deleteFlagNode in triangleNode.childNodes {
+                        if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                            deleteFlagNode.isHidden = false
+                        }
+                    }
+                }
+                for textNode in self.textNodes {
+//                    textNode.showDeleteFlag()
+                    for deleteFlagNode in textNode.childNodes {
+                        if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                            deleteFlagNode.isHidden = false
+                        }
+                    }
+                }
+                for lineNode in self.lineNodes {
+//                    lineNode.showDeleteFlag()
+                    for deleteFlagNode in lineNode.childNodes {
+                        if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                            deleteFlagNode.isHidden = false
+                        }
+                    }
+                }
             }
         }
         
@@ -571,29 +649,7 @@ class ARViewController: UIViewController {
                 sender.setTitle("SHOW", for: .normal)
             }
         }
-        
-        addLongpressGesture()
     }
-    
-    private func addLongpressGesture() {
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.deleteNode(longpress:)))
-        longPressGesture.numberOfTouchesRequired = 1
-        self.sceneView.addGestureRecognizer(longPressGesture)
-    }
-    
-    @objc
-    private func deleteNode(longpress: UILongPressGestureRecognizer) {
-        guard let function = function else { return }
-        if function == .delete {
-            let touchPoint = longpress.location(ofTouch: 0, in: sceneView)
-            guard let hitTestNode = sceneView.hitTest(touchPoint, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first?.node else { return }
-            print("name \(hitTestNode.name)")
-            if hitTestNode.name == "plane_for_hit" {
-                hitTestNode.parent?.removeFromParentNode()
-            }
-        }
-    }
-    
     
     private func resetBottomMenuView() {
         if UserDefaults.hasAutoShowBottomMenu {
@@ -611,123 +667,130 @@ class ARViewController: UIViewController {
         let location = sender.location(in: sceneView)
         guard let hitResult = self.sceneView.hitTest(location, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else { return }
         
-        //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
-        
-        let tapPoint_local = hitResult.localCoordinates
-        let tapNode = hitResult.node
-        let tapPoint_world_scn = tapNode.convertPosition(tapPoint_local, to: cadModelRoot)
-        let tapPoint_world = simd_float3(tapPoint_world_scn.x, tapPoint_world_scn.y, tapPoint_world_scn.z)
-        //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
-        
-        guard let function = function else { return }
-        if function == .triangle {
-            let triangleNode = Triangle()
-            //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
-            
-            triangleNode.simdScale = simd_float3(1, 1, 1)
-//            let boundingbox = triangleNode.boundingBox
-//            print("三角形boundingbox: \(boundingbox)")
-            
-            let constraint = SCNBillboardConstraint()
-            constraint.freeAxes = SCNBillboardAxis.Y
-            triangleNode.constraints = [constraint]
-            
-            //cadModelRoot
-            guard let cadModelRootNode = cadModelRoot else { return }
-            
-            // Convert the camera matrix to the nodes coordinate space
-            guard let camera = sceneView.pointOfView else { return }
-            let transform = camera.transform
-            var localTransform = cadModelRootNode.convertTransform(transform, from: nil)
-            localTransform.m41 = tapPoint_world.x
-            localTransform.m42 = tapPoint_world.y
-            localTransform.m43 = tapPoint_world.z
-            triangleNode.transform = localTransform
-            
-            markerRoot?.addChildNode(triangleNode)
-            triangleNodes.append(triangleNode)
-            //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
-        }
-        
-        if function == .square {
-            let squareNode = Square()
-            //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
-            
-            squareNode.simdScale = simd_float3(1, 1, 1)
-            
-            let constraint = SCNBillboardConstraint()
-            constraint.freeAxes = SCNBillboardAxis.Y
-            squareNode.constraints = [constraint]
-            
-            //cadModelRoot
-            guard let cadModelRootNode = cadModelRoot else { return }
-            
-            // Convert the camera matrix to the nodes coordinate space
-            guard let camera = sceneView.pointOfView else { return }
-            let transform = camera.transform
-            var localTransform = cadModelRootNode.convertTransform(transform, from: nil)
-            localTransform.m41 = tapPoint_world.x
-            localTransform.m42 = tapPoint_world.y
-            localTransform.m43 = tapPoint_world.z
-            squareNode.transform = localTransform
-            
-            markerRoot?.addChildNode(squareNode)
-            squareNodes.append(squareNode)
-            //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
-        }
-        
-        if function == .circle {
-            let circleNode = Circle()
-            //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
-            
-            circleNode.simdScale = simd_float3(1, 1, 1)
-            
-            let constraint = SCNBillboardConstraint()
-            constraint.freeAxes = SCNBillboardAxis.Y
-            circleNode.constraints = [constraint]
-            
-            //cadModelRoot
-            guard let cadModelRootNode = cadModelRoot else { return }
-            
-            // Convert the camera matrix to the nodes coordinate space
-            guard let camera = sceneView.pointOfView else { return }
-            let transform = camera.transform
-            var localTransform = cadModelRootNode.convertTransform(transform, from: nil)
-            localTransform.m41 = tapPoint_world.x
-            localTransform.m42 = tapPoint_world.y
-            localTransform.m43 = tapPoint_world.z
-            circleNode.transform = localTransform
-            
-            markerRoot?.addChildNode(circleNode)
-            circleNodes.append(circleNode)
-            //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
-        }
-        
-        if function == .text {
-            guard let textGeometry = textGeometry else {
-                return
+        if function == .delete {
+            let hitNode = hitResult.node
+            if hitNode.name == "plane_for_hit" {
+                hitNode.parent?.removeFromParentNode()
             }
+        } else {
+            //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
+            
+            let tapPoint_local = hitResult.localCoordinates
+            let tapNode = hitResult.node
+            let tapPoint_world_scn = tapNode.convertPosition(tapPoint_local, to: cadModelRoot)
+            let tapPoint_world = simd_float3(tapPoint_world_scn.x, tapPoint_world_scn.y, tapPoint_world_scn.z)
+            //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
+            
+            guard let function = function else { return }
+            if function == .triangle {
+                let triangleNode = Triangle()
+                //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
+                
+                triangleNode.simdScale = simd_float3(1, 1, 1)
+    //            let boundingbox = triangleNode.boundingBox
+    //            print("三角形boundingbox: \(boundingbox)")
+                
+                let constraint = SCNBillboardConstraint()
+                constraint.freeAxes = SCNBillboardAxis.Y
+                triangleNode.constraints = [constraint]
+                
+                //cadModelRoot
+                guard let cadModelRootNode = cadModelRoot else { return }
+                
+                // Convert the camera matrix to the nodes coordinate space
+                guard let camera = sceneView.pointOfView else { return }
+                let transform = camera.transform
+                var localTransform = cadModelRootNode.convertTransform(transform, from: nil)
+                localTransform.m41 = tapPoint_world.x
+                localTransform.m42 = tapPoint_world.y
+                localTransform.m43 = tapPoint_world.z
+                triangleNode.transform = localTransform
+                
+                markerRoot?.addChildNode(triangleNode)
+                triangleNodes.append(triangleNode)
+                //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
+            }
+            
+            if function == .square {
+                let squareNode = Square()
+                //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
+                
+                squareNode.simdScale = simd_float3(1, 1, 1)
+                
+                let constraint = SCNBillboardConstraint()
+                constraint.freeAxes = SCNBillboardAxis.Y
+                squareNode.constraints = [constraint]
+                
+                //cadModelRoot
+                guard let cadModelRootNode = cadModelRoot else { return }
+                
+                // Convert the camera matrix to the nodes coordinate space
+                guard let camera = sceneView.pointOfView else { return }
+                let transform = camera.transform
+                var localTransform = cadModelRootNode.convertTransform(transform, from: nil)
+                localTransform.m41 = tapPoint_world.x
+                localTransform.m42 = tapPoint_world.y
+                localTransform.m43 = tapPoint_world.z
+                squareNode.transform = localTransform
+                
+                markerRoot?.addChildNode(squareNode)
+                squareNodes.append(squareNode)
+                //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
+            }
+            
+            if function == .circle {
+                let circleNode = Circle()
+                //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
+                
+                circleNode.simdScale = simd_float3(1, 1, 1)
+                
+                let constraint = SCNBillboardConstraint()
+                constraint.freeAxes = SCNBillboardAxis.Y
+                circleNode.constraints = [constraint]
+                
+                //cadModelRoot
+                guard let cadModelRootNode = cadModelRoot else { return }
+                
+                // Convert the camera matrix to the nodes coordinate space
+                guard let camera = sceneView.pointOfView else { return }
+                let transform = camera.transform
+                var localTransform = cadModelRootNode.convertTransform(transform, from: nil)
+                localTransform.m41 = tapPoint_world.x
+                localTransform.m42 = tapPoint_world.y
+                localTransform.m43 = tapPoint_world.z
+                circleNode.transform = localTransform
+                
+                markerRoot?.addChildNode(circleNode)
+                circleNodes.append(circleNode)
+                //_____AAAAAAAAAAAAAAAAAAAAAAAAAAAAA______DIPRO_END_2023/02/09______AAAAAAAAAAAAAAAAAAAAAAAAAAAAA_____
+            }
+            
+            if function == .text {
+                guard let textGeometry = textGeometry else {
+                    return
+                }
 
-            let newTextNode = SCNTextNode(geometry: textGeometry)
+                let newTextNode = SCNTextNode(geometry: textGeometry)
 
-            
-            let constraint = SCNBillboardConstraint()
-            constraint.freeAxes = SCNBillboardAxis.Y
-            newTextNode.constraints = [constraint]
-            
-            let min = newTextNode.boundingBox.min * ShapeSetting.textScale
-            let max = newTextNode.boundingBox.max * ShapeSetting.textScale
-            let width = max.x - min.x
-            let depth = max.z - min.z
-            
-            let centerX = tapPoint_world.x//- width/2.0
-            let centerY = tapPoint_world.y
-            let centerZ = tapPoint_world.z - depth/2.0
-            
-            newTextNode.position = SCNVector3(x: centerX, y: centerY, z: centerZ)
+                
+                let constraint = SCNBillboardConstraint()
+                constraint.freeAxes = SCNBillboardAxis.Y
+                newTextNode.constraints = [constraint]
+                
+                let min = newTextNode.boundingBox.min * ShapeSetting.textScale
+                let max = newTextNode.boundingBox.max * ShapeSetting.textScale
+                let width = max.x - min.x
+                let depth = max.z - min.z
+                
+                let centerX = tapPoint_world.x//- width/2.0
+                let centerY = tapPoint_world.y
+                let centerZ = tapPoint_world.z - depth/2.0
+                
+                newTextNode.position = SCNVector3(x: centerX, y: centerY, z: centerZ)
 
-            markerRoot?.addChildNode(newTextNode)
-            textNodes.append(newTextNode)
+                markerRoot?.addChildNode(newTextNode)
+                textNodes.append(newTextNode)
+            }
         }
     }
     
@@ -1216,8 +1279,10 @@ class ARViewController: UIViewController {
             UIView.animate(withDuration: 0.3) {
                 sender.transform = CGAffineTransform(translationX: -300, y: 0)
                 self.shapeMenuView.transform = CGAffineTransform(translationX: -300, y: 0)
-                self.shapeMenuView.resetUI()
-                self.function = Function.none
+                if self.function != .delete {
+                    self.shapeMenuView.resetUI()
+                    self.function = Function.none
+                }
             } completion: { _ in
             }
         } else {

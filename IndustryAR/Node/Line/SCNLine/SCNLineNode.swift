@@ -38,9 +38,7 @@ public class SCNLineNode: SCNNode {
         }
     }
     public private(set) var gParts: GeometryParts?
-    
-    private var deleteFlag: SCNNode = SCNNode()
-    
+        
     /// Initialiser for a SCNLineNode
     ///
     /// - Parameters:
@@ -76,18 +74,8 @@ public class SCNLineNode: SCNNode {
         let lastPoint = initialHitTest.node.convertPosition(initialHitTest.localCoordinates, to: self)
         planeNode.position = SCNVector3(x: lastPoint.x, y: lastPoint.y, z: lastPoint.z)
         self.addChildNode(planeNode)
-        deleteFlag = planeNode
-//        deleteFlag.isHidden = true
+        planeNode.isHidden = true
     }
-    
-    func showDeleteFlag() {
-        deleteFlag.isHidden = false
-    }
-    
-    func hideDeleteFlag() {
-        deleteFlag.isHidden = true
-    }
-    
     /// Add a point to the collection for this SCNLineNode
     ///
     /// - Parameter point: point to be added to the line

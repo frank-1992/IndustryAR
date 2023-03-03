@@ -9,9 +9,7 @@ import UIKit
 import SceneKit
 
 class SCNTextNode: SCNNode {
-    
-    private var deleteFlag: SCNNode = SCNNode()
-    
+        
     init(geometry: SCNGeometry) {
         super.init()
         self.geometry = geometry
@@ -32,19 +30,14 @@ class SCNTextNode: SCNNode {
         planeNode.name = "plane_for_hit"
         planeNode.simdPosition = simd_float3(self.boundingBox.min.x, self.boundingBox.min.y, self.boundingBox.min.z)
         addChildNode(planeNode)
-        deleteFlag = planeNode
-//        deleteFlag.isHidden = true
+        planeNode.isHidden = true
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
     }
     
-    func showDeleteFlag() {
-        deleteFlag.isHidden = false
-    }
-    
-    func hideDeleteFlag() {
-        deleteFlag.isHidden = true
+    override class var supportsSecureCoding: Bool {
+        return true
     }
 }

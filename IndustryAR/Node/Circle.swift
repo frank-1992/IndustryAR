@@ -52,15 +52,6 @@ class Circle: SCNNode {
         planeNode.name = "plane_for_hit"
         planeNode.simdPosition = simd_float3(0, 0, 0)
         addChildNode(planeNode)
-        deleteFlag = planeNode
-//        deleteFlag.isHidden = true
-    }
-    
-    func showDeleteFlag() {
-        deleteFlag.isHidden = false
-    }
-    
-    func hideDeleteFlag() {
-        deleteFlag.isHidden = true
+        planeNode.isHidden = true
     }
 }

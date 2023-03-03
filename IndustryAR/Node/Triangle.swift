@@ -11,9 +11,7 @@ import SceneKit
 class Triangle: SCNNode {
     
     private var segments: [Segment] = []
-    
-    private var deleteFlag: SCNNode = SCNNode()
-    
+        
     private let positioningNode = SCNNode()
     
     override init() {
@@ -71,15 +69,6 @@ class Triangle: SCNNode {
         planeNode.name = "plane_for_hit"
         planeNode.simdPosition = simd_float3(0, -ShapeSetting.lineLength/2000, 0)
         addChildNode(planeNode)
-        deleteFlag = planeNode
-//        deleteFlag.isHidden = true
-    }
-    
-    func showDeleteFlag() {
-        deleteFlag.isHidden = false
-    }
-    
-    func hideDeleteFlag() {
-        deleteFlag.isHidden = true
+        planeNode.isHidden = true
     }
 }
