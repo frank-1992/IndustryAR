@@ -20,7 +20,7 @@ class ShapeSetting {
     static var lineThickness: Float {
         get {
             if UserDefaults.lineThickness == 0 {
-                return 10
+                return 1
             } else {
                 return UserDefaults.lineThickness
             }

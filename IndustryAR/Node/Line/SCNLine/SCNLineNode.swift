@@ -48,7 +48,7 @@ public class SCNLineNode: SCNNode {
     ///   - maxTurning: multiplier to dictate how smooth the turns should be
     public init(with points: [SCNVector3] = [], radius: Float = 1, edges: Int = 12, maxTurning: Int = 4) {
         self.points = points
-        self.radius = radius/10000
+        self.radius = radius/2000
         self.edges = edges
         self.maxTurning = maxTurning
         super.init()

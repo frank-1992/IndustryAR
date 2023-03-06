@@ -28,7 +28,7 @@ class Circle: SCNNode {
     }
     
     private func create() {
-        let circleNode = SCNNode(geometry: SCNTorus(ringRadius:CGFloat(ShapeSetting.lineLength)/1000.0, pipeRadius: CGFloat(ShapeSetting.lineThickness)/15000))
+        let circleNode = SCNNode(geometry: SCNTorus(ringRadius:CGFloat(ShapeSetting.lineLength)/1000.0, pipeRadius: CGFloat(ShapeSetting.lineThickness)/2000))
         circleNode.geometry?.firstMaterial?.diffuse.contents = ShapeSetting.lineColor
         circleNode.geometry?.firstMaterial?.isDoubleSided = true
         circleNode.geometry?.firstMaterial?.ambient.contents = UIColor.black

@@ -12,13 +12,10 @@ class Segment: SCNNode {
 
     // MARK: - Configuration & Initialization
 
-    /// Thickness of the focus square lines in m.
-    static let thickness: CGFloat = 0.15
-
     let plane: SCNPlane
 
     init(name: String, lineLength: CGFloat) {
-        plane = SCNPlane(width: CGFloat(ShapeSetting.lineThickness)/10000, height: lineLength)
+        plane = SCNPlane(width: CGFloat(ShapeSetting.lineThickness)/1000, height: lineLength)
         super.init()
         self.name = name
         
@@ -36,7 +33,7 @@ class Segment: SCNNode {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        plane = SCNPlane(width: CGFloat(ShapeSetting.lineThickness)/10000, height: CGFloat(ShapeSetting.lineLength/1000))
+        plane = SCNPlane(width: CGFloat(ShapeSetting.lineThickness)/1000, height: CGFloat(ShapeSetting.lineLength/1000) * 2)
         super.init(coder: aDecoder)
     }
     

@@ -35,7 +35,7 @@ class Square: SCNNode {
         segments = [s1, s2, s3, s4]
         
         let sl: Float = ShapeSetting.lineLength/1000 * 2
-        let c: Float = ShapeSetting.lineThickness / 2 / 10000
+        let c: Float = ShapeSetting.lineThickness / 2 / 1000
         s1.simdPosition = simd_float3(0, 0, -sl / 2)
         s1.simdRotation = simd_float4(0, 0, 1, .pi / 2)
         s1.simdLocalRotate(by: simd_quatf(angle: .pi / 2, axis: SIMD3(x: 0, y: 1, z: 0)))
