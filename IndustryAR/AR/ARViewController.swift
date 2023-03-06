@@ -251,7 +251,7 @@ class ARViewController: UIViewController {
         shapeMenuView.deselectShapeTypeClosure = { [weak self] function in
             guard let self = self else { return }
             self.function = function
-            self.setDeleteFlagHiddenState(isHidden: true)
+            self.setDeleteFlagHiddenState(isHidden: true, completion: nil)
             if(self.bGestureRemoved)
             {
                 self.sceneView.addGestureRecognizer(self.oneFingerPanGesture!)
@@ -356,7 +356,7 @@ class ARViewController: UIViewController {
             }
             
             if function == .delete {
-                self.setDeleteFlagHiddenState(isHidden: false)
+                self.setDeleteFlagHiddenState(isHidden: false, completion: nil)
             }
             
             if function == .background {
@@ -477,13 +477,14 @@ class ARViewController: UIViewController {
                     }
                 }
                 
-                self.setDeleteFlagHiddenState(isHidden: true)
-
-                // save screenshot
-                self.sceneView.takePhoto { (photo: UIImage) in
-                    let photoURL = dirURL.appendingPathComponent(fileName + ".png")
-                    let imageData = photo.pngData()
-                    try? imageData?.write(to: photoURL)
+                self.setDeleteFlagHiddenState(isHidden: true) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        self.sceneView.takePhoto { (photo: UIImage) in
+                            let photoURL = dirURL.appendingPathComponent(fileName + ".png")
+                            let imageData = photo.pngData()
+                            try? imageData?.write(to: photoURL)
+                        }
+                    }
                 }
                 
                 // copy usdz file
@@ -564,8 +565,7 @@ class ARViewController: UIViewController {
         }
         
         // auto settings
-        bottomMenuView.autoSettingClosure = { [weak self] sender in
-            guard let self = self else { return }
+        bottomMenuView.autoSettingClosure = { sender in
             if !UserDefaults.hasAutoShowBottomMenu {
                 UserDefaults.hasAutoShowBottomMenu = true
                 sender.setTitle("AUTO", for: .normal)
@@ -586,7 +586,7 @@ class ARViewController: UIViewController {
         }
     }
     
-    private func setDeleteFlagHiddenState(isHidden: Bool) {
+    private func setDeleteFlagHiddenState(isHidden: Bool, completion: (() -> Void)?) {
         for circleNode in self.circleNodes {
             for deleteFlagNode in circleNode.childNodes {
                 if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
@@ -622,6 +622,7 @@ class ARViewController: UIViewController {
                 }
             }
         }
+        completion?()
     }
     
     // test geometry surface
