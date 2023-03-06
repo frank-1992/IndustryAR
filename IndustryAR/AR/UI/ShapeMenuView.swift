@@ -15,6 +15,7 @@ enum Function {
     case text
     case occlusion
     case delete
+    case background
     case settings
     case showSymbol
     case none
@@ -24,17 +25,18 @@ class ShapeMenuView: UIView {
     
     private let shapeTableViewCell = "shapeTableViewCell"
     
-    private let icons = ["quxian", "sanjiaoxing", "cub", "yuanxing", "wenzi", "zhedang", "shanchu", "shezhi", "biaoji"]
+    private let icons = ["quxian", "sanjiaoxing", "cub", "yuanxing", "wenzi", "zhedang", "backgroundPhotography","shanchu", "shezhi", "biaoji"]
     private var names = [drawing.localizedString(),
                          triangle.localizedString(),
                          square.localizedString(),
                          circle.localizedString(),
                          text_local.localizedString(),
                          remove_occlusion.localizedString(),
+                         background_photography.localizedString(),
                          delete_local.localizedString(),
                          setting_local.localizedString(),
                          none_marker_local.localizedString()]
-    private let functions: [Function] = [.line, .triangle, .square, .circle, .text, .occlusion, .delete, .settings, .showSymbol]
+    private let functions: [Function] = [.line, .triangle, .square, .circle, .text, .occlusion, .background, .delete, .settings, .showSymbol]
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: self.bounds)
@@ -78,6 +80,12 @@ class ShapeMenuView: UIView {
     func resetOcclusionTitleState(title: String) {
         names.remove(at: 5)
         names.insert(title.localizedString(), at: 5)
+        tableView.reloadData()
+    }
+    
+    func resetBackgroundTitleState(title: String) {
+        names.remove(at: 6)
+        names.insert(title.localizedString(), at: 6)
         tableView.reloadData()
     }
     

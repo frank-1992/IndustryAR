@@ -73,6 +73,7 @@ public class SCNLineNode: SCNNode {
         
         let lastPoint = initialHitTest.node.convertPosition(initialHitTest.localCoordinates, to: self)
         planeNode.position = SCNVector3(x: lastPoint.x, y: lastPoint.y, z: lastPoint.z + 0.01)
+        planeNode.renderingOrder = 101
         self.addChildNode(planeNode)
         planeNode.isHidden = true
     }

@@ -17,6 +17,8 @@
 "insert_occlusion" = "オクルージョン復元";
 "remove_occlusion" = "オクルージョン";
 "delete" = "消去";
+"background_photography" = "Background Photography";
+"delete_background_photography" = "Delete Background";
 "setting" = "設定";
 "marker" = "マーク表示";
 "none_marker" = "マーク非表示";

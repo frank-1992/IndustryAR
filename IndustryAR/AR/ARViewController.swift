@@ -161,6 +161,7 @@ class ARViewController: UIViewController {
     var lineNodes: [SCNLineNode] = [SCNLineNode]()
     
     var removedOcclusion: Bool = false
+    var backgroundPhotography: Bool = false
     
     @objc
     private func backButtonClicked() {
@@ -223,7 +224,7 @@ class ARViewController: UIViewController {
         shapeMenuView.snp.makeConstraints { make in
             make.left.equalTo(sceneView.snp.right)
             make.top.equalTo(shapeMenuButton)
-            make.size.equalTo(CGSize(width: 300, height: 540))
+            make.size.equalTo(CGSize(width: 300, height: 600))
         }
         
         sceneView.addSubview(bottomMenuButton)
@@ -250,41 +251,7 @@ class ARViewController: UIViewController {
         shapeMenuView.deselectShapeTypeClosure = { [weak self] function in
             guard let self = self else { return }
             self.function = function
-            for circleNode in self.circleNodes {
-                for deleteFlagNode in circleNode.childNodes {
-                    if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
-                        deleteFlagNode.isHidden = true
-                    }
-                }
-            }
-            for squareNode in self.squareNodes {
-                for deleteFlagNode in squareNode.childNodes {
-                    if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
-                        deleteFlagNode.isHidden = true
-                    }
-                }
-            }
-            for triangleNode in self.triangleNodes {
-                for deleteFlagNode in triangleNode.childNodes {
-                    if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
-                        deleteFlagNode.isHidden = true
-                    }
-                }
-            }
-            for textNode in self.textNodes {
-                for deleteFlagNode in textNode.childNodes {
-                    if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
-                        deleteFlagNode.isHidden = true
-                    }
-                }
-            }
-            for lineNode in self.lineNodes {
-                for deleteFlagNode in lineNode.childNodes {
-                    if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
-                        deleteFlagNode.isHidden = true
-                    }
-                }
-            }
+            self.setDeleteFlagHiddenState(isHidden: true)
             if(self.bGestureRemoved)
             {
                 self.sceneView.addGestureRecognizer(self.oneFingerPanGesture!)
@@ -389,40 +356,17 @@ class ARViewController: UIViewController {
             }
             
             if function == .delete {
-                for circleNode in self.circleNodes {
-                    for deleteFlagNode in circleNode.childNodes {
-                        if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
-                            deleteFlagNode.isHidden = false
-                        }
-                    }
-                }
-                for squareNode in self.squareNodes {
-                    for deleteFlagNode in squareNode.childNodes {
-                        if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
-                            deleteFlagNode.isHidden = false
-                        }
-                    }
-                }
-                for triangleNode in self.triangleNodes {
-                    for deleteFlagNode in triangleNode.childNodes {
-                        if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
-                            deleteFlagNode.isHidden = false
-                        }
-                    }
-                }
-                for textNode in self.textNodes {
-                    for deleteFlagNode in textNode.childNodes {
-                        if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
-                            deleteFlagNode.isHidden = false
-                        }
-                    }
-                }
-                for lineNode in self.lineNodes {
-                    for deleteFlagNode in lineNode.childNodes {
-                        if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
-                            deleteFlagNode.isHidden = false
-                        }
-                    }
+                self.setDeleteFlagHiddenState(isHidden: false)
+            }
+            
+            if function == .background {
+                // 背景摄影（Background Photography）->删除背景（Delete Background）
+                if self.backgroundPhotography {
+                    self.backgroundPhotography = false
+                    self.shapeMenuView.resetBackgroundTitleState(title: background_photography.localizedString())
+                } else {
+                    self.backgroundPhotography = true
+                    self.shapeMenuView.resetBackgroundTitleState(title: delete_background_photography.localizedString())
                 }
             }
         }
@@ -532,6 +476,8 @@ class ARViewController: UIViewController {
                         print("createDirectory error:\(error)")
                     }
                 }
+                
+                self.setDeleteFlagHiddenState(isHidden: true)
 
                 // save screenshot
                 self.sceneView.takePhoto { (photo: UIImage) in
@@ -637,6 +583,44 @@ class ARViewController: UIViewController {
         } else {
             bottomMenuButton.tag = 200
             showBottomMenuView(sender: bottomMenuButton)
+        }
+    }
+    
+    private func setDeleteFlagHiddenState(isHidden: Bool) {
+        for circleNode in self.circleNodes {
+            for deleteFlagNode in circleNode.childNodes {
+                if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                    deleteFlagNode.isHidden = isHidden
+                }
+            }
+        }
+        for squareNode in self.squareNodes {
+            for deleteFlagNode in squareNode.childNodes {
+                if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                    deleteFlagNode.isHidden = isHidden
+                }
+            }
+        }
+        for triangleNode in self.triangleNodes {
+            for deleteFlagNode in triangleNode.childNodes {
+                if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                    deleteFlagNode.isHidden = isHidden
+                }
+            }
+        }
+        for textNode in self.textNodes {
+            for deleteFlagNode in textNode.childNodes {
+                if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                    deleteFlagNode.isHidden = isHidden
+                }
+            }
+        }
+        for lineNode in self.lineNodes {
+            for deleteFlagNode in lineNode.childNodes {
+                if let flagName = deleteFlagNode.name, flagName.contains("plane_for_hit") {
+                    deleteFlagNode.isHidden = isHidden
+                }
+            }
         }
     }
     

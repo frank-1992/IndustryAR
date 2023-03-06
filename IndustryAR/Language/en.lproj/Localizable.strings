@@ -17,6 +17,8 @@
 "insert_occlusion" = "Insert Occlusion";
 "remove_occlusion" = "Remove Occlusion";
 "delete" = "Delete";
+"background_photography" = "Background Photography";
+"delete_background_photography" = "Delete Background";
 "setting" = "Setting";
 "marker" = "Display Marker";
 "none_marker" = "Hide Marker";

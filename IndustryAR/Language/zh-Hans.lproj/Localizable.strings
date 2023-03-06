@@ -17,6 +17,8 @@
 "insert_occlusion" = "遮挡恢复";
 "remove_occlusion" = "遮挡剔除";
 "delete" = "删除";
+"background_photography" = "背景摄影";
+"delete_background_photography" = "删除背景";
 "setting" = "设置";
 "marker" = "标记显示";
 "none_marker" = "标记隐藏";
