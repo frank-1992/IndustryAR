@@ -1,28 +1,28 @@
 PODS:
-  - BetterSegmentedControl (2.0.1)
   - HandyJSON (5.0.2)
   - PKHUD (5.3.0)
   - SnapKit (5.6.0)
+  - Zip (2.1.2)
 
 DEPENDENCIES:
-  - BetterSegmentedControl (~> 2.0)
   - HandyJSON
   - PKHUD (~> 5.0)
   - SnapKit
+  - Zip (~> 2.1)
 
 SPEC REPOS:
   trunk:
-    - BetterSegmentedControl
     - HandyJSON
     - PKHUD
     - SnapKit
+    - Zip
 
 SPEC CHECKSUMS:
-  BetterSegmentedControl: 09607b27861d49cbce48b7673b74f9150a3d371a
   HandyJSON: 9e4e236f5d2dbefad5155a77417bbea438201c03
   PKHUD: 98f3e4bc904b9c916f1c5bb6d765365b5357291b
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
+  Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
 
-PODFILE CHECKSUM: 25dff7c136be02a7d8949db39b338d67c521a6a4
+PODFILE CHECKSUM: 508ebc758cab5cd529ea2caccd2d7efed190a55c
 
 COCOAPODS: 1.11.3

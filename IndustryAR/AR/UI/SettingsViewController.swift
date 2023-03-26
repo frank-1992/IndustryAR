@@ -15,12 +15,23 @@ enum ColorType {
 enum LineType: Int {
     case normal = 0
     case dash = 1
+    
+    var value: String {
+        switch self {
+        case .normal:
+            return normal_line.localizedString()
+        case .dash:
+            return dash_line.localizedString()
+        }
+    }
 }
 
 class SettingsViewController: UIViewController {
     
     var settingsClosure: (() -> Void)?
     var selectFontClosure: (() -> Void)?
+    var selectLineTypeClosure: (() -> Void)?
+    var backgroundMoveSelectedClosure: ((Bool) -> Void)?
 
     private let settingsTableViewCellID = "settingsTableViewCell"
     private let colorsCollectionViewCellID = "colorsCollectionViewCell"
@@ -31,8 +42,9 @@ class SettingsViewController: UIViewController {
                                 marker_size.localizedString(),
                                 text_color.localizedString(),
                                 text_size.localizedString(),
-                                text_font.localizedString()]
-    private let detailName = ["", "", normal_line.localizedString(), "", "", "24", "PingFang"]
+                                text_font.localizedString(),
+                                move_background.localizedString()]
+    private let detailName = ["", "", normal_line.localizedString(), "", "", "24", "PingFang", ""]
     
     private let colors: [UIColor] = [.black,
                                    .blue,
@@ -78,10 +90,8 @@ class SettingsViewController: UIViewController {
         return collectionView
     }()
     
-//    private var currentLineColor: UIColor = .white
     private var currentLineWidth: CGFloat = 0.002
     private var currentLineType: LineType = .normal
-//    private var currentTextColor: UIColor = .white
     private var currentTextSize: CGFloat = 24
     private var currentTextFontName: String = "PingFang-SC-Medium"
 
@@ -140,22 +150,41 @@ extension SettingsViewController: UITableViewDataSource {
         let icon = detailName[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: settingsTableViewCellID, for: indexPath) as? SettingsTableViewCell ?? SettingsTableViewCell()
         if indexPath.row == 0 {
+            cell.checkBox.isHidden = true
             cell.iconView.backgroundColor = ShapeSetting.lineColor
             cell.nameLabel.text = settingsName[0]
             cell.detailLabel.text = detailName[0]
         } else if indexPath.row == 4 {
+            cell.checkBox.isHidden = true
             cell.iconView.backgroundColor = ShapeSetting.textColor
             cell.nameLabel.text = settingsName[4]
             cell.detailLabel.text = detailName[4]
         } else if indexPath.row == 6 {
+            cell.checkBox.isHidden = true
             cell.iconView.backgroundColor = .clear
             cell.nameLabel.text = title
             cell.detailLabel.text = ShapeSetting.fontName
         } else {
+            cell.checkBox.isHidden = true
             cell.iconView.backgroundColor = .clear
             cell.nameLabel.text = title
-            cell.detailLabel.text = icon
+            if indexPath.row == 2 {
+                switch ShapeSetting.lineType {
+                case .dash:
+                    cell.detailLabel.text = dash_line.localizedString()
+                case .normal:
+                    cell.detailLabel.text = normal_line.localizedString()
+                }
+            } else if indexPath.row == settingsName.count - 1 {
+                cell.checkBox.isHidden = false
+                cell.checkBox.isHighlighted = ShapeSetting.isBackgroundMove
+                cell.detailLabel.text = ""
+            } else {
+                cell.checkBox.isHidden = true
+                cell.detailLabel.text = icon
+            }
         }
+        
         
         if indexPath.row == 1 || indexPath.row == 3 || indexPath.row == 5 {
             cell.textField.isHidden = false
@@ -205,6 +234,21 @@ extension SettingsViewController: UITableViewDelegate {
         if indexPath.row == 6 {
             if let selectFontClosure = selectFontClosure {
                 selectFontClosure()
+            }
+        }
+        if indexPath.row == 2 {
+            if let selectLineTypeClosure = selectLineTypeClosure {
+                selectLineTypeClosure()
+            }
+        }
+        
+        if indexPath.row == settingsName.count - 1 {
+            if let cell = tableView.cellForRow(at: indexPath) as? SettingsTableViewCell {
+                cell.checkBox.isHighlighted = !cell.checkBox.isHighlighted
+                ShapeSetting.isBackgroundMove = cell.checkBox.isHighlighted
+                if let backgroundMoveSelectedClosure = backgroundMoveSelectedClosure {
+                    backgroundMoveSelectedClosure(cell.checkBox.isHighlighted)
+                }
             }
         }
     }

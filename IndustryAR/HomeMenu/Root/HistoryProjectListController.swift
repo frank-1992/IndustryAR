@@ -56,7 +56,6 @@ class HistoryProjectListController: UIViewController {
             
             self.historyModels = sortedHistoryModels
             
-            
             self.historyCollectionView.reloadData()
         }
     }
@@ -70,8 +69,26 @@ extension HistoryProjectListController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let historyModel = historyModels[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: historyCellID, for: indexPath) as? HomeContainerCell ?? HomeContainerCell()
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPresssAction(longPress:)))
+        cell.addGestureRecognizer(longPressGesture)
+        cell.tag = indexPath.row
         cell.setupHistoryUIWith(historyModel)
+        cell.hideDeleteButton()
         return cell
+    }
+    
+    @objc
+    func longPresssAction(longPress: UILongPressGestureRecognizer) {
+        if let cell = longPress.view as? HomeContainerCell {
+            cell.showDeleteButton()
+            let model = historyModels[cell.tag]
+            cell.deleteCellClosure = {
+                self.historyModels.remove(at: cell.tag)
+                self.historyCollectionView.reloadData()
+                // delete file
+                ARFileManager.shared.deleteFileWithFileName(name: model.fileName)
+            }
+        }
     }
 }
 

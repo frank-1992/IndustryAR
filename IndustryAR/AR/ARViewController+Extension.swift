@@ -12,34 +12,59 @@ import SnapKit
 import HandyJSON
 import PKHUD
 
+enum PickerViewType {
+    case lineType
+    case fontName
+}
+
 extension ARViewController {
-    func addFontPickerView() {
-        view.addSubview(fontPickerView)
-        fontPickerView.snp.makeConstraints { make in
+    func addPickerView() {
+        view.addSubview(customerPickerView)
+        customerPickerView.snp.makeConstraints { make in
             make.left.right.bottom.equalTo(view)
             make.height.equalTo(200)
         }
+        customerPickerView.reloadAllComponents()
         
         view.addSubview(fontToolBar)
         fontToolBar.snp.makeConstraints { make in
-            make.left.right.equalTo(fontPickerView)
-            make.bottom.equalTo(fontPickerView.snp.top)
+            make.left.right.equalTo(customerPickerView)
+            make.bottom.equalTo(customerPickerView.snp.top)
             make.height.equalTo(45)
         }
         
+        switch currentPickerViewType {
+        case .lineType:
+            if let row = ShapeSetting.lineTypeList.firstIndex(of: ShapeSetting.lineType.value) {
+                customerPickerView.selectRow(row, inComponent: 0, animated: true)
+            } else {
+                customerPickerView.selectRow(0, inComponent: 0, animated: true)
+            }
+        case .fontName:
+            if let row = ShapeSetting.fontNameList.firstIndex(of: ShapeSetting.fontName) {
+                customerPickerView.selectRow(row, inComponent: 0, animated: true)
+            } else {
+                customerPickerView.selectRow(0, inComponent: 0, animated: true)
+            }
+        }
     }
     
     @objc
     func cancelAction() {
-        fontPickerView.removeFromSuperview()
+        customerPickerView.removeFromSuperview()
         fontToolBar.removeFromSuperview()
     }
     
     @objc
     func confirmAction() {
-        ShapeSetting.fontName = currentFontName
+        switch currentPickerViewType {
+        case .lineType:
+            ShapeSetting.lineType = currentLineType
+        case .fontName:
+            ShapeSetting.fontName = currentFontName
+        }
         settingsVC?.tableView.reloadData()
-        fontPickerView.removeFromSuperview()
+        customerPickerView.removeFromSuperview()
         fontToolBar.removeFromSuperview()
     }
 }
@@ -50,23 +75,47 @@ extension ARViewController: UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return ShapeSetting.fontNameList.count
+        switch currentPickerViewType {
+        case .lineType:
+            return ShapeSetting.lineTypeList.count
+
+        case .fontName:
+            return ShapeSetting.fontNameList.count
+        }
     }
 }
 
 
 extension ARViewController: UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        let fontName = ShapeSetting.fontNameList[row]
-        if row == 0 {
-            pickerView.selectRow(0, inComponent: component, animated: true)
+        switch currentPickerViewType {
+        case .lineType:
+            let lineTypeName = ShapeSetting.lineTypeList[row]
+            if row == 0 {
+                currentLineType = .normal
+            } else {
+                currentLineType = .dash
+            }
+            return lineTypeName
+
+        case .fontName:
+            let fontName = ShapeSetting.fontNameList[row]
             currentFontName = fontName
+            return fontName
         }
-        return fontName
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let fontName = ShapeSetting.fontNameList[row]
-        currentFontName = fontName
+        switch currentPickerViewType {
+        case .lineType:
+            if row == 0 {
+                currentLineType = .normal
+            } else {
+                currentLineType = .dash
+            }
+        case .fontName:
+            let fontName = ShapeSetting.fontNameList[row]
+            currentFontName = fontName
+        }
     }
 }

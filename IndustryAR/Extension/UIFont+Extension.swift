@@ -31,17 +31,17 @@ extension UIFont {
     }
 
     class func regularSize(size: CGFloat) -> (UIFont) {
-        let font = UIFont(name: "PingFangSC-Regular", size: size)!
+        let font = UIFont(name: "PingFang-SC-Regular", size: size)!
         return font
     }
 
     class func mediumSize(size: CGFloat) -> (UIFont) {
-        let font = UIFont(name: "PingFangSC-Medium", size: size)!
+        let font = UIFont(name: "PingFang-SC-Medium", size: size)!
         return font
     }
 
     class func boldSize(size: CGFloat) -> (UIFont) {
-        let font = UIFont(name: "PingFangSC-Semibold", size: size)!
+        let font = UIFont(name: "PingFang-SC-Semibold", size: size)!
         return font
     }
 }

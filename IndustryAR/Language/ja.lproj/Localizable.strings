@@ -8,6 +8,7 @@
 
 "project" = "計画";
 "history" = "歴史";
+"mine" = "私の";
 
 "drawing" = "フリーハンド";
 "triangle" = "三角形";
@@ -34,6 +35,8 @@
 "text_color" = "テキスト色:";
 "text_size" = "テキストサイズ:";
 "text_font" = "テキストフォント:";
+"move_background" = "背景可动";
+
 
 "normal_line" = "実線";
 "dash_line" = "点線";
@@ -41,3 +44,12 @@
 "save_success" = "正常に保存";
 "save_fail" = "保存失敗";
 "save_error" = "ビデオを保存できませんでした";
+
+"save_window_tip" = "是否需要保存Scene?";
+"save" = "保存";
+
+"save_cover_tip" = "上書き保存Scene?";
+
+"download_url" = "ダウンロードリンク:";
+"download" = "ダウンロード";
+

@@ -9,6 +9,9 @@ import UIKit
 
 class HomeContainerCell: UICollectionViewCell {
     
+    var deleteCellClosure: (() -> Void)?
+
+    
     private lazy var iconView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         imageView.backgroundColor = .white
@@ -22,6 +25,14 @@ class HomeContainerCell: UICollectionViewCell {
         label.textColor = .black
         label.textAlignment = .center
         return label
+    }()
+    
+    private lazy var deleteButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "shanchu 1"), for: .normal)
+        button.addTarget(self, action: #selector(deleteRow), for: .touchUpInside)
+        button.isHidden = true
+        return button
     }()
     
     override init(frame: CGRect) {
@@ -41,6 +52,13 @@ class HomeContainerCell: UICollectionViewCell {
             make.centerX.equalTo(iconView)
             make.top.equalTo(iconView.snp.bottom).offset(5)
             make.width.equalTo(180)
+        }
+        
+        contentView.addSubview(deleteButton)
+        deleteButton.snp.makeConstraints { make in
+            make.bottom.equalTo(iconView).offset(-20)
+            make.centerX.equalTo(iconView)
+            make.size.equalTo(CGSize(width: 48, height: 48))
         }
     }
     
@@ -69,6 +87,21 @@ class HomeContainerCell: UICollectionViewCell {
             iconView.image = UIImage(data: data)
         }
         nameLabel.text = historyModel.fileName
+    }
+    
+    func showDeleteButton() {
+        deleteButton.isHidden = false
+    }
+    
+    func hideDeleteButton() {
+        deleteButton.isHidden = true
+    }
+    
+    @objc
+    private func deleteRow() {
+        if let deleteCellClosure = deleteCellClosure {
+            deleteCellClosure()
+        }
     }
 }
 

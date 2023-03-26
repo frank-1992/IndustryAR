@@ -9,5 +9,5 @@ target 'IndustryAR' do
   pod 'SnapKit'
   pod 'PKHUD', '~> 5.0'
   pod 'HandyJSON'
-  pod 'BetterSegmentedControl', '~> 2.0'
+  pod 'Zip', '~> 2.1'
 end

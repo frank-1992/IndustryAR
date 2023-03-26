@@ -13,10 +13,10 @@ import HandyJSON
 import PKHUD
 
 let keyWindow = UIApplication.shared.connectedScenes
-        .filter({$0.activationState == .foregroundActive})
-        .compactMap({$0 as? UIWindowScene})
-        .first?.windows
-        .filter({$0.isKeyWindow}).first
+    .filter({$0.activationState == .foregroundActive})
+    .compactMap({$0 as? UIWindowScene})
+    .first?.windows
+    .filter({$0.isKeyWindow}).first
 
 let statusHeight = keyWindow?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
 
@@ -67,7 +67,7 @@ class ARViewController: UIViewController {
         return sceneView
     }()
     
-//    var configuration = ARWorldTrackingConfiguration()
+    //    var configuration = ARWorldTrackingConfiguration()
     
     private lazy var backButton: UIButton = {
         let backButton = UIButton()
@@ -105,7 +105,7 @@ class ARViewController: UIViewController {
         return view
     }()
     
-    lazy var fontPickerView: UIPickerView = {
+    lazy var customerPickerView: UIPickerView = {
         let fontPickerView = UIPickerView()
         fontPickerView.dataSource = self
         fontPickerView.delegate = self
@@ -125,6 +125,8 @@ class ARViewController: UIViewController {
     }()
     
     var currentFontName: String = "PingFang-SC-Regular"
+    var currentLineType: LineType = .normal
+
     
     // SCNLine
     var pointTouching: CGPoint = .zero
@@ -153,19 +155,40 @@ class ARViewController: UIViewController {
     
     // SCNNode-----Triangle
     var triangleNodes: [Triangle] = [Triangle]()
-
+    
     // SCNNode-----Text
     var textNodes: [SCNTextNode] = [SCNTextNode]()
-
+    
     // SCNNode-----Line
     var lineNodes: [SCNLineNode] = [SCNLineNode]()
     
     var removedOcclusion: Bool = false
     var backgroundPhotography: Bool = false
     
+    var currentPickerViewType: PickerViewType = .fontName
+    
+    var isSavedScene: Bool = false
+    
     @objc
     private func backButtonClicked() {
-        navigationController?.popViewController(animated: true)
+        if isSavedScene {
+            navigationController?.popViewController(animated: true)
+        } else {
+            // show save tip window
+            let alert = UIAlertController(title: save_window_tip.localizedString(), message: "", preferredStyle: UIAlertController.Style.alert)
+            
+            alert.addAction(UIAlertAction(title: cancel.localizedString(), style: UIAlertAction.Style.default, handler: { _ in
+                //cancel Action
+                self.navigationController?.popViewController(animated: true)
+            }))
+            alert.addAction(UIAlertAction(title: save.localizedString(),
+                                          style: UIAlertAction.Style.default,
+                                          handler: {(_: UIAlertAction!) in
+                //save action
+                self.saveScene(true)
+            }))
+            self.present(alert, animated: true, completion: nil)
+        }
     }
     
     override func viewDidLoad() {
@@ -178,6 +201,7 @@ class ARViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
+        UIApplication.shared.isIdleTimerDisabled = true
         resetTracking()
     }
     
@@ -192,7 +216,7 @@ class ARViewController: UIViewController {
         configuration.planeDetection = [.horizontal, .vertical]
         configuration.isLightEstimationEnabled = true
         configuration.environmentTexturing = .automatic
-       
+        
         if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
             configuration.sceneReconstruction = .mesh
         }
@@ -452,116 +476,7 @@ class ARViewController: UIViewController {
         // save SCN file
         bottomMenuView.saveSCNClosure = { [weak self]  in
             guard let self = self else { return }
-            
-            let textInputView = TextInputView(frame: .zero)
-            self.view.addSubview(textInputView)
-            
-            textInputView.snp.makeConstraints { make in
-                make.center.equalTo(self.view)
-                make.size.equalTo(CGSize(width: 300, height: 140))
-            }
-            
-            // save with name
-            textInputView.confirmTextClosure = { name in
-                let fileName = name
-                let scene = self.sceneView.scene
-
-                let dirURL = historyPath.appendingPathComponent(fileName, isDirectory: true)
-                var isDirectory: ObjCBool = ObjCBool(false)
-                let isExist = FileManager.default.fileExists(atPath: dirURL.path, isDirectory: &isDirectory)
-                if !isExist {
-                    do {
-                        try FileManager.default.createDirectory(at: dirURL, withIntermediateDirectories: true, attributes: nil)
-                    } catch {
-                        print("createDirectory error:\(error)")
-                    }
-                }
-                
-                self.setDeleteFlagHiddenState(isHidden: true) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        self.sceneView.takePhoto { (photo: UIImage) in
-                            let photoURL = dirURL.appendingPathComponent(fileName + ".png")
-                            let imageData = photo.pngData()
-                            try? imageData?.write(to: photoURL)
-                        }
-                    }
-                }
-                
-                // copy usdz file
-                if let assetModel = self.assetModel {
-                    let usdzFiles = assetModel.usdzFilePaths
-                    if let usdzURL = usdzFiles.first {
-                        let newUSDZURL = dirURL.appendingPathComponent(fileName + ".usdz")
-                        try? FileManager.default.copyItem(at: usdzURL, to: newUSDZURL)
-                    }
-                }
-                
-                if let historyModel = self.historyModel {
-                    if let usdzFileURL = historyModel.usdzPath {
-                        let newUSDZURL = dirURL.appendingPathComponent(fileName + ".usdz")
-                        try? FileManager.default.copyItem(at: usdzFileURL, to: newUSDZURL)
-                    }
-                }
-
-                if let cadModelRoot = self.cadModelRoot {
-                    let modelInfo = SceneModel()
-                    modelInfo.modelPositionX = cadModelRoot.position.x
-                    modelInfo.modelPositionY = cadModelRoot.position.y
-                    modelInfo.modelPositionZ = cadModelRoot.position.z
-                    modelInfo.modelScale = cadModelRoot.scale.x
-                    modelInfo.modelOrientationX = cadModelRoot.orientation.x
-                    modelInfo.modelOrientationY = cadModelRoot.orientation.y
-                    modelInfo.modelOrientationZ = cadModelRoot.orientation.z
-                    modelInfo.modelOrientationW = cadModelRoot.orientation.w
-
-                    // save model info json string
-                    let modelInfoString = JsonUtil.modelToJson(modelInfo)
-                    let modelInfoURL = dirURL.appendingPathComponent(fileName + ".txt")
-                    try? modelInfoString.write(to: modelInfoURL, atomically: true, encoding: .utf8)
-                    
-                    // save marker names
-                    var markerName: [String] = [String]()
-                    for (index, circle) in self.circleNodes.enumerated() {
-                        let name = "circle" + "\(index)"
-                        circle.name = name
-                        markerName.append(name)
-                    }
-                    for (index, square) in self.squareNodes.enumerated() {
-                        let name = "square" + "\(index)"
-                        square.name = name
-                        markerName.append(name)
-                    }
-                    for (index, triangle) in self.triangleNodes.enumerated() {
-                        let name = "triangle" + "\(index)"
-                        triangle.name = name
-                        markerName.append(name)
-                    }
-                    for (index, textNode) in self.textNodes.enumerated() {
-                        let name = "text" + "\(index)"
-                        textNode.name = name
-                        markerName.append(name)
-                    }
-                    for (index, lineNode) in self.lineNodes.enumerated() {
-                        let name = "line" + "\(index)"
-                        lineNode.name = name
-                        markerName.append(name)
-                    }
-                    
-                    guard let markerData = try? JSONSerialization.data(withJSONObject: markerName, options: []),
-                          let markerString = String(data: markerData, encoding: String.Encoding.utf8) else {
-                        return
-                    }
-                    
-                    let markerURL = dirURL.appendingPathComponent("markername.txt")
-                    try? markerString.write(to: markerURL, atomically: true, encoding: .utf8)
-                    HUD.flash(.label(save_success.localizedString()), delay: 1)
-                }
-                
-                let fileURL = dirURL.appendingPathComponent(fileName + ".scn")
-                scene.write(to: fileURL, options: nil, delegate: nil, progressHandler: nil)
-                // auto show
-                self.resetBottomMenuView()
-            }
+            self.saveScene()
         }
         
         // auto settings
@@ -572,6 +487,105 @@ class ARViewController: UIViewController {
             } else {
                 UserDefaults.hasAutoShowBottomMenu = false
                 sender.setTitle("SHOW", for: .normal)
+            }
+        }
+    }
+    
+    private func saveScene(_ needBack: Bool = false) {
+        let textInputView = TextInputView(frame: .zero)
+        self.view.addSubview(textInputView)
+        
+        textInputView.snp.makeConstraints { make in
+            make.center.equalTo(self.view)
+            make.size.equalTo(CGSize(width: 300, height: 140))
+        }
+        
+        // save with name
+        textInputView.confirmTextClosure = { [weak self] name in
+            guard let self = self else { return }
+            let fileName = name
+            
+//            // check if the file name exists
+//            let fileNamesString = UserDefaults.fileNamesString
+//            let fileNameModels = JsonUtil.jsonArrayToModel(fileNamesString, SceneModel.self)
+//            let fileNameIsExist = fileNameModels.contains(where: {$0.fileName == fileName})
+//            if fileNameIsExist {
+//                //
+//            }
+                        
+            let dirURL = historyPath.appendingPathComponent(fileName, isDirectory: true)
+            var isDirectory: ObjCBool = ObjCBool(false)
+            let isExist = FileManager.default.fileExists(atPath: dirURL.path, isDirectory: &isDirectory)
+            if isExist {
+                // show the tip window
+                let alert = UIAlertController(title: save_cover_tip.localizedString(), message: "", preferredStyle: UIAlertController.Style.alert)
+                
+                alert.addAction(UIAlertAction(title: cancel.localizedString(), style: UIAlertAction.Style.default, handler: { _ in
+                    //cancel Action
+                    
+                }))
+                alert.addAction(UIAlertAction(title: save.localizedString(),
+                                              style: UIAlertAction.Style.default,
+                                              handler: {(_: UIAlertAction!) in
+                    //save action
+                    self.saveTheScene(with: fileName, dirURL: dirURL, needBack: needBack)
+                    textInputView.removeFromSuperview()
+                }))
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                self.saveTheScene(with: fileName, dirURL: dirURL, needBack: needBack)
+                textInputView.removeFromSuperview()
+            }
+        }
+    }
+    
+    private func saveTheScene(with fileName: String, dirURL: URL, needBack: Bool) {
+        do {
+            try FileManager.default.createDirectory(at: dirURL, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            print("createDirectory error:\(error)")
+        }
+        
+        setDeleteFlagHiddenState(isHidden: true) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.sceneView.takePhoto { (photo: UIImage) in
+                    let photoURL = dirURL.appendingPathComponent(fileName + ".png")
+                    let imageData = photo.pngData()
+                    try? imageData?.write(to: photoURL)
+                }
+            }
+        }
+        
+        // save marker names
+        for (index, circle) in circleNodes.enumerated() {
+            let name = "circle" + "\(index)"
+            circle.name = name
+        }
+        for (index, square) in squareNodes.enumerated() {
+            let name = "square" + "\(index)"
+            square.name = name
+        }
+        for (index, triangle) in triangleNodes.enumerated() {
+            let name = "triangle" + "\(index)"
+            triangle.name = name
+        }
+        for (index, textNode) in textNodes.enumerated() {
+            let name = "text" + "\(index)"
+            textNode.name = name
+        }
+        for (index, lineNode) in lineNodes.enumerated() {
+            let name = "line" + "\(index)"
+            lineNode.name = name
+        }
+        
+        let fileURL = dirURL.appendingPathComponent(fileName + ".scn")
+        sceneView.scene.write(to: fileURL, options: nil, delegate: nil, progressHandler: nil)
+        // auto show
+        resetBottomMenuView()
+        isSavedScene = true
+        HUD.flash(.label(save_success.localizedString()), delay: 1) { _ in
+            if needBack {
+                self.navigationController?.popViewController(animated: true)
             }
         }
     }
@@ -651,8 +665,8 @@ class ARViewController: UIViewController {
                 //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
                 
                 triangleNode.simdScale = simd_float3(1, 1, 1)
-    //            let boundingbox = triangleNode.boundingBox
-    //            print("三角形boundingbox: \(boundingbox)")
+                //            let boundingbox = triangleNode.boundingBox
+                //            print("三角形boundingbox: \(boundingbox)")
                 
                 let constraint = SCNBillboardConstraint()
                 constraint.freeAxes = SCNBillboardAxis.Y
@@ -733,9 +747,9 @@ class ARViewController: UIViewController {
                 guard let textGeometry = textGeometry else {
                     return
                 }
-
+                
                 let newTextNode = SCNTextNode(geometry: textGeometry)
-
+                
                 
                 let constraint = SCNBillboardConstraint()
                 constraint.freeAxes = SCNBillboardAxis.Y
@@ -751,7 +765,7 @@ class ARViewController: UIViewController {
                 let centerZ = tapPoint_world.z - depth/2.0
                 
                 newTextNode.position = SCNVector3(x: centerX, y: centerY, z: centerZ)
-
+                
                 markerRoot?.addChildNode(newTextNode)
                 textNodes.append(newTextNode)
             }
@@ -781,30 +795,30 @@ class ARViewController: UIViewController {
         let cx = (cadModelBBox.max.x + cadModelBBox.min.x) / 2
         let cy = (cadModelBBox.max.y + cadModelBBox.min.y) / 2
         let cz = (cadModelBBox.max.z + cadModelBBox.min.z) / 2
-
+        
         /*
-        if(cadModelBBox.min.x == Float.greatestFiniteMagnitude || cadModelBBox.max.x == -Float.greatestFiniteMagnitude) {
-            let model = cadModelNode.childNodes[0]
-            let cx1 = (model.boundingBox.max.x + model.boundingBox.min.x) / 2
-            let cy1 = (model.boundingBox.max.y + model.boundingBox.min.y) / 2
-            let cz1 = (model.boundingBox.max.z + model.boundingBox.min.z) / 2
-            
-            cadModelNode.simdWorldTransform = simd_float4x4(
-                SIMD4(1, 0, 0, 0),
-                SIMD4(0, 1, 0, 0),
-                SIMD4(0, 0, 1, 0),
-                SIMD4(0, 0, 0, 1)
-            )
-            cadModelNode.transform = SCNMatrix4(
-                m11:1, m12:0, m13:0, m14:0,
-                m21:0, m22:1, m23:0, m24:0,
-                m31:0, m32:0, m33:1, m34:0,
-                m41:0, m42:0, m43:0, m44:1)
-            
-            cadModelNode.scale = SCNVector3(1, 1, 1)
-            cadModelNode.position = SCNVector3(x: 0, y: -cy1, z: -0.5)
-            return
-        }
+         if(cadModelBBox.min.x == Float.greatestFiniteMagnitude || cadModelBBox.max.x == -Float.greatestFiniteMagnitude) {
+         let model = cadModelNode.childNodes[0]
+         let cx1 = (model.boundingBox.max.x + model.boundingBox.min.x) / 2
+         let cy1 = (model.boundingBox.max.y + model.boundingBox.min.y) / 2
+         let cz1 = (model.boundingBox.max.z + model.boundingBox.min.z) / 2
+         
+         cadModelNode.simdWorldTransform = simd_float4x4(
+         SIMD4(1, 0, 0, 0),
+         SIMD4(0, 1, 0, 0),
+         SIMD4(0, 0, 1, 0),
+         SIMD4(0, 0, 0, 1)
+         )
+         cadModelNode.transform = SCNMatrix4(
+         m11:1, m12:0, m13:0, m14:0,
+         m21:0, m22:1, m23:0, m24:0,
+         m31:0, m32:0, m33:1, m34:0,
+         m41:0, m42:0, m43:0, m44:1)
+         
+         cadModelNode.scale = SCNVector3(1, 1, 1)
+         cadModelNode.position = SCNVector3(x: 0, y: -cy1, z: -0.5)
+         return
+         }
          */
         
         cadModelNode.pivot = SCNMatrix4MakeTranslation(
@@ -820,14 +834,14 @@ class ARViewController: UIViewController {
         if self.panDirection == nil {
             self.panDirection = getPanDirectionForRotation(velocity: velocity)
         }
-                
+        
         let translation = panGesture.translation(in: panGesture.view!)
         let anglePan = (self.panDirection == "horizontal") ?  deg2rad(deg: Float(translation.x)) :
-                                                              deg2rad(deg: Float(translation.y))
-                
+        deg2rad(deg: Float(translation.y))
+        
         var x:Float = (self.panDirection == "vertical" ) ? 1.0 : 0.0
         var y:Float = (self.panDirection == "horizontal" ) ?  1.0 : 0.0
-                
+        
         // calculate the angle change from last call
         let fraction = anglePan - lastAngle
         lastAngle = anglePan
@@ -857,10 +871,10 @@ class ARViewController: UIViewController {
                 return;
             }
         }
-
+        
         cadModelNode.transform = SCNMatrix4Mult(cadModelNode.transform,SCNMatrix4MakeRotation(fraction,  axis.x, axis.y, axis.z))
         //cadModelNode.transform = SCNMatrix4Mult(cadModelNode.transform,SCNMatrix4MakeRotation(fraction,  x, y, 0))
-                
+        
         if(panGesture.state == .ended) {
             self.panDirection = nil
         }
@@ -883,31 +897,31 @@ class ARViewController: UIViewController {
         let cx = (cadModelBBox.max.x + cadModelBBox.min.x) / 2
         let cy = (cadModelBBox.max.y + cadModelBBox.min.y) / 2
         let cz = (cadModelBBox.max.z + cadModelBBox.min.z) / 2
-
+        
         /*
-        if(cadModelBBox.min.x == Float.greatestFiniteMagnitude || cadModelBBox.max.x == -Float.greatestFiniteMagnitude) {
-            let model = cadModelNode.childNodes[0]
-            let cx1 = (model.boundingBox.max.x + model.boundingBox.min.x) / 2
-            let cy1 = (model.boundingBox.max.y + model.boundingBox.min.y) / 2
-            let cz1 = (model.boundingBox.max.z + model.boundingBox.min.z) / 2
-            
-            cadModelNode.simdWorldTransform = simd_float4x4(
-                SIMD4(1, 0, 0, 0),
-                SIMD4(0, 1, 0, 0),
-                SIMD4(0, 0, 1, 0),
-                SIMD4(0, 0, 0, 1)
-            )
-            cadModelNode.transform = SCNMatrix4(
-                m11:1, m12:0, m13:0, m14:0,
-                m21:0, m22:1, m23:0, m24:0,
-                m31:0, m32:0, m33:1, m34:0,
-                m41:0, m42:0, m43:0, m44:1)
-            
-            cadModelNode.scale = SCNVector3(1, 1, 1)
-            cadModelNode.position = SCNVector3(x: 0, y: -cy1, z: -0.5)
-            return
-        }
-        */
+         if(cadModelBBox.min.x == Float.greatestFiniteMagnitude || cadModelBBox.max.x == -Float.greatestFiniteMagnitude) {
+         let model = cadModelNode.childNodes[0]
+         let cx1 = (model.boundingBox.max.x + model.boundingBox.min.x) / 2
+         let cy1 = (model.boundingBox.max.y + model.boundingBox.min.y) / 2
+         let cz1 = (model.boundingBox.max.z + model.boundingBox.min.z) / 2
+         
+         cadModelNode.simdWorldTransform = simd_float4x4(
+         SIMD4(1, 0, 0, 0),
+         SIMD4(0, 1, 0, 0),
+         SIMD4(0, 0, 1, 0),
+         SIMD4(0, 0, 0, 1)
+         )
+         cadModelNode.transform = SCNMatrix4(
+         m11:1, m12:0, m13:0, m14:0,
+         m21:0, m22:1, m23:0, m24:0,
+         m31:0, m32:0, m33:1, m34:0,
+         m41:0, m42:0, m43:0, m44:1)
+         
+         cadModelNode.scale = SCNVector3(1, 1, 1)
+         cadModelNode.position = SCNVector3(x: 0, y: -cy1, z: -0.5)
+         return
+         }
+         */
         
         cadModelNode.pivot = SCNMatrix4MakeTranslation(
             cx,
@@ -978,83 +992,83 @@ class ARViewController: UIViewController {
         //print("pan direction : ", self.panDirection ?? "nil")
         
         let location = panGesture.location(in: self.sceneView)
-          
+        
         switch panGesture.state {
-          case .began:
+        case .began:
             prevTwoFingerLocation = location
             prevTwoFingerDelta = SCNVector3(0,0,0)
-              
-          case .changed:
-              currTwoFingerLocation = location
-             
-              if let lastLocation = prevTwoFingerLocation {
-                  var delta = SCNVector3(0,0,0)
-                  var dirSign:Float = 1
-                  
-                  if(panDirection == "x-axis"){
-                      delta.x = Float(location.x - lastLocation.x)/1000.0
-                      //if((prevTwoFingerDelta.x > 0 && delta.x < 0) || (prevTwoFingerDelta.x < 0 && delta.x > 0)){
-                      //    dirSign = -1
-                      //}
-                      if(abs(prevTwoFingerDelta.x) > 0 && abs(delta.x) > abs(prevTwoFingerDelta.x)*5.0){
-                          //dirSign = -1
-                          delta.x = prevTwoFingerDelta.x * 5.0
-                      }
-                      if(delta.x == 0){
-                          dirSign = -1
-                      }
-                  }
-                  else if(panDirection == "y-axis"){
-                      delta.y = -Float(location.y - lastLocation.y)/1000.0
-                      //if((prevTwoFingerDelta.y > 0 && delta.y < 0) || (prevTwoFingerDelta.y < 0 && delta.y > 0)){
-                      //    dirSign = -1
-                      //}
-                      if(abs(prevTwoFingerDelta.y) > 0 && abs(delta.y) > abs(prevTwoFingerDelta.y)*5.0){
-                          //dirSign = -1
-                          delta.y = prevTwoFingerDelta.y * 5.0
-                      }
-                      if(delta.y == 0){
-                          dirSign = -1
-                      }
-                  }
-                  else if(panDirection == "z-axis"){
-                      delta.z = sqrt(Float(location.x - lastLocation.x) * Float(location.x - lastLocation.x) + Float(location.y - lastLocation.y) * Float(location.y - lastLocation.y))/1000.0
-                      if(location.y - lastLocation.y < 0.0){
-                          delta.z = -delta.z
-                      }
-                      //if((prevTwoFingerDelta.z > 0 && delta.z < 0) || (prevTwoFingerDelta.z < 0 && delta.z > 0)){
-                      //    dirSign = -1
-                      //}
-                      if(abs(prevTwoFingerDelta.z) > 0 && abs(delta.z) > abs(prevTwoFingerDelta.z)*5.0){
-                          //dirSign = -1
-                          delta.z = prevTwoFingerDelta.z * 5.0
-                      }
-                      if(delta.z == 0){
-                          dirSign = -1
-                      }
-                  }
-                  
-                  prevTwoFingerDelta = delta
-                  if(dirSign == 1) {
-                      var orig = SCNVector3(0,0,0)
-                      if let camera = sceneView.pointOfView { // カメラを取得
-                          orig = camera.convertPosition(orig, to: nil)
-                          delta = camera.convertPosition(delta, to: nil)
-                          delta = delta - orig
-                          
-                          let moveAction = SCNAction.move(by: delta, duration: 0)
-                          cadModelNode.runAction(moveAction)
-                      }
-                  }
-                  
-                  prevTwoFingerLocation = location
-              }
-              
-          case .ended, .cancelled:
-              panDirection = nil
-              prevTwoFingerLocation = nil
-              prevTwoFingerDelta = SCNVector3(0,0,0)
-          default:
+            
+        case .changed:
+            currTwoFingerLocation = location
+            
+            if let lastLocation = prevTwoFingerLocation {
+                var delta = SCNVector3(0,0,0)
+                var dirSign:Float = 1
+                
+                if(panDirection == "x-axis"){
+                    delta.x = Float(location.x - lastLocation.x)/1000.0
+                    //if((prevTwoFingerDelta.x > 0 && delta.x < 0) || (prevTwoFingerDelta.x < 0 && delta.x > 0)){
+                    //    dirSign = -1
+                    //}
+                    if(abs(prevTwoFingerDelta.x) > 0 && abs(delta.x) > abs(prevTwoFingerDelta.x)*5.0){
+                        //dirSign = -1
+                        delta.x = prevTwoFingerDelta.x * 5.0
+                    }
+                    if(delta.x == 0){
+                        dirSign = -1
+                    }
+                }
+                else if(panDirection == "y-axis"){
+                    delta.y = -Float(location.y - lastLocation.y)/1000.0
+                    //if((prevTwoFingerDelta.y > 0 && delta.y < 0) || (prevTwoFingerDelta.y < 0 && delta.y > 0)){
+                    //    dirSign = -1
+                    //}
+                    if(abs(prevTwoFingerDelta.y) > 0 && abs(delta.y) > abs(prevTwoFingerDelta.y)*5.0){
+                        //dirSign = -1
+                        delta.y = prevTwoFingerDelta.y * 5.0
+                    }
+                    if(delta.y == 0){
+                        dirSign = -1
+                    }
+                }
+                else if(panDirection == "z-axis"){
+                    delta.z = sqrt(Float(location.x - lastLocation.x) * Float(location.x - lastLocation.x) + Float(location.y - lastLocation.y) * Float(location.y - lastLocation.y))/1000.0
+                    if(location.y - lastLocation.y < 0.0){
+                        delta.z = -delta.z
+                    }
+                    //if((prevTwoFingerDelta.z > 0 && delta.z < 0) || (prevTwoFingerDelta.z < 0 && delta.z > 0)){
+                    //    dirSign = -1
+                    //}
+                    if(abs(prevTwoFingerDelta.z) > 0 && abs(delta.z) > abs(prevTwoFingerDelta.z)*5.0){
+                        //dirSign = -1
+                        delta.z = prevTwoFingerDelta.z * 5.0
+                    }
+                    if(delta.z == 0){
+                        dirSign = -1
+                    }
+                }
+                
+                prevTwoFingerDelta = delta
+                if(dirSign == 1) {
+                    var orig = SCNVector3(0,0,0)
+                    if let camera = sceneView.pointOfView { // カメラを取得
+                        orig = camera.convertPosition(orig, to: nil)
+                        delta = camera.convertPosition(delta, to: nil)
+                        delta = delta - orig
+                        
+                        let moveAction = SCNAction.move(by: delta, duration: 0)
+                        cadModelNode.runAction(moveAction)
+                    }
+                }
+                
+                prevTwoFingerLocation = location
+            }
+            
+        case .ended, .cancelled:
+            panDirection = nil
+            prevTwoFingerLocation = nil
+            prevTwoFingerDelta = SCNVector3(0,0,0)
+        default:
             break
         }
     }
@@ -1067,106 +1081,70 @@ class ARViewController: UIViewController {
             let scnFiles = assetModel.scnFilePaths
             if !usdzFiles.isEmpty {
                 for usdzFile in usdzFiles {
-                    if let usdzObject = SCNReferenceNode(url: usdzFile) {
-                        usdzObject.name = "usdz"
-                        usdzObject.load()
-                        usdzObjects.append(usdzObject)
-                        showVirtualObject(with: usdzObject)
+                    
+                    let usdzObject = try? SCNScene(url: usdzFile)
+                    if let rootNode = usdzObject?.rootNode {
+                        usdzObjects.append(rootNode)
+                        showVirtualObject(with: rootNode)
                     }
                 }
             }
             
             if !scnFiles.isEmpty {
                 for scnFile in scnFiles {
-                    if let scnObject = SCNReferenceNode(url: scnFile) {
-                        scnObject.name = "scn"
-                        scnObject.load()
-                        scnObjects.append(scnObject)
-                        showVirtualObject(with: scnObject)
+                    let scnObject = try? SCNScene(url: scnFile)
+                    if let rootNode = scnObject?.rootNode {
+                        scnObjects.append(rootNode)
+                        showVirtualObject(with: rootNode)
                     }
                 }
             }
         } else if let historyModel = historyModel {
-            guard let scnFileURL = historyModel.fileSCNPath,
-                  let usdzURL = historyModel.usdzPath,
-                  let tranformJsonStringURL = historyModel.fileTransformString else {
+            guard let scnFileURL = historyModel.fileSCNPath else {
                 return
             }
-
+            
             do {
-                guard let transformString = try? String(contentsOf: tranformJsonStringURL) else { return }
-                guard let modelInfo = JsonUtil.jsonToModel(transformString, SceneModel.self) as? SceneModel else { return }
                 if let savedScene = try? SCNScene(url: scnFileURL) {
-
-                    if let usdzObject = SCNReferenceNode(url: usdzURL) {
-                        usdzObject.load()
-                        if(cadModelRoot == nil) {
-                            let cadModelRoot1 = SCNNode()
-                            self.cadModelRoot = cadModelRoot1
-                            cadModelRoot1.name = "ModelRoot"
-
-                            if let childNode = savedScene.rootNode.childNode(withName: "usdz", recursively: true) {
-                                childNode.name = "usdz"
-                                cadModelRoot1.addChildNode(childNode)
-                            }
-                            
-                            presetCadModel(cadModelNode: cadModelRoot1, bPivot: true, bSubdLevel: true)
-
-                            let markerRoot1 = SCNNode()
-                            markerRoot = markerRoot1
-
-                            if let markerNameURL = historyModel.markerNameURL,
-                               let markerNameString = try? String(contentsOf: markerNameURL),
-                               let data = markerNameString.data(using: .utf8),
-                               let markerNames = try? JSONSerialization.jsonObject(with: data, options: []) as? [String] {
-                                for marker in markerNames {
-                                    if let childNode = savedScene.rootNode.childNode(withName: marker, recursively: true) {
-                                        
-                                        markerRoot1.addChildNode(childNode)
-                                        if marker.contains("circle") {
-                                            if let childNode = childNode as? Circle {
-                                                circleNodes.append(childNode)
+                    sceneView.scene = savedScene
+                    
+                    for modelRoot in savedScene.rootNode.childNodes {
+                        if modelRoot.name == "ModelRoot" {
+                            self.cadModelRoot = modelRoot
+                            for markerRoot in modelRoot.childNodes {
+                                if markerRoot.name == "MarkerRoot" {
+                                    self.markerRoot = markerRoot
+                                    for childNode in markerRoot.childNodes {
+                                        if let marker = childNode.name {
+                                            if marker.contains("circle") {
+                                                if let childNode = childNode as? Circle {
+                                                    circleNodes.append(childNode)
+                                                }
+                                            }
+                                            if marker.contains("square") {
+                                                if let childNode = childNode as? Square {
+                                                    squareNodes.append(childNode)
+                                                }
+                                            }
+                                            if marker.contains("triangle") {
+                                                if let childNode = childNode as? Triangle {
+                                                    triangleNodes.append(childNode)
+                                                }
+                                            }
+                                            if marker.contains("text") {
+                                                if let childNode = childNode as? SCNTextNode {
+                                                    textNodes.append(childNode)
+                                                }
+                                            }
+                                            if marker.contains("line") {
+                                                if let childNode = childNode as? SCNLineNode {
+                                                    lineNodes.append(childNode)
+                                                }
                                             }
                                         }
-                                        if marker.contains("square") {
-                                            if let childNode = childNode as? Square {
-                                                squareNodes.append(childNode)
-                                            }
-                                        }
-                                        if marker.contains("triangle") {
-                                            if let childNode = childNode as? Triangle {
-                                                triangleNodes.append(childNode)
-                                            }
-                                        }
-                                        if marker.contains("text") {
-                                            if let childNode = childNode as? SCNTextNode {
-                                                textNodes.append(childNode)
-                                            }
-                                        }
-                                        if marker.contains("line") {
-                                            if let childNode = childNode as? SCNLineNode {
-                                                lineNodes.append(childNode)
-                                            }
-                                        }
-                                        if !marker.contains("line") {
-                                            let constraint = SCNBillboardConstraint()
-                                            constraint.freeAxes = SCNBillboardAxis.Y
-                                            childNode.constraints = [constraint]
-                                        }
-                                        
                                     }
                                 }
                             }
-                
-                            markerRoot1.name = "MarkerRoot"
-                            cadModelRoot1.addChildNode(markerRoot1)
-                            
-                            cadModelRoot1.position = SCNVector3(x: modelInfo.modelPositionX, y: modelInfo.modelPositionY, z: modelInfo.modelPositionZ)
-                            cadModelRoot1.scale = SCNVector3(modelInfo.modelScale, modelInfo.modelScale, modelInfo.modelScale)
-                            cadModelRoot1.orientation = SCNQuaternion(modelInfo.modelOrientationX, modelInfo.modelOrientationY, modelInfo.modelOrientationZ, modelInfo.modelOrientationW)
-                            
-                            savedScene.rootNode.addChildNode(cadModelRoot1)
-                            sceneView.scene = savedScene
                         }
                     }
                 }
@@ -1181,14 +1159,14 @@ class ARViewController: UIViewController {
         let width = bmax.x - bmin.x
         let depth = bmax.z - bmin.z
         let height = bmax.y - bmin.y
-
+        
         
         //_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____DIPRO_START_2023/02/09_____VVVVVVVVVVVVVVVVVVVVVVVVVVVVV_____
         
         let cx = (model.boundingBox.max.x + model.boundingBox.min.x) / 2
         let cy = (model.boundingBox.max.y + model.boundingBox.min.y) / 2
         let cz = (model.boundingBox.max.z + model.boundingBox.min.z) / 2
-
+        
         //model.name = "VirtualObject"
         if(cadModelRoot == nil) {
             let cadModelRoot1 = SCNNode()
@@ -1270,7 +1248,19 @@ class ARViewController: UIViewController {
         
         settingsVC.selectFontClosure = { [weak self] in
             guard let self = self else { return }
-            self.addFontPickerView()
+            self.currentPickerViewType = .fontName
+            self.addPickerView()
+        }
+        
+        settingsVC.selectLineTypeClosure = { [weak self] in
+            guard let self = self else { return }
+            self.currentPickerViewType = .lineType
+            self.addPickerView()
+        }
+        
+        settingsVC.backgroundMoveSelectedClosure = { [weak self] isSelected in
+            guard let self = self else { return }
+            print("选中state: \(isSelected)")
         }
     }
     
@@ -1310,7 +1300,7 @@ class ARViewController: UIViewController {
     }
     
     var touchPoints: [CGPoint] = [CGPoint]()
-
+    
     var firstPoint: CGPoint = .zero
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -1318,10 +1308,6 @@ class ARViewController: UIViewController {
         guard let function = function, function == .line, let location = touches.first?.location(in: nil) else {
             return
         }
-        
-        
-        
-        
         
         pointTouching = location
         touchPoints.append(pointTouching)
@@ -1334,7 +1320,7 @@ class ARViewController: UIViewController {
         begin(hit: lastHit)
         isDrawing = true
     }
-
+    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         //MARK: 1
         guard let function = function, function == .line, let location = touches.first?.location(in: nil) else {
@@ -1343,14 +1329,14 @@ class ARViewController: UIViewController {
         pointTouching = location
         touchPoints.append(pointTouching)
     }
-
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         //MARK: 1
         isDrawing = false
         reset()
         
     }
-
+    
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
     }
     
@@ -1374,7 +1360,7 @@ class ARViewController: UIViewController {
         
         lineNodes.append(drawingNode)
     }
-
+    
     private func addPointAndCreateVertices() {
         guard let lastHit = sceneView.hitTest(self.pointTouching, options: [SCNHitTestOption.searchMode: SCNHitTestSearchMode.closest.rawValue as NSNumber]).first else {
             return
@@ -1413,17 +1399,17 @@ extension ARViewController: ARSCNViewDelegate {
     
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         guard let meshAnchor = anchor as? ARMeshAnchor else {
-                return nil
-            }
-
+            return nil
+        }
+        
         let geometry = createGeometryFromAnchor(meshAnchor: meshAnchor)
-
+        
         //apply occlusion material
         geometry.firstMaterial?.colorBufferWriteMask = []
         geometry.firstMaterial?.writesToDepthBuffer = true
         geometry.firstMaterial?.readsFromDepthBuffer = true
-            
-
+        
+        
         let node = SCNNode(geometry: geometry)
         //change rendering order so it renders before  our virtual object
         node.renderingOrder = -1
@@ -1449,15 +1435,15 @@ extension ARViewController: ARSCNViewDelegate {
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
         guard let meshAnchor = anchor as? ARMeshAnchor else {
-                return
-            }
+            return
+        }
         let geometry = createGeometryFromAnchor(meshAnchor: meshAnchor)
-
-            // Optionally hide the node from rendering as well
-            geometry.firstMaterial?.colorBufferWriteMask = []
-            geometry.firstMaterial?.writesToDepthBuffer = true
-            geometry.firstMaterial?.readsFromDepthBuffer = true
-            
+        
+        // Optionally hide the node from rendering as well
+        geometry.firstMaterial?.colorBufferWriteMask = []
+        geometry.firstMaterial?.writesToDepthBuffer = true
+        geometry.firstMaterial?.readsFromDepthBuffer = true
+        
         node.geometry = geometry
     }
     
@@ -1477,13 +1463,13 @@ extension ARViewController: ARSCNViewDelegate {
         
         return SCNGeometry(sources: [vertexSource, normalsSource], elements: [geometryElement])
     }
-
+    
     func primitiveType(type: ARGeometryPrimitiveType) -> SCNGeometryPrimitiveType {
-            switch type {
-                case .line: return .line
-                case .triangle: return .triangles
-            default : return .triangles
-            }
+        switch type {
+        case .line: return .line
+        case .triangle: return .triangles
+        default : return .triangles
+        }
     }
 }
 

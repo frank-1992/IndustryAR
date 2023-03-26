@@ -84,7 +84,7 @@ class TextInputView: UIView {
                 confirmTextClosure(content)
             }
         }
-        self.removeFromSuperview()
+//        self.removeFromSuperview()
     }
     
     @objc

@@ -46,6 +46,14 @@ class SettingsTableViewCell: UITableViewCell {
         return textField
     }()
     
+    lazy var checkBox: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "checkbox")
+        imageView.highlightedImage = UIImage(named: "checkboxchecked")
+        imageView.isHidden = true
+        return imageView
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
@@ -85,6 +93,13 @@ class SettingsTableViewCell: UITableViewCell {
             make.centerY.equalTo(contentView)
             make.right.equalTo(contentView).offset(-10)
             make.size.equalTo(CGSize(width: 100, height: 40))
+        }
+        
+        addSubview(checkBox)
+        checkBox.snp.makeConstraints { make in
+            make.centerY.equalTo(contentView)
+            make.right.equalTo(contentView).offset(-10)
+            make.size.equalTo(CGSize(width: 26, height: 26))
         }
     }
     

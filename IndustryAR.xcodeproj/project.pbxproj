@@ -46,6 +46,9 @@
 		CEDF542D29AE103D00C5AC95 /* ARViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF542C29AE103D00C5AC95 /* ARViewController+Extension.swift */; };
 		CEDF543B29AF215500C5AC95 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CEDF543D29AF215500C5AC95 /* Localizable.strings */; };
 		CEDF544129AF2D4E00C5AC95 /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF544029AF2D4E00C5AC95 /* Localizable.swift */; };
+		CEF5EC7129C83FCB00C8191E /* MineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF5EC7029C83FCB00C8191E /* MineViewController.swift */; };
+		CEF5EC7529C8474900C8191E /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF5EC7329C8474900C8191E /* Downloader.swift */; };
+		CEF5EC7629C8474900C8191E /* DownloaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF5EC7429C8474900C8191E /* DownloaderManager.swift */; };
 		F033BB92299A883400625BAC /* BottomMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BB91299A883400625BAC /* BottomMenuView.swift */; };
 		F033BBF1299BD06600625BAC /* VideoRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BB97299BD06600625BAC /* VideoRecording.swift */; };
 		F033BBF2299BD06600625BAC /* VideoSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F033BB98299BD06600625BAC /* VideoSettings.swift */; };
@@ -174,6 +177,9 @@
 		CEDF543E29AF215B00C5AC95 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		CEDF543F29AF215C00C5AC95 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CEDF544029AF2D4E00C5AC95 /* Localizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
+		CEF5EC7029C83FCB00C8191E /* MineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MineViewController.swift; sourceTree = "<group>"; };
+		CEF5EC7329C8474900C8191E /* Downloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
+		CEF5EC7429C8474900C8191E /* DownloaderManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloaderManager.swift; sourceTree = "<group>"; };
 		F033BB91299A883400625BAC /* BottomMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomMenuView.swift; sourceTree = "<group>"; };
 		F033BB97299BD06600625BAC /* VideoRecording.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoRecording.swift; sourceTree = "<group>"; };
 		F033BB98299BD06600625BAC /* VideoSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoSettings.swift; sourceTree = "<group>"; };
@@ -399,6 +405,7 @@
 		CECCE93D296835080098B299 /* AR */ = {
 			isa = PBXGroup;
 			children = (
+				CEF5EC7229C8473C00C8191E /* Download */,
 				CE509C90298E1D7F0081346C /* UI */,
 				CECCE93E296835110098B299 /* ARView.swift */,
 				CECE42F4296BF8D400D0D795 /* ARViewController.swift */,
@@ -425,6 +432,7 @@
 				CEDF541C29AC667C00C5AC95 /* BaseNavgationController.swift */,
 				CEDF542529AC718F00C5AC95 /* HistoryProjectListController.swift */,
 				CEDF541429AC5ADD00C5AC95 /* CurrentProjectListController.swift */,
+				CEF5EC7029C83FCB00C8191E /* MineViewController.swift */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -436,6 +444,15 @@
 				CEDF544029AF2D4E00C5AC95 /* Localizable.swift */,
 			);
 			path = Language;
+			sourceTree = "<group>";
+		};
+		CEF5EC7229C8473C00C8191E /* Download */ = {
+			isa = PBXGroup;
+			children = (
+				CEF5EC7329C8474900C8191E /* Downloader.swift */,
+				CEF5EC7429C8474900C8191E /* DownloaderManager.swift */,
+			);
+			path = Download;
 			sourceTree = "<group>";
 		};
 		F033BB93299BD03E00625BAC /* Recorder */ = {
@@ -867,6 +884,7 @@
 				CE53166B298E72C70069CC7F /* UserDefaults+Extension.swift in Sources */,
 				F033BC29299BD06600625BAC /* AudioAdapter.swift in Sources */,
 				CE509C92298E1DA10081346C /* ShapeTypeTableViewCell.swift in Sources */,
+				CEF5EC7129C83FCB00C8191E /* MineViewController.swift in Sources */,
 				F033BC21299BD06600625BAC /* WeakCollection.swift in Sources */,
 				F033BCA829AB23E400625BAC /* HistoryModel.swift in Sources */,
 				CEDF542429AC68E400C5AC95 /* ColorSettings.swift in Sources */,
@@ -893,6 +911,7 @@
 				F033BC1B299BD06600625BAC /* VideoOutput.State.swift in Sources */,
 				F033BC2D299BD06600625BAC /* SelfSceneRecordable.swift in Sources */,
 				F033BC2A299BD06600625BAC /* AssociatedStorage.swift in Sources */,
+				CEF5EC7629C8474900C8191E /* DownloaderManager.swift in Sources */,
 				F033BCA629A7BDA100625BAC /* SCNNode+Extensions.swift in Sources */,
 				CEDF541D29AC667C00C5AC95 /* BaseNavgationController.swift in Sources */,
 				F033BC00299BD06600625BAC /* AudioEngine.Player.swift in Sources */,
@@ -938,6 +957,7 @@
 				CECCE935296820390098B299 /* ChildProjectTableViewCell.swift in Sources */,
 				F033BC0A299BD06600625BAC /* MTLPixelFormat+Helpers.swift in Sources */,
 				CEDF541729AC5B0500C5AC95 /* Regular.swift in Sources */,
+				CEF5EC7529C8474900C8191E /* Downloader.swift in Sources */,
 				CEC5ADBC298E1A590054AD3A /* ShapeMenuView.swift in Sources */,
 				F033BC0E299BD06600625BAC /* CALayer+InterfaceOrientation.swift in Sources */,
 				CECE42F5296BF8D400D0D795 /* ARViewController.swift in Sources */,

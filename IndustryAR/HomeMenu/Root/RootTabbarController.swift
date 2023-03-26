@@ -22,6 +22,7 @@ class RootTabbarController: UITabBarController {
     private func addControllers() {
         addChildViewController(vc: CurrentProjectListController(), title: project.localizedString(), imgName: "Home")
         addChildViewController(vc: HistoryProjectListController(), title: history.localizedString(), imgName: "Folders")
+        addChildViewController(vc: MineViewController(), title: mine.localizedString(), imgName: "Mine")
         selectedIndex = 0
     }
     

@@ -9,6 +9,7 @@ import UIKit
 
 let project = "project"
 let history = "history"
+let mine = "mine"
 
 let drawing = "drawing"
 let triangle = "triangle"
@@ -35,14 +36,23 @@ let marker_size = "marker_size"
 let text_color = "text_color"
 let text_size = "text_size"
 let text_font = "text_font"
+let move_background = "move_background"
 
 let normal_line = "normal_line"
-let dash_line = "dash line"
+let dash_line = "dash_line"
 
 let save_success = "save_success"
 let save_fail = "save_fail"
 let save_error = "save_error"
 
+let save_window_tip = "save_window_tip"
+
+let save = "save"
+
+let save_cover_tip = "save_cover_tip"
+
+let download_url = "download_url"
+let download = "download"
 
 extension String {
     func localizedString() -> String {

@@ -89,7 +89,18 @@ class ShapeSetting {
         }
     } //= "PingFang-SC-Regular"
     
+    static var isBackgroundMove: Bool {
+        get {
+            return UserDefaults.isBackgroundMove
+        }
+        set {
+            UserDefaults.isBackgroundMove = newValue
+        }
+    }
+    
     static var fontNameList: [String] = [String]()
+    
+    static var lineTypeList: [String] = [normal_line.localizedString(), dash_line.localizedString()]
 }
 
 
@@ -162,6 +173,16 @@ extension UserDefaults {
         }
         set {
             self.standard.set(newValue, forKey: kfontName)
+        }
+    }
+    
+    private static let kbackgroundMove = "IndustryAR-kbackgroundMove"
+    static var isBackgroundMove: Bool {
+        get {
+            self.standard.bool(forKey: kbackgroundMove)
+        }
+        set {
+            self.standard.set(newValue, forKey: kbackgroundMove)
         }
     }
 }

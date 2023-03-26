@@ -7,6 +7,9 @@
 
 import UIKit
 
+let containerName = "ARAssets"
+let historyName = "History"
+
 class ARFileManager: NSObject {
     static let shared = ARFileManager()
     
@@ -16,14 +19,9 @@ class ARFileManager: NSObject {
     
     private let manager = FileManager.default
     
-    private let containerName = "ARAssets"
-    private let historyName = "History"
-    
     public func setupAssetsContainer() {
         let urls: [URL] = manager.urls(for: .documentDirectory, in: .userDomainMask)
         self.documentURL = urls.first!
-        
-        
         let url = documentURL.appendingPathComponent(containerName, isDirectory: true)
         let historyURL = documentURL.appendingPathComponent(historyName, isDirectory: true)
         var isDirectory: ObjCBool = ObjCBool(false)
@@ -49,8 +47,8 @@ class ARFileManager: NSObject {
         do {
             let historyURL = documentURL.appendingPathComponent(historyName, isDirectory: true)
             let dirs = try manager.contentsOfDirectory(at: historyURL,
-                                                                includingPropertiesForKeys: nil,
-                                                                options: .skipsHiddenFiles)
+                                                       includingPropertiesForKeys: nil,
+                                                       options: .skipsHiddenFiles)
             var historyList = [HistoryModel]()
             for childDir in dirs {
                 let dirPath = childDir.relativePath
@@ -61,9 +59,6 @@ class ARFileManager: NSObject {
                 let usdzURL = dirURL.appendingPathComponent(dirName + ".usdz")
                 let screenShot = dirURL.appendingPathComponent(dirName + ".png")
                 let scnFile = dirURL.appendingPathComponent(dirName + ".scn")
-                let transformString = dirURL.appendingPathComponent(dirName + ".txt")
-                let markerNameURL = dirURL.appendingPathComponent("markername.txt")
-                historyModel.markerNameURL = markerNameURL
                 if manager.fileExists(atPath: usdzURL.relativePath) {
                     historyModel.usdzPath = usdzURL
                 }
@@ -73,9 +68,7 @@ class ARFileManager: NSObject {
                 if manager.fileExists(atPath: scnFile.relativePath) {
                     historyModel.fileSCNPath = scnFile
                 }
-                if manager.fileExists(atPath: transformString.relativePath) {
-                    historyModel.fileTransformString = transformString
-                }
+                
                 historyList.append(historyModel)
             }
             completion(historyList)
@@ -120,7 +113,6 @@ class ARFileManager: NSObject {
         let url = self.documentURL.appendingPathComponent(containerName, isDirectory: true)
         do {
             let contentsOfDirectory = try manager.contentsOfDirectory(atPath: url.path)
-//            print("contentsOfDirectory:\(contentsOfDirectory)")
             
             var projectModels = [FileModel]()
             for directory in contentsOfDirectory {
@@ -148,70 +140,16 @@ class ARFileManager: NSObject {
                 }
             }
             completion(projectModels)
-            
-//            var assets = [AssetModel]()
-//            var usdzFilePaths: [URL] = []
-//            var scnFilePaths: [URL] = []
-//            var modelThumbnailPath: URL?
-//            for directory in contentsOfDirectory {
-//                if !directory.contains(".DS_Store") {
-//                    let modelName = directory
-//                    let childURL = url.appendingPathComponent(directory, isDirectory: true)
-//
-//                    guard let enumberatorAtURL = manager.enumerator(at: childURL,
-//                                                              includingPropertiesForKeys: nil,
-//                                                              options: .skipsHiddenFiles,
-//                                                                    errorHandler: nil) else { return }
-//
-//                    for urlObject in enumberatorAtURL.allObjects {
-//                        if let url = urlObject as? URL {
-//                            print("\(url.lastPathComponent)")
-//                            if url.lastPathComponent.contains(".usdz") {
-//                                usdzFilePaths.append(url)
-//                            }
-//                            if url.lastPathComponent.contains(".scn") {
-//                                scnFilePaths.append(url)
-//                            }
-//                            if url.lastPathComponent.contains(".jpg") || url.lastPathComponent.contains(".png") {
-//                                modelThumbnailPath = url
-//                            }
-//                        }
-//                    }
-//
-//                    let assetModel = AssetModel()
-//                    assetModel.modelName = modelName
-//                    if let modelThumbnailPath = modelThumbnailPath {
-//                        assetModel.modelThumbnailPath = modelThumbnailPath
-//                    }
-//                    assetModel.usdzFilePaths = usdzFilePaths
-//                    assetModel.scnFilePaths = scnFilePaths
-//                    assets.append(assetModel)
-//                }
-//            }
-//            completion(assets)
         } catch {
             print("error:\(error)")
         }
-//        // 1.2 浅遍历：包含完整路径
-//        do {
-//            let contentsOfDirectory = try manager.contentsOfDirectory(at: url,
-//                                                                      includingPropertiesForKeys: nil,
-//                                                                      options: .skipsHiddenFiles)
-//            print("skipsHiddenFiles:\(contentsOfDirectory)")
-//        } catch {
-//            print("1.2 浅遍历 error:\(error)")
-//        }
-//
-//        // 2.1 深度遍历：只有当前文件夹下的路径
-//        let enumberatorAtPath = manager.enumerator(atPath: url.path)
-//        print("2.1 深度遍历：\(enumberatorAtPath?.allObjects)")
-//        // 2.2 深度遍历：包含完整路径
-//        let enumberatorAtURL = manager.enumerator(at: url,
-//                                                  includingPropertiesForKeys: nil,
-//                                                  options: .skipsHiddenFiles,
-//                                                  errorHandler: nil)
-//        print("2.2 深度遍历：\(enumberatorAtURL?.allObjects)")
-//
     }
     
+    public func deleteFileWithFileName(name: String) {
+        let historyURL = documentURL.appendingPathComponent(historyName, isDirectory: true)
+        do {
+            let path = historyURL.appendingPathComponent(name).relativePath
+            try manager.removeItem(atPath: path)
+        } catch {}
+    }
 }
